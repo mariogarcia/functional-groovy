@@ -18,6 +18,14 @@ package groovyfp.ac
 
 import groovy.transform.Immutable
 
+/**
+ * This class represents a given final score between two teams
+ * at a given date.
+ *
+ * Instances of this class are immutable
+ *
+ * @author Mario Garcia
+ */
 @Immutable
 class NbaGame {
 
