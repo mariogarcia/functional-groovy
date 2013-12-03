@@ -26,15 +26,18 @@ class NbaGameService extends CsvReaderAware {
      * @param year
      * @return Name of the first 10 teams
      */
-    def getTop10TeamsByWinningGamesAndYear(Integer year) {
+    List<String> getTop10TeamsByWinningGamesAndYear(Integer year) {
 
         def aggregator = [:]
-
-        return csv.inject(aggregator){ acc, line ->
-
+        def collector = { acc, line ->
+            def key = line.visitorPoints > line.homePoints ? line.visitor : line.home
+            def val = acc.get(key, 0)
+            acc[key] = val + 1
             acc
+        }
+        def descending = { a, b -> b.value <=> a.value }
 
-        }.keySet()
+        return csv.inject(aggregator, collector).entrySet().sort(descending).key.take(10)
 
     }
 

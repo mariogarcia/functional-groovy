@@ -18,10 +18,27 @@ package groovyfp.csv
 
 import static com.xlson.groovycsv.CsvParser.parseCsv
 
+/**
+ * This class serves as convention for reading csv files
+ *
+ * @author Mario Garcia
+ */
 class CsvReaderAware {
 
+    /**
+     * This method tries to read a file with the same name as the actual
+     * Java node
+     *
+     * @return Iterable object with every line
+     */
     def getCsv() {
 
+        def resourceInputStream =
+            this
+                .getClass()
+                .getResourceAsStream("${this.getClass().simpleName}.csv")
+
+        return parseCsv(new BufferedReader(new InputStreamReader(resourceInputStream)))
 
     }
 

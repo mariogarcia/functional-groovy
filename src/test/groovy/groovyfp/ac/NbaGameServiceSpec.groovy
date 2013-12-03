@@ -23,10 +23,17 @@ class NbaGameServiceSpec extends Specification {
     def 'Getting the top 10 teams by winning games'() {
         given: 'The NBA service'
             def nbaService = new NbaGameService()
+            def top10 = [
+                'Brooklyn Nets', 'Charlotte Bobcats',
+                'Minnesota Timberwolves', 'Utah Jazz',
+                'Chicago Bulls', 'Phoenix Suns',
+                'Dallas Mavericks', 'Miami Heat',
+                'Cleveland Cavaliers', 'Milwaukee Bucks'
+            ]
         when: 'Getting the top 10 teams'
             def resultList = nbaService.getTop10TeamsByWinningGamesAndYear(2012)
-        then: 'The top ten are'
-            resultList == ['LA Lakers']
+        then: 'The top ten are the expected'
+            resultList.every { it in top10 }
     }
 
 }
