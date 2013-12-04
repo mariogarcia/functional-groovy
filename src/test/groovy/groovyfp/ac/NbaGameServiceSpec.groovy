@@ -18,6 +18,11 @@ package groovyfp.ac
 
 import spock.lang.Specification
 
+/**
+ * This specs test all actions over the Nba games csv file
+ *
+ * @author Mario Garcia
+ */
 class NbaGameServiceSpec extends Specification {
 
     def 'Getting the top 10 teams by winning games'() {
