@@ -33,12 +33,13 @@ class CsvReaderAware {
      */
     def getCsv() {
 
-        def resourceInputStream =
-            this
-                .getClass()
-                .getResourceAsStream("${this.getClass().simpleName}.csv")
-
-        return parseCsv(new BufferedReader(new InputStreamReader(resourceInputStream)))
+        return parseCsv(
+            new BufferedReader(
+                new InputStreamReader(
+                    getClass().getResourceAsStream("${this.getClass().simpleName}.csv")
+                )
+            )
+        )
 
     }
 

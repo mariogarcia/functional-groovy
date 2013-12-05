@@ -35,9 +35,9 @@ class NbaGameService extends CsvReaderAware {
             acc[key] = val + 1
             acc
         }
-        def descending = { a, b -> b.value <=> a.value }
+        def desc = { a, b -> b.value <=> a.value }
 
-        return csv.inject(aggregator, collector).entrySet().sort(descending).key.take(10)
+        return csv.inject(aggregator, collector).entrySet().sort(desc).key.take(10)
 
     }
 
