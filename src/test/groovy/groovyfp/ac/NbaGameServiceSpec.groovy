@@ -16,6 +16,9 @@
  */
 package groovyfp.ac
 
+import static org.junit.Assert.assertThat
+import static org.hamcrest.CoreMatchers.is
+
 import spock.lang.Specification
 
 /**
@@ -25,7 +28,7 @@ import spock.lang.Specification
  */
 class NbaGameServiceSpec extends Specification {
 
-    def 'Getting the top 10 teams by winning games'() {
+    def 'folding: Getting the top 10 teams by winning games'() {
         given: 'The NBA service'
             def nbaService = new NbaGameService()
             def top10 = [
@@ -39,6 +42,14 @@ class NbaGameServiceSpec extends Specification {
             def resultList = nbaService.getTop10TeamsByWinningGamesAndYear(2012)
         then: 'The top ten are the expected'
             resultList.every { it in top10 }
+    }
+
+    def 'recursion: Summing up recursively all marked points during a given year'() {
+        when: 'Calculating all points during a given year'
+            def nbaService = new NbaGameService()
+            def total = nbaService.sumAllPointsByYear(2012)
+        then: 'We should get the total marked that year'
+            assertThat total, is(241223)
     }
 
 }

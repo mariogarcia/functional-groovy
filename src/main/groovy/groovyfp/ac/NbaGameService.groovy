@@ -18,10 +18,20 @@ package groovyfp.ac
 
 import groovyfp.csv.CsvReaderAware
 
+/**
+ * This service does some calculations over a dataset of NBA games
+ * using some functional programming techniques such as
+ *
+ * folding (reduce), recursion...
+ *
+ * @author Mario Garcia
+ */
 class NbaGameService extends CsvReaderAware {
 
     /**
      * This method return the first 10 teams by winning games
+     *
+     * FP concept: FOLD
      *
      * @param year
      * @return Name of the first 10 teams
@@ -30,7 +40,7 @@ class NbaGameService extends CsvReaderAware {
 
         def aggregator = [:]
         def collector = { acc, line ->
-            def key = line.visitorPoints > line.homePoints ? line.visitor : line.home
+            def key = line.with { visitorPoints > homePoints ? visitor : home }
             def val = acc.get(key, 0)
             acc[key] = val + 1
             acc
@@ -38,6 +48,34 @@ class NbaGameService extends CsvReaderAware {
         def desc = { a, b -> b.value <=> a.value }
 
         return csv.inject(aggregator, collector).entrySet().sort(desc).key.take(10)
+
+    }
+
+    /**
+     * This method sums all points of all games during a given
+     * year
+     *
+     * FP concept: recursion
+     *
+     * @param year the year to sum all points from
+     * @return summing up all points marked a given year
+     */
+    Integer sumAllPointsByYear(Integer year) {
+
+        def sumLines
+
+        sumLines = { accumulator, lines ->
+
+            return !lines.hasNext() ?
+                accumulator :
+                sumLines.trampoline(
+                    accumulator + lines.next()?.with { visitorPoints.toInteger() + homePoints.toInteger() } ?: 0,
+                    lines
+                )
+
+        }.trampoline()
+
+        return sumLines(0, csv)
 
     }
 
