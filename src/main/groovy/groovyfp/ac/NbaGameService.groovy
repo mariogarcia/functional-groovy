@@ -81,21 +81,42 @@ class NbaGameService extends CsvReaderAware {
     }
 
     /**
+     * This method gets all nba games when the visitor won
+     *
+     * @return a list of NbaGame instances when the visitor won
      *
      */
     List<NbaGame> findAllNbaGameWhenVisitorWon() {
 
+        return findAllNbaGameBy { it.visitorPoints.toInteger() > it.homePoints.toInteger() }
+
+    }
+
+    /**
+     * A more general way of filtering nba games by a closure used
+     * as a selector
+     *
+     * @param selector The filter criteria
+     * @return a list of NbaGame instances
+     *
+     */
+    List<NbaGame> findAllNbaGameBy(Closure<Boolean> selector) {
+
+        def collector = { game ->
+            game.with {
+                new NbaGame(
+                    home: home,
+                    homePoints: homePoints?.toInteger(),
+                    visitor: visitor,
+                    visitorPoints: visitorPoints?.toInteger()
+                )
+            }
+        }
+
         return withPool {
             csv.
-                findAllParallel { it.visitorPoints.toInteger() > it.homePoints.toInteger() }.
-                collectParallel {
-                   new NbaGame(
-                        home: it.home,
-                        homePoints: it.homePoints?.toInteger(),
-                        visitor: it.visitor,
-                        visitorPoints: it.visitorPoints?.toInteger()
-                   )
-                }
+                findAllParallel(selector).
+                collectParallel(collector)
         }
 
     }
