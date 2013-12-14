@@ -52,4 +52,13 @@ class NbaGameServiceSpec extends Specification {
             assertThat total, is(241223)
     }
 
+    def 'dataParallelism: Finding all NBA games when the visitor won'() {
+        when: 'Querying the specific games'
+            def visitorWonList =
+                new NbaGameService().
+                    findAllNbaGameWhenVisitorWon()
+        then: 'The number of results are'
+            visitorWonList.size() == 477
+    }
+
 }

@@ -23,6 +23,7 @@ repositories {
 dependencies {
 
     compile 'org.codehaus.groovy:groovy:2.1.7'
+    compile 'org.codehaus.gpars:gpars:1.1.0'
     compile('com.xlson.groovycsv:groovycsv:1.0') {
         exclude group: 'groovy'
     }

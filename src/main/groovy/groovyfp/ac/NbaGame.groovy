@@ -26,7 +26,6 @@ import groovy.transform.Immutable
  *
  * @author Mario Garcia
  */
-@Immutable
 class NbaGame {
 
     Date date

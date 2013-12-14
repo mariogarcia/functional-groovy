@@ -16,6 +16,7 @@
  */
 package groovyfp.ac
 
+import static groovyx.gpars.GParsPool.withPool
 import groovyfp.csv.CsvReaderAware
 
 /**
@@ -79,4 +80,25 @@ class NbaGameService extends CsvReaderAware {
 
     }
 
+    /**
+     *
+     */
+    List<NbaGame> findAllNbaGameWhenVisitorWon() {
+
+        return withPool {
+            csv.
+                findAllParallel { it.visitorPoints.toInteger() > it.homePoints.toInteger() }.
+                collectParallel {
+                   new NbaGame(
+                        home: it.home,
+                        homePoints: it.homePoints?.toInteger(),
+                        visitor: it.visitor,
+                        visitorPoints: it.visitorPoints?.toInteger()
+                   )
+                }
+        }
+
+    }
+
 }
+
