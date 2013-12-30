@@ -18,6 +18,7 @@ package groovyfp.ac
 
 import static org.junit.Assert.assertThat
 import static org.hamcrest.CoreMatchers.is
+import static com.xlson.groovycsv.CsvParser.parseCsv
 
 import spock.lang.Specification
 
@@ -59,6 +60,27 @@ class NbaGameServiceSpec extends Specification {
                     findAllNbaGameWhenVisitorWon()
         then: 'The number of results are'
             visitorWonList.size() == 477
+    }
+
+    def 'Using closure composition to find a specific type of games'() {
+        given: 'A selector composition'
+            def selector =
+                { list -> list.collect { it.visitor } } <<
+                { list -> list.findAll { it.visitorPoints.toInteger() > it.homePoints.toInteger() } }
+        and: 'A data set'
+            def dataSet = readCsv(new File('src/main/resources/groovyfp/ac/NbaGameService.csv'))
+        when: 'Filtering the data-set'
+            def result = selector << dataSet
+        then: 'Checking the result'
+            result.size() == 477
+    }
+
+    def readCsv(File file) {
+
+        return parseCsv(
+            new BufferedReader(new FileReader(file))
+        )
+
     }
 
 }
