@@ -63,16 +63,13 @@ class NbaGameServiceSpec extends Specification {
     }
 
     def 'Using closure composition to find a specific type of games'() {
-        given: 'A selector composition'
-            def selector =
-                { list -> list.collect { it.visitor } } <<
-                { list -> list.findAll { it.visitorPoints.toInteger() > it.homePoints.toInteger() } }
-        and: 'A data set'
-            def dataSet = readCsv(new File('src/main/resources/groovyfp/ac/NbaGameService.csv'))
-        when: 'Filtering the data-set'
-            def result = selector << dataSet
-        then: 'Checking the result'
-            result.size() == 477
+        when: 'Filtering using a closure composition'
+            def file = 'src/main/resources/groovyfp/ac/NbaGameService.csv' as File
+            def results =
+                { list -> list.collect { row -> row.visitor } } <<
+                { list -> list.findAll { row -> row.visitorPoints.toInteger() > row.homePoints.toInteger() } } << readCsv(file)
+        then: 'The expected number of results'
+            results.size() == 477
     }
 
     def readCsv(File file) {
