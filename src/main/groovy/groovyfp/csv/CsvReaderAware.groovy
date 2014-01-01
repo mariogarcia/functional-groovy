@@ -18,6 +18,9 @@ package groovyfp.csv
 
 import static com.xlson.groovycsv.CsvParser.parseCsv
 
+import java.nio.file.Path
+import java.nio.file.Paths
+
 /**
  * This class serves as convention for reading csv files
  *
@@ -33,11 +36,17 @@ class CsvReaderAware {
      */
     def getCsv() {
 
+        return getCsvFrom(
+            Paths.get(getClass().getResource("${this.getClass().simpleName}.csv").toURI())
+        )
+
+    }
+
+    def getCsvFrom(Path path) {
+
         return parseCsv(
             new BufferedReader(
-                new InputStreamReader(
-                    getClass().getResourceAsStream("${this.getClass().simpleName}.csv")
-                )
+                new FileReader(path.toFile().absolutePath)
             )
         )
 
