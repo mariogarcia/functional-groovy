@@ -16,13 +16,18 @@ class EcuationSpec extends Specification {
     }
 
     def 'Using ecuation resolver'() {
-        given: 'A simple ecuation'
-            def ecuation = { _2x + _3x == 25 }
         when: 'Using an ecuation resolver'
             def resolver = new EcuationResolver()
-        then: 'We should be able to resolve the problem'
-            resolver.resolve(ecuation).with(5)
+        then: 'We should be able to check the result'
+            resolver.check(ecuation).with(values)
+        where: 'Possible type of ecuations could be'
+                    ecuation                |      values
+            { it -> _2x + _3x == 25 }       |      [x:5]
+            { it -> _2x + _x == 9 }         |      [x:3]
+            { it -> _2x + _3y + 1 == 10 }   |      [x:3, y:1]
     }
+
+
 
 }
 

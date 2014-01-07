@@ -5,27 +5,37 @@ package groovyfp.ecuation
  */
 class EcuationResolver {
 
-    static final String PATTERN = /_(\d)x/
+    static final String PATTERN = /_([\d]{0,1})([x-z]{1})/
 
-    Number solution = 1
+    Map<String,Number> values
     Closure ecuation
 
     def propertyMissing(String name) {
 
         def matcher = name =~ PATTERN
-        def result = matcher ? matcher[0][1].toInteger() : super.propertyMissing(name)
 
-        return result * solution
+        if (!matcher) {
+            return super.propertyMissing(name)
+        }
+
+        def multiplier = matcher[0][1]
+        def variableName = matcher[0][2]
+        def solution =
+            multiplier ?
+                values[variableName] * multiplier.toInteger() :
+                values[variableName]
+
+        return solution
 
     }
 
-    def resolve(Closure ecuation) {
+    def check(Closure ecuation) {
         this.ecuation = ecuation
         return this
     }
 
-    def with(Number solution) {
-        this.solution = solution
+    def with(Map values) {
+        this.values = values
         return this.with(ecuation)
     }
 
