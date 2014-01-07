@@ -15,6 +15,15 @@ class EcuationSpec extends Specification {
             { x -> (2 * x) + (3 * x) == 25 }    |       5
     }
 
+    def 'Using ecuation resolver'() {
+        given: 'A simple ecuation'
+            def ecuation = { _2x + _3x == 25 }
+        when: 'Using an ecuation resolver'
+            def resolver = new EcuationResolver()
+        then: 'We should be able to resolve the problem'
+            resolver.resolve(ecuation).with(5)
+    }
+
 }
 
 
