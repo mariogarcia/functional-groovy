@@ -8,7 +8,7 @@ class EcuationResolver {
     static final String PATTERN = /_([\d]{0,1})([x-z]{1})/
 
     Map<String,Number> values
-    Closure ecuation
+    List<Closure> ecuations = []
 
     def propertyMissing(String name) {
 
@@ -29,14 +29,16 @@ class EcuationResolver {
 
     }
 
-    def check(Closure ecuation) {
-        this.ecuation = ecuation
+    def check(Closure... ecuations) {
+        this.ecuations.clear()
+        this.ecuations.addAll(ecuations)
         return this
     }
 
     def with(Map values) {
         this.values = values
-        return this.with(ecuation)
+        this.ecuations*.delegate = this
+        return this.ecuations*.doCall()
     }
 
 }
