@@ -18,8 +18,7 @@ class EcuationResolver {
             return super.propertyMissing(name)
         }
 
-        def multiplier = matcher[0][1]
-        def variableName = matcher[0][2]
+        def (multiplier, variableName) = matcher[0][1..2]
         def solution =
             multiplier ?
                 values[variableName] * multiplier.toInteger() :
@@ -30,8 +29,10 @@ class EcuationResolver {
     }
 
     def check(Closure... ecuations) {
-        this.ecuations.clear()
-        this.ecuations.addAll(ecuations)
+        this.ecuations.with {
+            clear()
+            addAll(ecuations)
+        }
         return this
     }
 
