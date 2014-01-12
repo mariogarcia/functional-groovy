@@ -1,5 +1,6 @@
 package groovyfp.ecuation
 
+import java.util.regex.Matcher
 /**
  *
  */
@@ -18,6 +19,11 @@ class EcuationResolver {
             return super.propertyMissing(name)
         }
 
+        return !values.isEmpty() ? checkSolution(matcher) : calculateSolution(matcher)
+
+    }
+
+    def checkSolution(Matcher matcher) {
         def (multiplier, variableName) = matcher[0][1..2]
         def solution =
             multiplier ?
@@ -25,6 +31,9 @@ class EcuationResolver {
                 values[variableName]
 
         return solution
+    }
+
+    def calculateSolution(Matcher matcher) {
 
     }
 
@@ -34,6 +43,10 @@ class EcuationResolver {
             addAll(ecuations)
         }
         return this
+    }
+
+    def resolve(Closure... ecuations) {
+        return check(ecuations).with([:])
     }
 
     def with(Map values) {

@@ -40,6 +40,14 @@ class EcuationSpec extends Specification {
             results.every { partial -> partial == true}
     }
 
+    def 'Resolving a simple ecuation'() {
+        given: 'A simple ecuation'
+            def resolver = new EcuationResolver()
+            def simple = { it -> _2x + _3x == 25 }
+        expect: 'To resolve the variable'
+            resolver.resolve(simple) == [x: 5]
+    }
+
 }
 
 
