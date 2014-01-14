@@ -34,6 +34,8 @@ class EcuationResolver {
     }
 
     def calculateSolution(Matcher matcher) {
+        // We have to work with tuples and just operate over the
+        // the numbers in those tuples
 
     }
 
