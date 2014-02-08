@@ -6,14 +6,26 @@ class OptionSpec extends Specification {
 
     def 'Getting several objects with null/notnull value'() {
         when: 'Getting a given object'
-            Option option = object2Test
+            Option option = obj
         then: 'It should give us some information about itself'
-            isNull == option.hasValue()
+            with(option) {
+                hasValue() != isNull
+                hasValue() ?
+                    getOrElse(defaultValue) != defaultValue :
+                    getOrElse(defaultValue) == defaultValue
+            }
         where: 'Possible values are'
-            obj | isNull
-            a   | true
-            b   | false
+            obj                 | isNull | defaultValue
+            optionalWithNoValue | true   | "something"
+            optionalWithValue   | false  | "something"
     }
 
+    Option<String> getOptionalWithNoValue() {
+        return new Option<String>()
+    }
+
+    Option<String> getOptionalWithValue() {
+        return new Option<String>(value: 'hello')
+    }
 
 }
