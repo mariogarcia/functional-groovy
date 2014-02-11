@@ -19,5 +19,15 @@ class TemplatePatternSpec extends Specification {
             total < 262
     }
 
+    def 'Passing only values'() {
+        given: 'A price'
+            def price = 100
+        when: 'Applying vat and discount to calculate'
+            def result = TemplatePattern.
+                calculateWithVatAndDiscount(100, 0.10, 0.2)
+        then: 'The result should be checked'
+            result == 88
+    }
+
 
 }
