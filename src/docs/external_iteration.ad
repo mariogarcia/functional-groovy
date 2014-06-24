@@ -1,4 +1,47 @@
-== External Iteration
+== Internal Vs External iteration 
 
+Most of the time we need to iterate through a list we do the same. We tend to specify every detail, we code
+every step of the way. But is there any other way ? Well there is...it's call internal iteration.
 
+There are some reasons I would recommend you to start using internal iteration:
+
+* Is more concise and clear
+* We could change the internal behavior of the iteration without having to change client code
+* Compiler (JIT) could do some optimizations about how to iterate the collection
+
+=== More concise
+
+Let's say we have a list of mercenaries in lower case and we want to get their names in upper case. Well
+no problem...That is what is should look like in old-fashioned Java code: 
+
+[source, groovy]
+.External Iteration: Java style
+----
+include::{testDir}/groovyfp/exit/ExternalIterationIsEvilSpec.groovy[tags=external_iteration_1,indent=0] 
+----
+
+* We have to remember to create the collection to store the transformed names. 
+* Then we should know how the iteration is done
+* Finally to add explicitly every transformed name into the new collection.
+
+Maybe Groovy is more concise and less verbose...hell yeah but you can do it wrong either.
+
+[source, groovy]
+.External Iteration: Groovy style 
+----
+include::{testDir}/groovyfp/exit/ExternalIterationIsEvilSpec.groovy[tags=external_iteration_2,indent=0] 
+----
+
+_"That's not what I signed for!!!"_ you may think. Don't worry Groovy has a lot more to offer. Collections
+in Groovy have many useful method to loop through them filtering and collecting transformed values
+without having to specify how a collection should be traversed.
+
+[source, groovy]
+.Internal Iteration: Groovy 
+----
+include::{testDir}/groovyfp/exit/ExternalIterationIsEvilSpec.groovy[tags=external_iteration_3,indent=0] 
+----
+
+This example shows how you can loop through a collection in Groovy in a declarative way. You can almost
+read _"I want to collect the upper-case-version of the expendable collection"_ can't you ? 
 
