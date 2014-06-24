@@ -23,6 +23,9 @@ repositories {
 dependencies {
     compile 'org.codehaus.groovy:groovy:2.2.1'
     compile 'org.codehaus.gpars:gpars:1.2.0'
+    compile('com.xlson.groovycsv:groovycsv:1.0') {
+        exclude group: 'groovy'
+    }
 
     testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
     testCompile 'junit:junit:4.11'
@@ -38,5 +41,4 @@ asciidoctor {
         ]
     ]
 }
-
 
