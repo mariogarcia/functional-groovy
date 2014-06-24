@@ -44,6 +44,18 @@ class ExternalIterationIsEvil extends Specification {
     }
     // end::external_iteration_3[]
 
+    // tag::external_iteration_4[]
+    void 'Internal iteration'() {
+        given: 'A collection we want to iterate'
+            def expendables = ['Stallone', 'Staham', 'Couture']
+        when: 'Collecting the upper case version of the names'
+            def upperCaseVersion = expendables.collect { it.toUpperCase() }
+        then: 'All names should be in upper case'
+          upperCaseVersion == ['STALLONE', 'STAHAM', 'COUTURE']
+    }
+    // end::external_iteration_4[]
+
+
     void 'External iteration. Filtering logic'() {
         given: 'A collection we want to iterate'
             def expendables = ['Stallone', 'Staham', 'Couture']
