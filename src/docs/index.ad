@@ -1,0 +1,8 @@
+= Functional Groovy 
+:numbered:                                                                                                                              
+:testDir: ../../src/test/groovy
+:sourceDir: ../../src/main/groovy
+
+By Mario Garcia <link:https://www.twitter.com/marioggar[@marioggar]>
+  
+include::src/docs/external_iteration.ad[]
