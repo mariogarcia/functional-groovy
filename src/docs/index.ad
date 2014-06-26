@@ -2,7 +2,17 @@
 :numbered:                                                                                                                              
 :testDir: ../../src/test/groovy
 :sourceDir: ../../src/main/groovy
-
-By Mario Garcia <link:https://www.twitter.com/marioggar[@marioggar]>
   
-include::src/docs/external_iteration.ad[]
+include::src/docs/1_intro.ad[]
+
+include::src/docs/2_closures.ad[]
+
+include::src/docs/3_iteration.ad[]
+
+include::src/docs/4_streams.ad[]
+
+include::src/docs/5_from_oop_to_fn.ad[]
+
+include::src/docs/6_fn_patterns.ad[]
+
+include::src/docs/7_monads.ad[]
