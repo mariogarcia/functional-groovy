@@ -61,15 +61,107 @@ want to keep your code reusable.
 
 Imagine we had a method looping through a collection to sum all numbers less than 20.
 
+[source, groovy]
+.Internal Iteration: Groovy 
+----
+include::{testDir}/groovyfp/exit/ExternalIterationIsEvilSpec.groovy[tags=external_iteration_5,indent=0] 
+----
+
 Now we want to get all numbers from 20 to 100 
+
+[source, groovy]
+.Internal Iteration: Groovy 
+----
+include::{testDir}/groovyfp/exit/ExternalIterationIsEvilSpec.groovy[tags=external_iteration_6,indent=0] 
+----
 
 And now...you know what ? forget it :P
 
-We should have a collection capable to receive "behavior" and capable to apply that behavior to
-that collection.
+There should be a better way of refactoring this behavior. There are two main actions when trying to
+solve these type of problems:
 
-In groovy by default you can apply new behaviors to a collection...but imagine we always want
-to get double of each filtered value:
+* Filtering data 
+* Transforming data
 
+And when talking about Groovy and collections this means to use *_find_* or *_findAll_* when trying
+to filtering data and *_collect_* for transforming data.
 
+Back to the prolem, while the transformation applied to the data is the same the filtering applied
+is different. Lets see how our reusable method should look like:
+
+[source, groovy]
+.Internal Iteration: Filter + Transformation 
+----
+include::{testDir}/groovyfp/exit/ExternalIterationIsEvilSpec.groovy[tags=external_iteration_7,indent=0] 
+----
+
+<1> First we pass the collection we want to transform. We say transform deliberately, we don't want
+to *_mutate_* the collection but to create a new one for applying a given action. This case to sum
+all numbers of that new collection
+
+<2> We want to get certain numbers to add them up. By default if no filter given then apply to all (*_{ it }_*).
+
+<3> We're using Groovy's collection behavior to apply the given filter to get the new collection and
+then sum all numbers in that collection.
+
+And how to use it for different filters:
+
+[source, groovy]
+.Internal Iteration: Reuse of functions 
+----
+include::{testDir}/groovyfp/exit/ExternalIterationIsEvilSpec.groovy[tags=external_iteration_8,indent=0] 
+----
+
+That's great but the previous example shows us a way of reusing behavior through the use of methods.
+But Does it mean it will be forcing us to create a method every time we would like to reuse a
+certain behavior ? That would lead us to create a lot of methods don't you think ?
+
+Functional programming teach us that behavior is not limited to *_methods_* of an object. When
+talking about behavior we will be talking of *_functions_* in a more general way.
+
+Functions are more powertful in the way that they can be modified, passed as a parameter to other
+functions, and still can be used as the methods we normally use. In Groovy such type of functions
+are called *_closures_*.
+
+Although we will be talking about *_closures_* deeper in its own chapter lets say for now that
+they're extremely useful to reuse behavior.
+
+What if I want to use the same method with the same type of filter several times in the same
+method. That would be a lot of boiler plate code. A lot of code to maintain and repeat. Sounds
+too dirty... and looks worst :P
+
+[source, groovy]
+.Internal Iteration: Reusability limited to methods ? 
+----
+include::{testDir}/groovyfp/exit/ExternalIterationIsEvilSpec.groovy[tags=external_iteration_9,indent=0] 
+----
+
+What can I do ? Well let's say that Groovy methods could be transformed into *_closures_*... How ? 
+As I said earlier *_functions_* / *_closures_* can be assigned and be passed as parameters.
+
+[source, groovy]
+.Internal Iteration: Reusability limited to methods ? 
+----
+include::{testDir}/groovyfp/exit/ExternalIterationIsEvilSpec.groovy[tags=external_iteration_10,indent=0] 
+----
+
+<1> We assign the closure representing the *_filter_* to a given variable
+<2> Then we pass the closure as parameter to filter numbers 
+
+And also I said *_methods_* in Groovy can be transformed to closures:
+
+[source, groovy]
+.Internal Iteration: Reusability limited to methods ? 
+----
+include::{testDir}/groovyfp/exit/ExternalIterationIsEvilSpec.groovy[tags=external_iteration_11,indent=0] 
+----
+
+<1> We are creating a new function with a fixed type of filter
+<2> We have created a new function that sums all numbers greater than 20
+and less than 200 for the collection passed as parameter
+
+WARNING: If the expression *_this.&sum.rcurry_* sounds like chinese to you just take that this
+expression is only saying: I want to get a new function with the first parameter from the right with
+the following value *_{ it > 20 && it < 100}_*. Anyway I recommend you to review the chaper
+dedicated to closures.
 
