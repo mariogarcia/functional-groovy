@@ -378,14 +378,100 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] { cursor: default; }
 <h2 id="_streams">Streams</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>(TODO)</p>
+<p>So far, we&#8217;ve seen that in Groovy, filtering elements and applying transformation over
+that collection is as easy as a pie right ? But we didn&#8217;t realize we could be more
+efficient in the way we do those tasks.</p>
+</div>
+<div class="paragraph">
+<p>Imagine we want to filter even numbers from a given collection and then multiply them
+10 times.</p>
+</div>
+<div class="listingblock">
+<div class="title">Working more than you should</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{testDir}/groovyfp/streams/StreamsSpec.groovy[tags=streams_1,indent=0]</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>We loop through the entire collection to get all required values</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The we loop through the filtered values to apply some transformation</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>It&#8217;s clear we should be able to loop only once the collection while applying the transformation only
+to the required values. In this particular example is not critical, but imagine we were looping a collection with thousands
+of elements, going through that collection more than once wouldn&#8217;t be very nice so to speak.</p>
+</div>
+<div class="paragraph">
+<p>Let see what says the wikipedia about streams in this context:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>&#8230;A stream is a lazily evaluated or delayed sequence of data elements. A stream can be used
+similarly to a list, but later elements are only calculated when needed. Streams can therefore
+represent infinite sequences and series.</p>
+</div>
+</blockquote>
+<div class="attribution">
+&#8212; Wikipedia
+</div>
+</div>
+<div class="paragraph">
+<p>So how can we modify previous example to make it process the required values on the fly, as
+soon as the process detectes they are suitable to be part of the result.</p>
+</div>
+<div class="paragraph">
+<p>Later on we&#8217;ll see there&#8217;re at least a couple libraries that can do it for you in a
+easy way. But for now we have to make do with Groovy alone.</p>
+</div>
+<div class="listingblock">
+<div class="title">Two tasks at once</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{testDir}/groovyfp/streams/StreamsSpec.groovy[tags=streams_2,indent=0]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We have use the collection <strong><em>inject</em></strong> method. This method receives two arguments:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Initial value of the aggregated data</p>
+</li>
+<li>
+<p>A closure receiving two parameters: the <strong><em>agregated data</em></strong>, and the <strong><em>next value</em></strong> of the source collection</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Now the process declares which element the transformation has to be applied to and then add it to
+the result. We don&#8217;t have to loop the collection twice we are doing both filtering and
+transformation all at once.</p>
+</div>
+<div class="paragraph">
+<p>Now we reached the goal, the process is more efficient but the problem is that I don&#8217;t like the
+code, it&#8217;s not reusable.  So it&#8217;s time to change it.</p>
+</div>
+<div class="listingblock">
+<div class="title">Functional lazy</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{testDir}/groovyfp/streams/StreamsSpec.groovy[tags=streams_3,indent=0]</code></pre>
+</div>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-06-27 00:13:12 CEST
+Last updated 2014-06-29 22:58:07 CEST
 </div>
 </div>
 </body>

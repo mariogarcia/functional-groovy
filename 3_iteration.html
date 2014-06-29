@@ -384,8 +384,12 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] { cursor: default; }
 <h2 id="_internal_vs_external_iteration">Internal Vs External iteration</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Most of the time we need to iterate through a list we do the same. We tend to specify every detail, we code
+<p>Most of the time we need to iterate through a list, we end doing the same. We tend to specify every detail, we code
 every step of the way. But is there any other way ? Well there is&#8230;it&#8217;s call internal iteration.</p>
+</div>
+<div class="paragraph">
+<p>The point here is that We should be taking care on the logic of filtering and transformation and not
+how to loop through the collection, Don&#8217;t you thing ?</p>
 </div>
 <div class="paragraph">
 <p>There are some reasons I would recommend you to start using internal iteration:</p>
@@ -472,19 +476,167 @@ want to keep your code reusable.</p>
 <div class="paragraph">
 <p>Imagine we had a method looping through a collection to sum all numbers less than 20.</p>
 </div>
+<div class="listingblock">
+<div class="title">Internal Iteration: Groovy</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{testDir}/groovyfp/exit/ExternalIterationIsEvilSpec.groovy[tags=external_iteration_5,indent=0]</code></pre>
+</div>
+</div>
 <div class="paragraph">
 <p>Now we want to get all numbers from 20 to 100</p>
+</div>
+<div class="listingblock">
+<div class="title">Internal Iteration: Groovy</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{testDir}/groovyfp/exit/ExternalIterationIsEvilSpec.groovy[tags=external_iteration_6,indent=0]</code></pre>
+</div>
 </div>
 <div class="paragraph">
 <p>And now&#8230;you know what ? forget it :P</p>
 </div>
 <div class="paragraph">
-<p>We should have a collection capable to receive "behavior" and capable to apply that behavior to
-that collection.</p>
+<p>There should be a better way of refactoring this behavior. There are two main actions when trying to
+solve these type of problems:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Filtering data</p>
+</li>
+<li>
+<p>Transforming data</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>In groovy by default you can apply new behaviors to a collection&#8230;but imagine we always want
-to get double of each filtered value:</p>
+<p>And when talking about Groovy and collections this means to use <strong><em>find</em></strong> or <strong><em>findAll</em></strong> when trying
+to filtering data and <strong><em>collect</em></strong> for transforming data.</p>
+</div>
+<div class="paragraph">
+<p>Back to the prolem, while the transformation applied to the data is the same the filtering applied
+is different. Lets see how our reusable method should look like:</p>
+</div>
+<div class="listingblock">
+<div class="title">Internal Iteration: Filter + Transformation</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{testDir}/groovyfp/exit/ExternalIterationIsEvilSpec.groovy[tags=external_iteration_7,indent=0]</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>First we pass the collection we want to transform. We say transform deliberately, we don&#8217;t want
+to <strong><em>mutate</em></strong> the collection but to create a new one for applying a given action. This case to sum
+all numbers of that new collection</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>We want to get certain numbers to add them up. By default if no filter given then apply to all (<strong><em>{ it }</em></strong>).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>We&#8217;re using Groovy&#8217;s collection behavior to apply the given filter to get the new collection and
+then sum all numbers in that collection.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>And how to use it for different filters:</p>
+</div>
+<div class="listingblock">
+<div class="title">Internal Iteration: Reuse of functions</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{testDir}/groovyfp/exit/ExternalIterationIsEvilSpec.groovy[tags=external_iteration_8,indent=0]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>That&#8217;s great but the previous example shows us a way of reusing behavior through the use of methods.
+But Does it mean it will be forcing us to create a method every time we would like to reuse a
+certain behavior ? That would lead us to create a lot of methods don&#8217;t you think ?</p>
+</div>
+<div class="paragraph">
+<p>Functional programming teach us that behavior is not limited to <strong><em>methods</em></strong> of an object. When
+talking about behavior we will be talking of <strong><em>functions</em></strong> in a more general way.</p>
+</div>
+<div class="paragraph">
+<p>Functions are more powertful in the way that they can be modified, passed as a parameter to other
+functions, and still can be used as the methods we normally use. In Groovy such type of functions
+are called <strong><em>closures</em></strong>.</p>
+</div>
+<div class="paragraph">
+<p>Although we will be talking about <strong><em>closures</em></strong> deeper in its own chapter lets say for now that
+they&#8217;re extremely useful to reuse behavior.</p>
+</div>
+<div class="paragraph">
+<p>What if I want to use the same method with the same type of filter several times in the same
+method. That would be a lot of boiler plate code. A lot of code to maintain and repeat. Sounds
+too dirty&#8230; and looks worst :P</p>
+</div>
+<div class="listingblock">
+<div class="title">Internal Iteration: Reusability limited to methods ?</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{testDir}/groovyfp/exit/ExternalIterationIsEvilSpec.groovy[tags=external_iteration_9,indent=0]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>What can I do ? Well let&#8217;s say that Groovy methods could be transformed into <strong><em>closures</em></strong>&#8230; How ?
+As I said earlier <strong><em>functions</em></strong> / <strong><em>closures</em></strong> can be assigned and be passed as parameters.</p>
+</div>
+<div class="listingblock">
+<div class="title">Internal Iteration: Reusability limited to methods ?</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{testDir}/groovyfp/exit/ExternalIterationIsEvilSpec.groovy[tags=external_iteration_10,indent=0]</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>We assign the closure representing the <strong><em>filter</em></strong> to a given variable</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Then we pass the closure as parameter to filter numbers</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>And also I said <strong><em>methods</em></strong> in Groovy can be transformed to closures:</p>
+</div>
+<div class="listingblock">
+<div class="title">Internal Iteration: Reusability limited to methods ?</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{testDir}/groovyfp/exit/ExternalIterationIsEvilSpec.groovy[tags=external_iteration_11,indent=0]</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>We are creating a new function with a fixed type of filter</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>We have created a new function that sums all numbers greater than 20
+and less than 200 for the collection passed as parameter</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+If the expression <strong><em>this.&amp;sum.rcurry</em></strong> sounds like chinese to you just take that this
+expression is only saying: I want to get a new function with the first parameter from the right with
+the following value <strong><em>{ it &gt; 20 &amp;&amp; it &lt; 100}</em></strong>. Anyway I recommend you to review the chaper
+dedicated to closures.
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -492,7 +644,7 @@ to get double of each filtered value:</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-06-26 18:47:48 CEST
+Last updated 2014-06-29 20:44:01 CEST
 </div>
 </div>
 </body>

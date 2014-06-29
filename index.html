@@ -407,8 +407,12 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] { cursor: default; }
 <h2 id="_internal_vs_external_iteration">3. Internal Vs External iteration</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Most of the time we need to iterate through a list we do the same. We tend to specify every detail, we code
+<p>Most of the time we need to iterate through a list, we end doing the same. We tend to specify every detail, we code
 every step of the way. But is there any other way ? Well there is&#8230;it&#8217;s call internal iteration.</p>
+</div>
+<div class="paragraph">
+<p>The point here is that We should be taking care on the logic of filtering and transformation and not
+how to loop through the collection, Don&#8217;t you thing ?</p>
 </div>
 <div class="paragraph">
 <p>There are some reasons I would recommend you to start using internal iteration:</p>
@@ -530,19 +534,255 @@ want to keep your code reusable.</p>
 <div class="paragraph">
 <p>Imagine we had a method looping through a collection to sum all numbers less than 20.</p>
 </div>
+<div class="listingblock">
+<div class="title">Internal Iteration: Groovy</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>void 'external iteration: adding up all numbers from a given collection'() {
+    given: 'a collection of numbers'
+        def numbers = (0..1000)
+        def sum = 0
+    when: 'summing all of them'
+        numbers.each { nextnumber -&gt;
+            sum += nextnumber
+        }
+    then: 'the expected result should be the expected'
+        sum == 500500
+}</code></pre>
+</div>
+</div>
 <div class="paragraph">
 <p>Now we want to get all numbers from 20 to 100</p>
+</div>
+<div class="listingblock">
+<div class="title">Internal Iteration: Groovy</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>void 'External iteration: Adding numbers from 20 to 100 from a given collection'() {
+    given: 'a collection of numbers'
+        def numbers = (0..1000)
+        def sum = 0
+    when: 'adding up all of them'
+        numbers.each { nextnumber -&gt;
+            if (nextnumber &gt; 20 &amp;&amp; nextnumber &lt; 100) {
+                sum += nextnumber
+            }
+        }
+    then: 'the expected result should be the expected'
+        sum == 4740
+}</code></pre>
+</div>
 </div>
 <div class="paragraph">
 <p>And now&#8230;you know what ? forget it :P</p>
 </div>
 <div class="paragraph">
-<p>We should have a collection capable to receive "behavior" and capable to apply that behavior to
-that collection.</p>
+<p>There should be a better way of refactoring this behavior. There are two main actions when trying to
+solve these type of problems:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Filtering data</p>
+</li>
+<li>
+<p>Transforming data</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>In groovy by default you can apply new behaviors to a collection&#8230;but imagine we always want
-to get double of each filtered value:</p>
+<p>And when talking about Groovy and collections this means to use <strong><em>find</em></strong> or <strong><em>findAll</em></strong> when trying
+to filtering data and <strong><em>collect</em></strong> for transforming data.</p>
+</div>
+<div class="paragraph">
+<p>Back to the prolem, while the transformation applied to the data is the same the filtering applied
+is different. Lets see how our reusable method should look like:</p>
+</div>
+<div class="listingblock">
+<div class="title">Internal Iteration: Filter + Transformation</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>Integer sum(
+    final Collection&lt;Integer&gt; source, <i class="conum" data-value="1"></i><b>(1)</b>
+    final Closure&lt;Boolean&gt; filter = { it }) { <i class="conum" data-value="2"></i><b>(2)</b>
+
+    return source.findAll(filter).sum() <i class="conum" data-value="3"></i><b>(3)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>First we pass the collection we want to transform. We say transform deliberately, we don&#8217;t want
+to <strong><em>mutate</em></strong> the collection but to create a new one for applying a given action. This case to sum
+all numbers of that new collection</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>We want to get certain numbers to add them up. By default if no filter given then apply to all (<strong><em>{ it }</em></strong>).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>We&#8217;re using Groovy&#8217;s collection behavior to apply the given filter to get the new collection and
+then sum all numbers in that collection.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>And how to use it for different filters:</p>
+</div>
+<div class="listingblock">
+<div class="title">Internal Iteration: Reuse of functions</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>void 'Internal iteration: Adding up with reusability'() {
+    given: 'A collection of numbers'
+        def numbers = (0..1000)
+    when: 'adding up'
+        def all = sum(numbers)
+        def from20To100 = sum(numbers) {
+            it &gt; 20 &amp;&amp; it &lt; 100
+        }
+    then: 'Results should be the expected'
+        all == 500500
+        from20To100 == 4740
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>That&#8217;s great but the previous example shows us a way of reusing behavior through the use of methods.
+But Does it mean it will be forcing us to create a method every time we would like to reuse a
+certain behavior ? That would lead us to create a lot of methods don&#8217;t you think ?</p>
+</div>
+<div class="paragraph">
+<p>Functional programming teach us that behavior is not limited to <strong><em>methods</em></strong> of an object. When
+talking about behavior we will be talking of <strong><em>functions</em></strong> in a more general way.</p>
+</div>
+<div class="paragraph">
+<p>Functions are more powertful in the way that they can be modified, passed as a parameter to other
+functions, and still can be used as the methods we normally use. In Groovy such type of functions
+are called <strong><em>closures</em></strong>.</p>
+</div>
+<div class="paragraph">
+<p>Although we will be talking about <strong><em>closures</em></strong> deeper in its own chapter lets say for now that
+they&#8217;re extremely useful to reuse behavior.</p>
+</div>
+<div class="paragraph">
+<p>What if I want to use the same method with the same type of filter several times in the same
+method. That would be a lot of boiler plate code. A lot of code to maintain and repeat. Sounds
+too dirty&#8230; and looks worst :P</p>
+</div>
+<div class="listingblock">
+<div class="title">Internal Iteration: Reusability limited to methods ?</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>void 'Internal iteration: Reusability limited ?'() {
+    given: 'A collection of numbers'
+        def numbers1 = [100, 20, 2, 54, 33, 14]
+        def numbers2 = [100, 20, 2, 54, 33, 14]
+        def numbers3 = [100, 24, 6, 48, 22, 40]
+    when: 'adding up all numbers of first collection'
+        def numbers1Sum = sum(numbers1)
+    and: 'adding up numbers &gt; 20 and &lt; 100 for the remaining collections'
+        def numbers2Sum = sum(numbers2) {
+            it &gt; 20 &amp;&amp; it &lt; 100
+        }
+        def numbers3Sum = sum(numbers3) {
+            it &gt; 20 &amp;&amp; it &lt; 100
+        }
+    then: 'Results should be the expected'
+        numbers1Sum == 223
+        numbers2Sum == 87
+        numbers3Sum == 134
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>What can I do ? Well let&#8217;s say that Groovy methods could be transformed into <strong><em>closures</em></strong>&#8230; How ?
+As I said earlier <strong><em>functions</em></strong> / <strong><em>closures</em></strong> can be assigned and be passed as parameters.</p>
+</div>
+<div class="listingblock">
+<div class="title">Internal Iteration: Reusability limited to methods ?</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>void 'Internal iteration: Reusability limited ?'() {
+    given: 'A collection of numbers'
+        def numbers1 = [100, 20, 2, 54, 33, 14]
+        def numbers2 = [100, 20, 2, 54, 33, 14]
+        def numbers3 = [100, 24, 6, 48, 22, 40]
+    and: 'A fixed type of filter'
+        def greaterThan20LessThan100 = { it &gt; 20 &amp;&amp; it &lt; 100} <i class="conum" data-value="1"></i><b>(1)</b>
+    when: 'adding up all numbers of first collection'
+        def numbers1Sum = sum(numbers1)
+    and: 'adding up numbers &gt; 20 and &lt; 100 for the remaining collections'
+        def numbers2Sum = sum(numbers2, greaterThan20LessThan100) <i class="conum" data-value="2"></i><b>(2)</b>
+        def numbers3Sum = sum(numbers3, greaterThan20LessThan100)
+    then: 'Results should be the expected'
+        numbers1Sum == 223
+        numbers2Sum == 87
+        numbers3Sum == 134
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>We assign the closure representing the <strong><em>filter</em></strong> to a given variable</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Then we pass the closure as parameter to filter numbers</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>And also I said <strong><em>methods</em></strong> in Groovy can be transformed to closures:</p>
+</div>
+<div class="listingblock">
+<div class="title">Internal Iteration: Reusability limited to methods ?</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>void 'Internal iteration: Reusability limited ?'() {
+    given: 'A collection of numbers'
+        def numbers1 = [100, 20, 2, 54, 33, 14]
+        def numbers2 = [100, 20, 2, 54, 33, 14]
+        def numbers3 = [100, 24, 6, 48, 22, 40]
+    and: 'A fixed type of behavior'
+        def customSum = this.&amp;sum.rcurry { it &gt; 20 &amp;&amp; it &lt; 100} <i class="conum" data-value="1"></i><b>(1)</b>
+    when: 'adding up all numbers of first collection'
+        def numbers1Sum = sum(numbers1)
+    and: 'adding up numbers &gt; 20 and &lt; 100 for the remaining collections'
+        def numbers2Sum = customSum(numbers2) <i class="conum" data-value="2"></i><b>(2)</b>
+        def numbers3Sum = customSum(numbers3)
+    then: 'Results should be the expected'
+        numbers1Sum == 223
+        numbers2Sum == 87
+        numbers3Sum == 134
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>We are creating a new function with a fixed type of filter</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>We have created a new function that sums all numbers greater than 20
+and less than 200 for the collection passed as parameter</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+If the expression <strong><em>this.&amp;sum.rcurry</em></strong> sounds like chinese to you just take that this
+expression is only saying: I want to get a new function with the first parameter from the right with
+the following value <strong><em>{ it &gt; 20 &amp;&amp; it &lt; 100}</em></strong>. Anyway I recommend you to review the chaper
+dedicated to closures.
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -551,7 +791,127 @@ to get double of each filtered value:</p>
 <h2 id="_streams">4. Streams</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>(TODO)</p>
+<p>So far, we&#8217;ve seen that in Groovy, filtering elements and applying transformation over
+that collection is as easy as a pie right ? But we didn&#8217;t realize we could be more
+efficient in the way we do those tasks.</p>
+</div>
+<div class="paragraph">
+<p>Imagine we want to filter even numbers from a given collection and then multiply them
+10 times.</p>
+</div>
+<div class="listingblock">
+<div class="title">Working more than you should</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>void 'Multiply even numbers 10 times'() {
+    given: 'A collection of numbers'
+        def numbers = (0..10)
+    when: 'Filtering and transforming numbers'
+        def result =
+            numbers.
+                findAll { it % 2 == 0}. <i class="conum" data-value="1"></i><b>(1)</b>
+                collect { it * 10 } <i class="conum" data-value="2"></i><b>(2)</b>
+    then: 'We should get the expected result'
+        result == [0, 20, 40, 60, 80, 100]
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>We loop through the entire collection to get all required values</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The we loop through the filtered values to apply some transformation</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>It&#8217;s clear we should be able to loop only once the collection while applying the transformation only
+to the required values. In this particular example is not critical, but imagine we were looping a collection with thousands
+of elements, going through that collection more than once wouldn&#8217;t be very nice so to speak.</p>
+</div>
+<div class="paragraph">
+<p>Let see what says the wikipedia about streams in this context:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>&#8230;A stream is a lazily evaluated or delayed sequence of data elements. A stream can be used
+similarly to a list, but later elements are only calculated when needed. Streams can therefore
+represent infinite sequences and series.</p>
+</div>
+</blockquote>
+<div class="attribution">
+&#8212; Wikipedia
+</div>
+</div>
+<div class="paragraph">
+<p>So how can we modify previous example to make it process the required values on the fly, as
+soon as the process detectes they are suitable to be part of the result.</p>
+</div>
+<div class="paragraph">
+<p>Later on we&#8217;ll see there&#8217;re at least a couple libraries that can do it for you in a
+easy way. But for now we have to make do with Groovy alone.</p>
+</div>
+<div class="listingblock">
+<div class="title">Two tasks at once</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>void 'Multiply even numbers 10 times lazily'() {
+    given: 'A collection of numbers'
+        def numbers = (0..10)
+    when: 'Filtering and transforming numbers'
+        def result =
+            numbers.inject([]){ acc, val -&gt;
+                if (val % 2 == 0) {
+                    acc &lt;&lt; (val * 10)
+                }
+                acc
+            }
+    then: 'We should get the expected result'
+        result == [0, 20, 40, 60, 80, 100]
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We have use the collection <strong><em>inject</em></strong> method. This method receives two arguments:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Initial value of the aggregated data</p>
+</li>
+<li>
+<p>A closure receiving two parameters: the <strong><em>agregated data</em></strong>, and the <strong><em>next value</em></strong> of the source collection</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Now the process declares which element the transformation has to be applied to and then add it to
+the result. We don&#8217;t have to loop the collection twice we are doing both filtering and
+transformation all at once.</p>
+</div>
+<div class="paragraph">
+<p>Now we reached the goal, the process is more efficient but the problem is that I don&#8217;t like the
+code, it&#8217;s not reusable.  So it&#8217;s time to change it.</p>
+</div>
+<div class="listingblock">
+<div class="title">Functional lazy</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>void 'Multiply even numbers 10 times lazily (nicer way)'() {
+    given: 'A collection of numbers'
+        def numbers = (0..10)
+    when: 'Filtering and transforming numbers'
+        def result =
+            Stream.
+                from(numbers).
+                filter { it % 2 == 0 }.
+                map { it * 10 }.collect()
+    then: 'We should get the expected result'
+        result == [0, 20, 40, 60, 80, 100]
+}</code></pre>
+</div>
 </div>
 </div>
 </div>
