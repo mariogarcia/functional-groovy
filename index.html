@@ -380,6 +380,12 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] { cursor: default; }
 </ul>
 </li>
 <li><a href="#_streams">4. Streams</a></li>
+<li>
+<ul class="sectlevel2">
+<li><a href="#_mind_the_lazyness">4.1. Mind the lazyness</a></li>
+<li><a href="#_stream_groovy">4.2. stream-groovy</a></li>
+</ul>
+</li>
 <li><a href="#_oop_revisited">5. OOP Revisited</a></li>
 <li><a href="#_functional_patterns">6. Functional Patterns</a></li>
 <li><a href="#_the_m_word">7. The M-Word</a></li>
@@ -795,6 +801,8 @@ dedicated to closures.
 that collection is as easy as a pie right ? But we didn&#8217;t realize we could be more
 efficient in the way we do those tasks.</p>
 </div>
+<div class="sect2">
+<h3 id="_mind_the_lazyness">4.1. Mind the lazyness</h3>
 <div class="paragraph">
 <p>Imagine we want to filter even numbers from a given collection and then multiply them
 10 times.</p>
@@ -896,6 +904,70 @@ transformation all at once.</p>
 <p>Now we reached the goal, the process is more efficient but the problem is that I don&#8217;t like the
 code, it&#8217;s not reusable.  So it&#8217;s time to change it.</p>
 </div>
+<div class="paragraph">
+<p>I&#8217;ve based my implementation in the JDK8 Stream API. Of course this is a very basic implementation,
+but it shows how lazy evaluation could be implemented.</p>
+</div>
+<div class="listingblock">
+<div class="title">Simple Stream</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>package groovyfp.streams
+
+final class Stream {
+
+    final Collection&lt;?&gt; col
+    Closure&lt;Boolean&gt; filter
+    Closure&lt;?&gt; transformer
+
+    Stream(Collection&lt;?&gt; col) {
+       this.col = col
+    }
+
+    static Stream from(Collection&lt;?&gt; source) {
+        return new Stream(source)
+    }
+
+    Stream filter(Closure&lt;Boolean&gt; filter) {
+        this.filter = filter
+        this
+    }
+
+    Stream map(Closure&lt;?&gt; transformer) {
+        this.transformer = transformer
+        this
+    }
+
+    Collection&lt;?&gt; collect() {
+        return col.inject([]){ acc, val -&gt;
+            if (filter(val)) {
+                acc &lt;&lt; transformer(val)
+            }
+            acc
+        }
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Most of the code initializes both the filter and transformer of the collection. But the interesting
+part is in the <strong><em>collect()</em></strong> method:</p>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The filter is applied to any element. If the element is suitable to be added to the result then&#8230;</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The transformation is applied to the element, and finally the element is added to the result.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Now if we change our test code, it should look like the following:</p>
+</div>
 <div class="listingblock">
 <div class="title">Functional lazy</div>
 <div class="content">
@@ -911,6 +983,57 @@ code, it&#8217;s not reusable.  So it&#8217;s time to change it.</p>
     then: 'We should get the expected result'
         result == [0, 20, 40, 60, 80, 100]
 }</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_stream_groovy">4.2. stream-groovy</h3>
+<div class="paragraph">
+<p>It&#8217;s great to know to understand how to build lazy estructures, but it&#8217;s even better to use
+libraries already created to do that work for you.</p>
+</div>
+<div class="paragraph">
+<p>Tim Yate&#8217;s <strong><em>stream-groovy</em></strong> is one of the libraries I will be reviewing in this chapter.
+What&#8217;s this library for ?</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Groovy-stream is a library for Groovy that lets you create lazy Iterators (or streams) based on
+Iterators, Collections, Maps, Iterables or other Streams.</p>
+</div>
+</blockquote>
+<div class="attribution">
+&#8212; stream-groovy site
+</div>
+</div>
+<div class="paragraph">
+<p>Earlier I built a simple class that helped me to loop through a collection and filter data while
+applying a single transformer. In other words I was able to create a stream for a single data set
+and apply a single filter and transformer to the required values.</p>
+</div>
+<div class="paragraph">
+<p>It was nice for that case but with many limitations.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>What if I want to combine <strong><em>more than one stream</em></strong> ?</p>
+</li>
+<li>
+<p>What if I want to combine <strong><em>more than one filter</em></strong> ?</p>
+</li>
+<li>
+<p>What if I want to combine <strong><em>more than one transfomer</em></strong> ?</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Lets see how <strong><em>stream-groovy</em></strong> can help you to do that.</p>
+</div>
+<div class="sect3">
+<h4 id="_first_steps">4.2.1. First steps</h4>
+
 </div>
 </div>
 </div>
