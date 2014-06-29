@@ -1,3 +1,37 @@
 == Streams
 
-(TODO)
+So far, we've seen that in Groovy, filtering elements and applying transformation over
+that collection is as easy as a pie right ? But we didn't realize we can be more
+efficient in the way we do those taks.
+
+Imagine we want to filter even numbers from a given collection and then multiply them
+10 times. 
+
+[source, groovy]
+.Working more than you should
+----
+include::{testDir}/groovyfp/streams/StreamsSpec.groovy[tags=streams_1,indent=0] 
+----
+
+<1> We loop through the entire collection to get all required values
+<2> The we loop through the filtered values to apply some transformation
+
+It's clear we should be able to loop only once the collection while applying the transformation only
+to the required values. In this particular example is not critical, but imagine we were looping a collection with thousands
+of elements, going through that collection more than once wouldn't be very nice so to speak.
+
+Let see what says the wikipedia about streams in this context: 
+
+[,Wikipedia]
+""
+...A stream is a lazily evaluated or delayed sequence of data elements. A stream can be used
+similarly to a list, but later elements are only calculated when needed. Streams can therefore
+represent infinite sequences and series.
+""
+[source, groovy]
+.Two tasks at once
+----
+include::{testDir}/groovyfp/streams/StreamsSpec.groovy[tags=streams_2,indent=0] 
+----
+
+
