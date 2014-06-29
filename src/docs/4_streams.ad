@@ -4,6 +4,8 @@ So far, we've seen that in Groovy, filtering elements and applying transformatio
 that collection is as easy as a pie right ? But we didn't realize we could be more
 efficient in the way we do those tasks.
 
+=== Mind the lazyness
+
 Imagine we want to filter even numbers from a given collection and then multiply them
 10 times. 
 
@@ -53,9 +55,54 @@ transformation all at once.
 Now we reached the goal, the process is more efficient but the problem is that I don't like the
 code, it's not reusable.  So it's time to change it. 
 
+I've based my implementation in the JDK8 Stream API. Of course this is a very basic implementation,
+but it shows how lazy evaluation could be implemented.
+
+[source, groovy]
+.Simple Stream
+----
+include::{sourceDir}/groovyfp/streams/Stream.groovy[] 
+----
+
+Most of the code initializes both the filter and transformer of the collection. But the interesting
+part is in the *_collect()_* method:
+
+<1> The filter is applied to any element. If the element is suitable to be added to the result then...
+<2> The transformation is applied to the element, and finally the element is added to the result.
+
+Now if we change our test code, it should look like the following:
+
 [source, groovy]
 .Functional lazy
 ----
 include::{testDir}/groovyfp/streams/StreamsSpec.groovy[tags=streams_3,indent=0] 
 ----
+
+=== stream-groovy
+
+It's great to know to understand how to build lazy estructures, but it's even better to use
+libraries already created to do that work for you. 
+
+Tim Yate's *_stream-groovy_* is one of the libraries I will be reviewing in this chapter. 
+What's this library for ?
+
+[,stream-groovy site]
+"" 
+Groovy-stream is a library for Groovy that lets you create lazy Iterators (or streams) based on
+Iterators, Collections, Maps, Iterables or other Streams.  
+""
+
+Earlier I built a simple class that helped me to loop through a collection and filter data while
+applying a single transformer. In other words I was able to create a stream for a single data set
+and apply a single filter and transformer to the required values.
+
+It was nice for that case but with many limitations. 
+
+* What if I want to combine *_more than one stream_* ?
+* What if I want to combine *_more than one filter_* ?
+* What if I want to combine *_more than one transfomer_* ?
+
+Lets see how *_stream-groovy_* can help you to do that.
+
+==== First steps
 
