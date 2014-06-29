@@ -1,7 +1,10 @@
 == Internal Vs External iteration 
 
-Most of the time we need to iterate through a list we do the same. We tend to specify every detail, we code
+Most of the time we need to iterate through a list, we end doing the same. We tend to specify every detail, we code
 every step of the way. But is there any other way ? Well there is...it's call internal iteration.
+
+The point here is that We should be taking care on the logic of filtering and transformation and not
+how to loop through the collection, Don't you thing ?
 
 There are some reasons I would recommend you to start using internal iteration:
 

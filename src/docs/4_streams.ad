@@ -1,8 +1,8 @@
 == Streams
 
 So far, we've seen that in Groovy, filtering elements and applying transformation over
-that collection is as easy as a pie right ? But we didn't realize we can be more
-efficient in the way we do those taks.
+that collection is as easy as a pie right ? But we didn't realize we could be more
+efficient in the way we do those tasks.
 
 Imagine we want to filter even numbers from a given collection and then multiply them
 10 times. 
@@ -28,10 +28,34 @@ Let see what says the wikipedia about streams in this context:
 similarly to a list, but later elements are only calculated when needed. Streams can therefore
 represent infinite sequences and series.
 ""
+
+So how can we modify previous example to make it process the required values on the fly, as
+soon as the process detectes they are suitable to be part of the result.
+
+Later on we'll see there're at least a couple libraries that can do it for you in a 
+easy way. But for now we have to make do with Groovy alone.
+
 [source, groovy]
 .Two tasks at once
 ----
 include::{testDir}/groovyfp/streams/StreamsSpec.groovy[tags=streams_2,indent=0] 
 ----
 
+We have use the collection *_inject_* method. This method receives two arguments:
+
+* Initial value of the aggregated data
+* A closure receiving two parameters: the *_agregated data_*, and the *_next value_* of the source collection
+
+Now the process declares which element the transformation has to be applied to and then add it to
+the result. We don't have to loop the collection twice we are doing both filtering and
+transformation all at once.
+
+Now we reached the goal, the process is more efficient but the problem is that I don't like the
+code, it's not reusable.  So it's time to change it. 
+
+[source, groovy]
+.Functional lazy
+----
+include::{testDir}/groovyfp/streams/StreamsSpec.groovy[tags=streams_3,indent=0] 
+----
 

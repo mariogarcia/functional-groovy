@@ -35,4 +35,19 @@ class StreamsSpec extends Specification {
     }
     // end::streams_2[]
 
+    // tag::streams_3[]
+    void 'Multiply even numbers 10 times lazily (nicer way)'() {
+        given: 'A collection of numbers'
+            def numbers = (0..10)
+        when: 'Filtering and transforming numbers'
+            def result =
+                Stream.
+                    from(numbers).
+                    filter { it % 2 == 0 }.
+                    map { it * 10 }.collect()
+        then: 'We should get the expected result'
+            result == [0, 20, 40, 60, 80, 100]
+    }
+    // end::streams_3[]
+
 }
