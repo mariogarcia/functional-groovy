@@ -102,7 +102,7 @@ It was nice for that case but with many limitations.
 * What if I want to combine *_more than one filter_* ?
 * What if I want to combine *_more than one transfomer_* ?
 
-Lets see how *_stream-groovy_* can help you to do that.
+Instead of reinventing the wheel lets see how *_stream-groovy_* can help you to do that.
 
 ==== First steps
 
@@ -111,3 +111,32 @@ Lets see how *_stream-groovy_* can help you to do that.
 ----
 include::{testDir}/groovyfp/streams/StreamGroovySpec.groovy[tags=streams_4,indent=0] 
 ----
+
+This example looks pretty similar to example in the previus chapter right ? Busted!!! ;)
+
+I'd like to point out some important parts:
+
+<1> We want to loop through a *_stream_*. A *_stream_* could be created using the different
+overloaded versions of the *_from_* method.  
+<2> Filtering the stream, and processing only the
+values matching this expression. You will chose what elements to process thanks to the *_filter_*
+method.  
+<3> We're applying a transformation. This time I want to get 10 times of every element in
+the stream. You will normally use *_map_* to express a transformation.  
+<4> Eventually I would like
+to get the transformated data. Because the result of the transformation is an instance of Iterable I
+can use methods such as collect(), first(), next(), find(), findAll()
+
+=== Creating a Stream
+
+As I mentioned in the previous chapter your can start creating a stream using the method
+*_Stream.from()_*
+
+[source, groovy]
+.stream-groovy getting started
+----
+include::{testDir}/groovyfp/streams/StreamGroovySpec.groovy[tags=streams_5,indent=0] 
+----
+
+In general you can create a stream from an iterable instance such as collections, or any class
+implementing java.util.Iterable, or creating a generator with the following expression:
