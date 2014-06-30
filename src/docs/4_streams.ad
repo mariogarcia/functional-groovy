@@ -106,3 +106,8 @@ Lets see how *_stream-groovy_* can help you to do that.
 
 ==== First steps
 
+[source, groovy]
+.stream-groovy getting started
+----
+include::{testDir}/groovyfp/streams/StreamGroovySpec.groovy[tags=streams_4,indent=0] 
+----
