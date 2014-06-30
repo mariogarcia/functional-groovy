@@ -389,6 +389,12 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] { cursor: default; }
 </ul>
 </li>
 <li><a href="#_oop_revisited">5. OOP Revisited</a></li>
+<li>
+<ul class="sectlevel2">
+<li><a href="#_replacing_functional_interface">5.1. Replacing Functional Interface</a></li>
+<li><a href="#_state">5.2. State</a></li>
+</ul>
+</li>
 <li><a href="#_functional_patterns">6. Functional Patterns</a></li>
 <li><a href="#_the_m_word">7. The M-Word</a></li>
 </ul>
@@ -1225,7 +1231,129 @@ all.</p>
 <h2 id="_oop_revisited">5. OOP Revisited</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>(TODO)</p>
+<p>Most of the time is hard to think in terms of functional programming because we are not used to do
+it. I was born as a programmer in OOP programming, and it&#8217;s now when I&#8217;ve started digging into
+functional programming.</p>
+</div>
+<div class="paragraph">
+<p>So I guess that a friendly way of travelling to the functional land would be to pass through some of
+the object-oriented places we&#8217;ve been working on for the past 20 years. Do you want to join me in
+this trip ? Lets go!</p>
+</div>
+<div class="paragraph">
+<p>I&#8217;ve followed the list of oop patterns discussed in the book "Functional Programming Patterns" by
+Michael Bevilaqua-Linn.</p>
+</div>
+<div class="paragraph">
+<p>Object oriented languages that doesn&#8217;t have functions as first citizens have to make do with classes
+and methods in order to be able to pass behavior to another classes or methods.</p>
+</div>
+<div class="sect2">
+<h3 id="_replacing_functional_interface">5.1. Replacing Functional Interface</h3>
+<div class="paragraph">
+<p>The first example has to do with some of the topics we&#8217;ve seen so far. In previous chapters we&#8217;ve
+been talking about how to filter and transform data with closures. Now we&#8217;re going to measure how
+far we are from the times we only could pass behavior using classes and methods.</p>
+</div>
+<div class="paragraph">
+<p>Don&#8217;t get me wrong, I&#8217;m not complaining, but we don&#8217;t have to do that anymore, do we ?</p>
+</div>
+<div class="paragraph">
+<p>How could do we pass filtering behavior to a collection if we didn&#8217;t have closures ? I would start
+by declaring an interface declaring the intent of the filter:</p>
+</div>
+<div class="listingblock">
+<div class="title">Filter</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>package groovyfp.oop2fn
+
+interface Filter&lt;T&gt; {
+   Boolean accept(T element)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then of course an implementation:</p>
+</div>
+<div class="listingblock">
+<div class="title">Filter implementation</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>package groovyfp.oop2fn
+
+class EvenNumbersFilter implements Filter&lt;Integer&gt; {
+    Boolean accept(Integer number) {
+        return number % 2 == 0
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And that&#8217;s it. We can now use it:</p>
+</div>
+<div class="listingblock">
+<div class="title">How to use the functional interface</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>List&lt;Integer&gt; filterNumbersByFilter(List&lt;Integer&gt; numbers, Filter&lt;Integer&gt; filter) {
+    List&lt;Integer&gt; resultList = new ArrayList()
+
+    for (Integer number : numbers) {
+        if (filter.accept(number)) {
+            resultList.add(number)
+        }
+    }
+
+    return resultList
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">How to use the functional interface</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>void 'Functional Interface: the old fashioned way'() {
+    given: 'a list of numbers'
+        def numbers = (0..10)
+    when: 'filtering using the class wrapping the filtering behavior'
+        def evenNumbers = filterNumbersByFilter(numbers, new EvenNumbersFilter())
+    then: 'We should get the expected result'
+        evenNumbers == [0, 2, 4, 6, 8, 10]
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And now, how can we do the same in Groovy ? Well, in case we wanted to reuse the method receiving
+the Filter instance we can use closures coercion:</p>
+</div>
+<div class="listingblock">
+<div class="title">Closure coercion</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>void 'Functional Interface: closures coercion'() {
+    given: 'a list of numbers'
+        def numbers = (0..10)
+    when: 'filtering using the class wrapping the filtering behavior'
+        def filter = { it % 2 == 0 } as Filter <i class="conum" data-value="1"></i><b>(1)</b>
+        def evenNumbers = filterNumbersByFilter(numbers, filter) <i class="conum" data-value="2"></i><b>(2)</b>
+    then: 'We should get the expected result'
+        evenNumbers == [0, 2, 4, 6, 8, 10]
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Creation of an instance that implements the functional interface. The body of the closure is
+supposed to be the implementation of the only method that the interface had.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Then you can use it whenever you used to pass an instance of that object</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_state">5.2. State</h3>
+
 </div>
 </div>
 </div>
