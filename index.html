@@ -1033,7 +1033,20 @@ and apply a single filter and transformer to the required values.</p>
 </div>
 <div class="sect3">
 <h4 id="_first_steps">4.2.1. First steps</h4>
+<div class="listingblock">
+<div class="title">stream-groovy getting started</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>void 'Getting double values from a given collection'() {
+    when:
+        def result = Stream.
+            from(0..5).
+            map { n -&gt; n * 10 }.collect()
+    then:
+        result == [0, 10, 20, 30, 40, 50]
 
+}</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
