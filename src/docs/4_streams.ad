@@ -125,7 +125,7 @@ method.
 the stream. You will normally use *_map_* to express a transformation.  
 <4> Eventually I would like
 to get the transformated data. Because the result of the transformation is an instance of Iterable I
-can use methods such as collect(), first(), next(), find(), findAll()
+can use methods such as collect(), next(), find(), findAll()
 
 === Creating a Stream
 
@@ -140,3 +140,51 @@ include::{testDir}/groovyfp/streams/StreamGroovySpec.groovy[tags=streams_5,inden
 
 In general you can create a stream from an iterable instance such as collections, or any class
 implementing java.util.Iterable, or creating a generator with the following expression:
+
+WARNING: Beware of not limiting the number of elements you want to receive from a generator.
+You might be creating a infinite loop!!!
+
+=== NBA time
+
+This year I talked about functional programming at the Greach conference in Madrid and most of the
+examples were about NBA games.
+
+One of the examples were about getting the maximum difference in an NBA game of all times. I started
+from an imperative style code, and then I was moving until getting a decent functional sample.
+
+However I think I didn't show how a lazy stream could beat the last example. Well it's about time!! 
+
+[source, groovy]
+.Non lazy approach
+----
+include::{testDir}/groovyfp/streams/StreamGroovySpec.groovy[tags=streams_6,indent=0] 
+----
+
+And the lazy counterpart:
+
+[source, groovy]
+.Lazy approach
+----
+include::{testDir}/groovyfp/streams/StreamGroovySpec.groovy[tags=streams_7,indent=0] 
+----
+
+I've used the same functions for filtering data and calculating the difference in every game for
+both examples. 
+
+[source, groovy]
+.Filter
+----
+include::{testDir}/groovyfp/streams/StreamGroovySpec.groovy[tags=streams_8,indent=0] 
+----
+
+[source, groovy]
+.Transformation
+----
+include::{testDir}/groovyfp/streams/StreamGroovySpec.groovy[tags=streams_9,indent=0] 
+----
+
+Altough this time I didn't use the whole NBA data set, however results are clear, the non lazy
+approach took more than twice as long as the lazy code. 
+
+So next time you think about lazyness....well just keep this in mind...  maybe is not that bad after
+all.

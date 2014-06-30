@@ -1,7 +1,10 @@
 package groovyfp.streams
 
+import groovyfp.csv.CsvReaderAware
+
 import spock.lang.Specification
 import groovy.stream.Stream
+import java.nio.file.Paths
 
 class StreamGroovySpec extends Specification {
 
@@ -42,5 +45,59 @@ class StreamGroovySpec extends Specification {
             stream6.until{ it > 6}.collect() == [3, 4, 5, 6]
     }
     // end::streams_5[]
+
+    // tag::streams_6[]
+    void 'Maximum difference in an NBA game: non lazy'() {
+        when: 'Csv iterable'
+            def result = csv
+                    .findAll(byDateFunction)
+                    .collect(differenceFunction)
+                    .max()
+        then: 'The result should be the expected'
+            result == 45
+    }
+    // end::streams_6[]
+
+    // tag::streams_7[]
+    void 'Maximum difference in an NBA game: lazy'() {
+        when: 'Csv iterable'
+            def result =
+                Stream
+                    .from(csv)
+                    .filter(byDateFunction)
+                    .map(differenceFunction)
+                    .max()
+        then: 'The result should be the expected'
+            result == 45
+    }
+    // end::streams_7[]
+
+    // tag::streams_8[]
+    def getByDateFunction() {
+        return { row ->
+           row.date.endsWith('2013')
+        }
+    }
+    // end::streams_8[]
+
+    // tag::streams_9[]
+    def getDifferenceFunction() {
+        return { row ->
+            [row.homePoints, row.visitorPoints]*.
+                toInteger().
+                sort().
+                with {
+                    last() - first()
+                }
+        }
+    }
+    // end::streams_9[]
+
+    def getCsv() {
+        return new CsvReaderAware().
+            getCsvFrom(
+                Paths.get('src/main/resources/groovyfp/ac/NbaGameService.csv')
+            )
+    }
 
 }
