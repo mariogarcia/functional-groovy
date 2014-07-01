@@ -148,9 +148,87 @@ We want to build and immutable object, or an object as immutable as it could be.
 carries information about a given video. Here is the Java-Style builder.
 
 [source, groovy]
+.Video 
+----
+include::{sourceDir}/groovyfp/oop2fn/Video.groovy[indent=0] 
+----
+
+In order to make Video object immutable (and not using @Immutable as we will see later on) I came
+with this idea of forcing to create all possible constructors to be able to initialize class fields
+using constructors and then overriding the setters.
+
+I guess it would be easier if we could declare fields as private and Groovy would care about private
+but so far it doesn't. So even if the field is private you can access to it.
+
+NOTE: Even in Java through the Reflection API you can access to the value of a private field.
+
+Next is the builder itself. It has a fluent API so if you use an IDE you will be please about
+concatenating builder methods to initialize and build a new instance of Video class.
+
+[source, groovy]
+.Video Builder
+----
+include::{sourceDir}/groovyfp/oop2fn/VideoBuilder.groovy[indent=0] 
+----
+
+Finally both classes interact together in the following specification.
+
+[source, groovy]
 .Using builder
 ----
-include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_6,indent=0] 
+include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_7,indent=0] 
 ----
+
+This is a lot of code right ? Since Groovy 1.7 *_@Immutable_* annotation is avaiable. This
+annotation applies an AST transformation to make your classes almost immutable. To see the
+particulars of what *_@Immutable_* can do for you, I'd recommend you to check the GroovyDoc, it's
+very detailed.
+
+[source, groovy]
+.ImmutableVideo 
+----
+include::{sourceDir}/groovyfp/oop2fn/ImmutableVideo.groovy[indent=0] 
+----
+
+[source, groovy]
+.Using @Immutable
+----
+include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_8,indent=0] 
+----
+
+The main difference between the Builder instance and the use of the @Immutable annotation is that
+the use of the annotation will thrown an exception every time you try to access to any of the fields
+of the anotated class, while the instance built with the builder will just ignore your attempts to
+change the value of your fields.
+
+Maybe there are more solutions to that problem, like a friend of mine says....pull-requests are
+welcome :-)
+
+=== Replacing Iterator
+
+Most of the ideas about this topic have been already discussed in link:3_iteration.html[Internal vs External Iteration].
+
+The only idea I want to touch here is *_sequence comprehensions_*.
+
+Why comprehensions are so appealling. Have you ever tried to loop through two collections at a time
+to get values combined ? I'm sure you have. How did it look like ? I bet it was pretty much like this:
+
+[source, groovy]
+.Looping hell
+----
+include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_9,indent=0] 
+----
+
+Unfortunately Groovy doesn't have comprehensions inbuilt in the language. But good news you have
+some options. You can use *_Tim Yates'_* http://timyates.github.io/groovy-stream/[*_stream-groovy_*] library which have among others some
+comprehensions implementation.
+
+[source, groovy]
+.stream-groovy comprehensions
+----
+include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_10,indent=0] 
+----
+
+=== Template pattern
 
 

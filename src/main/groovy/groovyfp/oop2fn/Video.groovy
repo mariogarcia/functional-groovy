@@ -1,5 +1,8 @@
 package groovyfp.oop2fn
 
+import groovy.transform.TupleConstructor
+
+@TupleConstructor
 class Video {
     String name
     String type

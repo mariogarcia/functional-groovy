@@ -26,11 +26,7 @@ class VideoBuilder {
     }
 
     Video build() {
-        return new Video(
-            name: name,
-            type: type,
-            length: length
-        )
+        return new Video(name, type, length)
     }
 
 }

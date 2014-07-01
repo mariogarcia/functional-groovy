@@ -83,7 +83,7 @@ include::{testDir}/groovyfp/streams/StreamsSpec.groovy[tags=streams_3,indent=0]
 It's great to know to understand how to build lazy estructures, but it's even better to use
 libraries already created to do that work for you. 
 
-Tim Yate's *_stream-groovy_* is one of the libraries I will be reviewing in this chapter. 
+*_Tim Yate's_* http://timyates.github.io/groovy-stream/[*_stream-groovy_*] is one of the libraries I will be reviewing in this chapter. 
 What's this library for ?
 
 [,stream-groovy site]

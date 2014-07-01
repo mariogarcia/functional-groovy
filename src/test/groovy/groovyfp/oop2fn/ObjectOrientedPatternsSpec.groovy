@@ -1,5 +1,6 @@
 package groovyfp.oop2fn
 
+import groovy.stream.Stream
 import spock.lang.Specification
 
 class ObjectOrientedPatternsSpec extends Specification {
@@ -95,7 +96,7 @@ class ObjectOrientedPatternsSpec extends Specification {
     // end::oop2fn_6[]
 
     // tag::oop2fn_7[]
-    void 'Immutability vs Builder'() {
+    void 'Immutability through Builder'() {
         given: 'an object built by a builder'
             def video =
                 VideoBuilder
@@ -111,4 +112,72 @@ class ObjectOrientedPatternsSpec extends Specification {
     }
     // end::oop2fn_7[]
 
+    // tag::oop2fn_8[]
+    void 'Immutability through @Immutable'() {
+        given: 'an immutable instance'
+            def video = new ImmutableVideo(
+                name: 'video.mp4',
+                type: 'mp4',
+                length: 12434
+            )
+        when: 'trying to mutate the object'
+            video.name = 'somethingelse.avi'
+        then: 'an exception will be thrown'
+            thrown(Exception)
+    }
+    // end::oop2fn_8[]
+
+    // tag::oop2fn_9[]
+    void 'Looping two collections at the same time'() {
+        given: 'two different collections'
+            def collection1 = (10..12)
+            def collection2 = (60..62)
+        and: 'the collection combining the result'
+            def combination = []
+        when: 'combining both collections'
+            collection1.each { outer ->
+                collection2.each { inner ->
+                   combination << [outer, inner]
+                }
+            }
+        then: 'values should be the expected'
+            combination == [
+                [10, 60],
+                [10, 61],
+                [10, 62],
+                [11, 60],
+                [11, 61],
+                [11, 62],
+                [12, 60],
+                [12, 61],
+                [12, 62]
+            ]
+    }
+    // end::oop2fn_9[]
+
+    // tag::oop2fn_10[]
+    void 'Groovy comprehensions using stream-groovy'() {
+        given: 'two different collections'
+            def collection1 = (10..12)
+            def collection2 = (60..62)
+        when: 'combining both collections using stream-groovy'
+            def combination =
+                Stream
+                    .from(x: collection1, y: collection2)
+                    .map { [x, y] }
+                    .collect()
+        then: 'the results should be the expected'
+            combination == [
+                [10, 60],
+                [10, 61],
+                [10, 62],
+                [11, 60],
+                [11, 61],
+                [11, 62],
+                [12, 60],
+                [12, 61],
+                [12, 62]
+            ]
+    }
+    // end::oop2fn_10[]
 }
