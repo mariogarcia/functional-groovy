@@ -68,4 +68,33 @@ supposed to be the implementation of the only method that the interface had.
 
 === State
 
+Closures have an important characteristic, which is they capture the "state" of the scope where they
+were created.
 
+IMHO the wrong way of thinking about this topic is the following example, which mutates
+one of the references the closure is using.
+
+[source, groovy]
+.State (Wrong)
+----
+include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_4,indent=0] 
+----
+
+<1> We declare a given discount to apply to some prices.
+<2> The scope is so wide there is the risk someone could mutate the state reference value 
+<3> The worst happened. We mutated state and the result of calling the closure with the same
+value changes. If you care about mutability, this is not good.
+
+How can we pass state without mutating references used by our closure. I've changed the
+example a little bit:
+
+[source, groovy]
+.State
+----
+include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_5,indent=0] 
+----
+
+<1> We declare the state at a given point
+<2> We declare the closure, but notice that when the inner closure is created it only sees the
+state when it was created nothing more.
+<3> That's way when the state variable mutates the execution of the closure remains the same

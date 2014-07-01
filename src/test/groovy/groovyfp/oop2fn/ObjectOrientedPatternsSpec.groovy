@@ -41,6 +41,43 @@ class ObjectOrientedPatternsSpec extends Specification {
     }
     // end::oop2fn_3[]
 
+    // tag::oop2fn_4[]
+    void 'Functional Interface: using state wrong'() {
+        given: 'an object used in a closure'
+            def state = new State(discount:50) // <1>
+            def closure = { price ->
+                price * (state.discount / 100) // <2>
+            }
+        when: 'calculating the price discount'
+            def result1 = closure(100)
+        and: 'changing state value'
+            state = new State(discount:20) // <3>
+            def result2 = closure(100)
+        then: 'the second result is different'
+            result1 != result2
+    }
+    // end::oop2fn_4[]
+
+    // tag::oop2fn_5[]
+    void 'Functional Interface: using state wrong'() {
+        given: 'an object used in a closure'
+            def state = new State(discount:50) // <1>
+        and: 'reducing the closure avaiable scope when is created'
+            def closure = { State st -> // <2>
+                return { price ->
+                    price * (st.discount / 100)
+                }
+            }
+        when: 'calculating the price discount'
+            def closureWithImmutableState  = closure(state)
+            def result1 = closureWithImmutableState(100)
+        and: 'changing state value'
+            state = new State(discount:20) // <3>
+            def result2 = closureWithImmutableState(100)
+        then: 'the second result is different'
+            result1 == result2
+    }
+    // end::oop2fn_5[]
 
 
 }
