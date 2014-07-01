@@ -98,3 +98,41 @@ include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn
 <2> We declare the closure, but notice that when the inner closure is created it only sees the
 state when it was created nothing more.
 <3> That's way when the state variable mutates the execution of the closure remains the same
+
+=== Command
+
+Command pattern normally wraps a certain behavior, and that behavior is passed to another function
+or object to execute that behavior with the data found at the destination function or object.
+
+Imagine I want to purchase online two tickets, and I can chose between paying the VIP tickets or the
+regular ones. Depending on my choice the payment process will charge me differently.
+
+[source, groovy]
+.Object receiving command
+----
+include::{sourceDir}/groovyfp/oop2fn/PurchaseEntry.groovy[indent=0] 
+----
+
+The purchase order has the normal price of the purchase, and depending on the process applied, the
+final amount could be changed.
+
+[source, groovy]
+.Contract of the command
+----
+include::{sourceDir}/groovyfp/oop2fn/PurchaseProcess.groovy[indent=0] 
+----
+
+All processes passed to the process entry, should comply to the PurchaseProcess interface. Remember
+we can create a closure and coerce it to become a functional interface.
+
+[source, groovy]
+.Using command pattern
+----
+include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_6,indent=0] 
+----
+
+<1> Initializing the entry with the initial price
+<2> Applying each of the processes to check different values
+<3> Declaring each process and the expected prices after applying those processes to the entry
+
+

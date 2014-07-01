@@ -42,7 +42,7 @@ class ObjectOrientedPatternsSpec extends Specification {
     // end::oop2fn_3[]
 
     // tag::oop2fn_4[]
-    void 'Functional Interface: using state wrong'() {
+    void 'State: using state wrong'() {
         given: 'an object used in a closure'
             def state = new State(discount:50) // <1>
             def closure = { price ->
@@ -59,7 +59,7 @@ class ObjectOrientedPatternsSpec extends Specification {
     // end::oop2fn_4[]
 
     // tag::oop2fn_5[]
-    void 'Functional Interface: using state wrong'() {
+    void 'State: using state wrong'() {
         given: 'an object used in a closure'
             def state = new State(discount:50) // <1>
         and: 'reducing the closure avaiable scope when is created'
@@ -79,5 +79,19 @@ class ObjectOrientedPatternsSpec extends Specification {
     }
     // end::oop2fn_5[]
 
+    // tag::oop2fn_6[]
+    void 'Command: passing behavior to another class'() {
+        given: 'a given purchase has a certain price'
+            def purchaseEntry = new PurchaseEntry(price: 200) // <1>
+        when: 'two different purchase processes'
+            def result = purchaseEntry.applyPurchaseProcess(process) // <2>
+        then: 'the price is the expected depending on the process'
+            result == expectedPrice
+        where: 'possible processes are'
+            process                           | expectedPrice
+            { price -> price }                | 200 // <3>
+            { price -> price += price * 0.3 } | 260 // <4>
+    }
+    // end::oop2fn_6[]
 
 }
