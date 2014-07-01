@@ -374,6 +374,10 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] { cursor: default; }
 <ul class="sectlevel2">
 <li><a href="#_replacing_functional_interface">Replacing Functional Interface</a></li>
 <li><a href="#_state">State</a></li>
+<li><a href="#_command">Command</a></li>
+<li><a href="#_immutable_objects_instead_of_builder">Immutable objects instead of Builder</a></li>
+<li><a href="#_replacing_iterator">Replacing Iterator</a></li>
+<li><a href="#_template_pattern">Template pattern</a></li>
 </ul>
 </li>
 </ul>
@@ -471,6 +475,240 @@ supposed to be the implementation of the only method that the interface had.</td
 </div>
 <div class="sect2">
 <h3 id="_state">State</h3>
+<div class="paragraph">
+<p>Closures have an important characteristic, which is they capture the "state" of the scope where they
+were created.</p>
+</div>
+<div class="paragraph">
+<p>IMHO the wrong way of thinking about this topic is the following example, which mutates
+one of the references the closure is using.</p>
+</div>
+<div class="listingblock">
+<div class="title">State (Wrong)</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_4,indent=0]</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>We declare a given discount to apply to some prices.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The scope is so wide there is the risk someone could mutate the state reference value</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The worst happened. We mutated state and the result of calling the closure with the same
+value changes. If you care about mutability, this is not good.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>How can we pass state without mutating references used by our closure. I&#8217;ve changed the
+example a little bit:</p>
+</div>
+<div class="listingblock">
+<div class="title">State</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_5,indent=0]</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>We declare the state at a given point</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>We declare the closure, but notice that when the inner closure is created it only sees the
+state when it was created nothing more.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>That&#8217;s way when the state variable mutates the execution of the closure remains the same</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_command">Command</h3>
+<div class="paragraph">
+<p>Command pattern normally wraps a certain behavior, and that behavior is passed to another function
+or object to execute that behavior with the data found at the destination function or object.</p>
+</div>
+<div class="paragraph">
+<p>Imagine I want to purchase online two tickets, and I can chose between paying the VIP tickets or the
+regular ones. Depending on my choice the payment process will charge me differently.</p>
+</div>
+<div class="listingblock">
+<div class="title">Object receiving command</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{sourceDir}/groovyfp/oop2fn/PurchaseEntry.groovy[indent=0]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The purchase order has the normal price of the purchase, and depending on the process applied, the
+final amount could be changed.</p>
+</div>
+<div class="listingblock">
+<div class="title">Contract of the command</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{sourceDir}/groovyfp/oop2fn/PurchaseProcess.groovy[indent=0]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>All processes passed to the process entry, should comply to the PurchaseProcess interface. Remember
+we can create a closure and coerce it to become a functional interface.</p>
+</div>
+<div class="listingblock">
+<div class="title">Using command pattern</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_6,indent=0]</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Initializing the entry with the initial price</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Applying each of the processes to check different values</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Declaring each process and the expected prices after applying those processes to the entry</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_immutable_objects_instead_of_builder">Immutable objects instead of Builder</h3>
+<div class="paragraph">
+<p>Six years ago I remember creating builder objects in Java not only because I was preserving
+immutability (I didn&#8217;t care about it at that time) but also because using a builder with a fluent
+API (using the chain pattern of course) was like using a DSL.</p>
+</div>
+<div class="paragraph">
+<p>Nowadays with Groovy both of those "requirements" can be achieved by using the @Immutable
+transformation and the fact that you can use maps when building new instances of an object.</p>
+</div>
+<div class="paragraph">
+<p>We want to build and immutable object, or an object as immutable as it could be. Our object
+carries information about a given video. Here is the Java-Style builder.</p>
+</div>
+<div class="listingblock">
+<div class="title">Video</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{sourceDir}/groovyfp/oop2fn/Video.groovy[indent=0]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In order to make Video object immutable (and not using @Immutable as we will see later on) I came
+with this idea of forcing to create all possible constructors to be able to initialize class fields
+using constructors and then overriding the setters.</p>
+</div>
+<div class="paragraph">
+<p>I guess it would be easier if we could declare fields as private and Groovy would care about private
+but so far it doesn&#8217;t. So even if the field is private you can access to it.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="icon-note" title="Note"></i>
+</td>
+<td class="content">
+Even in Java through the Reflection API you can access to the value of a private field.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Next is the builder itself. It has a fluent API so if you use an IDE you will be please about
+concatenating builder methods to initialize and build a new instance of Video class.</p>
+</div>
+<div class="listingblock">
+<div class="title">Video Builder</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{sourceDir}/groovyfp/oop2fn/VideoBuilder.groovy[indent=0]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Finally both classes interact together in the following specification.</p>
+</div>
+<div class="listingblock">
+<div class="title">Using builder</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_7,indent=0]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This is a lot of code right ? Since Groovy 1.7 <strong><em>@Immutable</em></strong> annotation is avaiable. This
+annotation applies an AST transformation to make your classes almost immutable. To see the
+particulars of what <strong><em>@Immutable</em></strong> can do for you, I&#8217;d recommend you to check the GroovyDoc, it&#8217;s
+very detailed.</p>
+</div>
+<div class="listingblock">
+<div class="title">ImmutableVideo</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{sourceDir}/groovyfp/oop2fn/ImmutableVideo.groovy[indent=0]</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Using @Immutable</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_8,indent=0]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The main difference between the Builder instance and the use of the @Immutable annotation is that
+the use of the annotation will thrown an exception every time you try to access to any of the fields
+of the anotated class, while the instance built with the builder will just ignore your attempts to
+change the value of your fields.</p>
+</div>
+<div class="paragraph">
+<p>Maybe there are more solutions to that problem, like a friend of mine says&#8230;.pull-requests are
+welcome :-)</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_replacing_iterator">Replacing Iterator</h3>
+<div class="paragraph">
+<p>Most of the ideas about this topic have been already discussed in <a href="3_iteration.html">Internal vs External Iteration</a>.</p>
+</div>
+<div class="paragraph">
+<p>The only idea I want to touch here is <strong><em>sequence comprehensions</em></strong>.</p>
+</div>
+<div class="paragraph">
+<p>Why comprehensions are so appealling. Have you ever tried to loop through two collections at a time
+to get values combined ? I&#8217;m sure you have. How did it look like ? I bet it was pretty much like this:</p>
+</div>
+<div class="listingblock">
+<div class="title">Looping hell</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_9,indent=0]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Unfortunately Groovy doesn&#8217;t have comprehensions inbuilt in the language. But good news you have
+some options. You can use <strong><em>Tim Yates'</em></strong> <a href="http://timyates.github.io/groovy-stream/"><strong><em>stream-groovy</em></strong></a> library which have among others some
+comprehensions implementation.</p>
+</div>
+<div class="listingblock">
+<div class="title">stream-groovy comprehensions</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_10,indent=0]</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_template_pattern">Template pattern</h3>
 
 </div>
 </div>
@@ -478,7 +716,7 @@ supposed to be the implementation of the only method that the interface had.</td
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-07-01 00:17:07 CEST
+Last updated 2014-07-02 00:41:11 CEST
 </div>
 </div>
 </body>
