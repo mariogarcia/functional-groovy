@@ -94,4 +94,21 @@ class ObjectOrientedPatternsSpec extends Specification {
     }
     // end::oop2fn_6[]
 
+    // tag::oop2fn_7[]
+    void 'Immutability vs Builder'() {
+        given: 'an object built by a builder'
+            def video =
+                VideoBuilder
+                    .builder()
+                    .name('trip.avi')
+                    .type('mp4')
+                    .length(100000)
+                    .build()
+        when: 'trying to mutate the object'
+            video.name = 'anothervideo'
+        then: 'the instance should not have been mutated'
+            video.name == 'trip.avi'
+    }
+    // end::oop2fn_7[]
+
 }

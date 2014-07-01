@@ -135,4 +135,22 @@ include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn
 <2> Applying each of the processes to check different values
 <3> Declaring each process and the expected prices after applying those processes to the entry
 
+=== Immutable objects instead of Builder
+
+Six years ago I remember creating builder objects in Java not only because I was preserving
+immutability (I didn't care about it at that time) but also because using a builder with a fluent
+API (using the chain pattern of course) was like using a DSL.
+
+Nowadays with Groovy both of those "requirements" can be achieved by using the @Immutable
+transformation and the fact that you can use maps when building new instances of an object.
+
+We want to build and immutable object, or an object as immutable as it could be. Our object
+carries information about a given video. Here is the Java-Style builder.
+
+[source, groovy]
+.Using builder
+----
+include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_6,indent=0] 
+----
+
 
