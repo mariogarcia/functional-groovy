@@ -231,4 +231,7 @@ include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn
 
 === Template pattern
 
+The intent of the template pattern is to describe a process skeleton in an abstract class and let
+subclasses to implement the behavior of some parts of the process.
+
 
