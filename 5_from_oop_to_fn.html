@@ -709,14 +709,115 @@ comprehensions implementation.</p>
 </div>
 <div class="sect2">
 <h3 id="_template_pattern">Template pattern</h3>
-
+<div class="paragraph">
+<p>The intent of the template pattern is to describe a process skeleton in an abstract class and let
+subclasses to implement the behavior of some parts of the process.</p>
+</div>
+<div class="paragraph">
+<p>The example we&#8217;re using is an imaginary financial calculation. Imagine a bank that depending on its
+clients applies a different values for some parts of the calculations&#8230;weird right ?</p>
+</div>
+<div class="paragraph">
+<p>Apart from the details the process is always the same adding up the amount,
+the applied taxes and then possible extra costs.</p>
+</div>
+<div class="paragraph">
+<p>First lets see how it would look like using a classical object oriented approach.</p>
+</div>
+<div class="listingblock">
+<div class="title">Abstract class</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{sourceDir}/groovyfp/oop2fn/AbstractFinancialProcess.groovy[indent=0]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For good clients the bank doesn&#8217;t charge much:</p>
+</div>
+<div class="listingblock">
+<div class="title">Soft financial calculation</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{sourceDir}/groovyfp/oop2fn/FinancialProcessSoft.groovy[indent=0]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For bad clients the picture doesn&#8217;t look that well:</p>
+</div>
+<div class="listingblock">
+<div class="title">Hard financial calculation</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{sourceDir}/groovyfp/oop2fn/FinancialProcessHard.groovy[indent=0]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And then of course testing the process with these two implementations:</p>
+</div>
+<div class="listingblock">
+<div class="title">Template pattern object oriented approach</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_11,indent=0]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>So how to turn this pattern to a functional style of programming ?</p>
+</div>
+<div class="paragraph">
+<p>Well the abstract class which represented the process could be translated to
+a function (I meant a closure):</p>
+</div>
+<div class="listingblock">
+<div class="title">Template now is a higher function</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_12,indent=0]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then we can create functions to "fill" the implementation gaps of this process</p>
+</div>
+<div class="listingblock">
+<div class="title">Specific details</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_13,indent=0]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Finally we use the functions to calculate the final amount:</p>
+</div>
+<div class="listingblock">
+<div class="title">Using functional template pattern</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_14,indent=0]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Because we&#8217;re using functions we can be more flexible about how to compose and reuse
+different combinations of functions.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="icon-note" title="Note"></i>
+</td>
+<td class="content">
+By the way, I normally type many of the examples but this is intentional because I want reader
+to know what the functions really return. Depending on the situation typing is really up to you
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Building a reusable function on the fly</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_15,indent=0]</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-07-02 00:41:11 CEST
+Last updated 2014-07-04 01:27:04 CEST
 </div>
 </div>
 </body>
