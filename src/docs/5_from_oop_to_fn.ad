@@ -298,3 +298,15 @@ Finally we use the functions to calculate the final amount:
 ----
 include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_14,indent=0] 
 ----
+
+Because we're using functions we can be more flexible about how to compose and reuse
+different combinations of functions.
+
+NOTE: By the way, I normally type many of the examples but this is intentional because I want reader
+to know what the functions really return. Depending on the situation typing is really up to you 
+
+[source, groovy]
+.Building a reusable function on the fly
+----
+include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_15,indent=0] 
+----

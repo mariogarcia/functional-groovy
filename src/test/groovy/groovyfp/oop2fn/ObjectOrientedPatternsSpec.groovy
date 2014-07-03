@@ -233,4 +233,20 @@ class ObjectOrientedPatternsSpec extends Specification {
             result1 != result2
     }
     // end::oop2fn_14[]
+
+    // tag::oop2fn_15[]
+    void 'Composing functions to reuse templates'() {
+        when: 'building a preset calculation'
+            Closure<Double> customCalculation = { Double amount ->
+                calculate(
+                    calculateSoftTaxes,
+                    calculateSoftExtras,
+                    amount
+                )
+            }
+        then: 'you can reuse it along your code'
+            customCalculation(100) == 121.0
+    }
+    // end::oop2fn_15[]
+
 }
