@@ -180,4 +180,57 @@ class ObjectOrientedPatternsSpec extends Specification {
             ]
     }
     // end::oop2fn_10[]
+
+    // tag::oop2fn_11[]
+    void 'Classical template method implementation'() {
+        given: 'One concrete subclass implementation'
+            def softCalculation = new FinancialProcessSoft()
+        and: 'another different implementation based in the same parent'
+            def hardCalculation = new FinancialProcessHard()
+        expect: 'both results differ using the same process'
+            softCalculation.calculate(100) !=
+            hardCalculation.calculate(100)
+    }
+    // end::oop2fn_11[]
+
+    // tag::oop2fn_12[]
+    Closure<Double> calculate = {
+            Closure<Double> calculateTaxes,
+            Closure<Double> calculateExtras,
+            Double amount ->
+
+        return amount + calculateTaxes(amount) + calculateExtras(amount)
+    }
+    // end::oop2fn_12[]
+
+    // tag::oop2fn_13[]
+    Closure<Double> calculateSoftTaxes = { Double amount ->
+        return amount * 0.01
+    }
+
+    Closure<Double> calculateSoftExtras = { Double amount ->
+        return amount * 0.2
+    }
+    // end::oop2fn_13[]
+
+    // tag::oop2fn_14[]
+    void 'Template pattern using functions'() {
+        when: 'calculating using predefined functions'
+            def result1 =
+                calculate(
+                    calculateSoftTaxes,
+                    calculateSoftExtras,
+                    100
+                )
+        and: 'calculating using anonymous functions'
+            def result2 =
+                calculate(
+                    { amount -> amount * 0.2 },
+                    { amount -> amount * 0.10 },
+                    100
+                )
+        then: 'same process...different results...with less code'
+            result1 != result2
+    }
+    // end::oop2fn_14[]
 }

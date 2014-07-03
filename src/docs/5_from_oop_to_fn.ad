@@ -234,4 +234,67 @@ include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn
 The intent of the template pattern is to describe a process skeleton in an abstract class and let
 subclasses to implement the behavior of some parts of the process.
 
+The example we're using is an imaginary financial calculation. Imagine a bank that depending on its
+clients applies a different values for some parts of the calculations...weird right ?
 
+Apart from the details the process is always the same adding up the amount,
+the applied taxes and then possible extra costs.
+
+First lets see how it would look like using a classical object oriented approach.
+
+[source, groovy]
+.Abstract class
+----
+include::{sourceDir}/groovyfp/oop2fn/AbstractFinancialProcess.groovy[indent=0] 
+----
+
+For good clients the bank doesn't charge much:
+
+[source, groovy]
+.Soft financial calculation
+----
+include::{sourceDir}/groovyfp/oop2fn/FinancialProcessSoft.groovy[indent=0] 
+----
+
+For bad clients the picture doesn't look that well:
+
+[source, groovy]
+.Hard financial calculation
+----
+include::{sourceDir}/groovyfp/oop2fn/FinancialProcessHard.groovy[indent=0] 
+----
+
+And then of course testing the process with these two implementations:
+
+[source, groovy]
+.Template pattern object oriented approach
+----
+include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_11,indent=0] 
+----
+
+So how to turn this pattern to a functional style of programming ? 
+
+Well the abstract class which represented the process could be translated to
+a function (I meant a closure):
+
+[source, groovy]
+.Template now is a higher function
+----
+include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_12,indent=0] 
+----
+
+Then we can create functions to "fill" the implementation gaps of this process
+
+[source, groovy]
+.Specific details
+----
+include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_13,indent=0] 
+----
+
+Finally we use the functions to calculate the final amount:
+
+[source, groovy]
+.Using functional template pattern
+----
+include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_14,indent=0] 
+----
