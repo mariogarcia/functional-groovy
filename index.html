@@ -397,6 +397,7 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] { cursor: default; }
 <li><a href="#_immutable_objects_instead_of_builder">5.4. Immutable objects instead of Builder</a></li>
 <li><a href="#_replacing_iterator">5.5. Replacing Iterator</a></li>
 <li><a href="#_template_pattern">5.6. Template pattern</a></li>
+<li><a href="#_strategy">5.7. Strategy</a></li>
 </ul>
 </li>
 <li><a href="#_functional_patterns">6. Functional Patterns</a></li>
@@ -1935,8 +1936,9 @@ different combinations of functions.</p>
 <i class="icon-note" title="Note"></i>
 </td>
 <td class="content">
-By the way, I normally type many of the examples but this is intentional because I want reader
-to know what the functions really return. Depending on the situation typing is really up to you
+By the way, in many of the examples variables are typed. This is intentional because I want
+reader to know what the functions really return. Depending on the situation typing is really up to
+you
 </td>
 </tr>
 </table>
@@ -1955,6 +1957,52 @@ to know what the functions really return. Depending on the situation typing is r
         }
     then: 'you can reuse it along your code'
         customCalculation(100) == 121.0
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_strategy">5.7. Strategy</h3>
+<div class="paragraph">
+<p>The intent of this pattern is to declare a process that uses an algoritm that can be implemented in
+several ways</p>
+</div>
+<div class="paragraph">
+<p>Lets say we are working in a video cassette company (an we&#8217;re in the 90&#8217;s :P). We belong to the
+quality department and we want to filter those videos not passing minimal standard validation. But
+the problem is that depending on the country the minimal validation changes.</p>
+</div>
+<div class="listingblock">
+<div class="title">Different strategies</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>
+List&lt;ImmutableVideo&gt; findAllFaultyVideo(List&lt;ImmutableVideo&gt; videoList, Closure&lt;Boolean&gt; validationStrategy) {
+    return videoList.findAll(validationStrategy)
+}
+
+Closure&lt;Boolean&gt; validationStrategy1 = { ImmutableVideo video -&gt; video.type == 'mp4' }
+Closure&lt;Boolean&gt; validationStrategy2 = { ImmutableVideo video -&gt; video.length &lt; 700  }
+</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Strategy test</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>void 'Changing the validation strategy'() {
+    given:'A list of cars'
+        List&lt;ImmutableVideo&gt; videoList = [
+            [name: 'video1', type: 'avi', length: 1000],
+            [name: 'video2', type: 'mp4', length: 1000],
+            [name: 'video3', type: 'avi', length: 500] ,
+            [name: 'video4', type: 'mp4', length: 1000],
+            [name: 'video5', type: 'mp4', length: 50]
+        ].asImmutable() as ImmutableVideo[]
+    when: 'applying different strategies to the same list'
+        def videoResultList1 = findAllFaultyVideo(videoList, validationStrategy1)
+        def videoResultList2 = findAllFaultyVideo(videoList, validationStrategy2)
+    then: 'you will have different result size'
+        videoResultList1.size() == 3
+        videoResultList2.size() == 2
 }</code></pre>
 </div>
 </div>
