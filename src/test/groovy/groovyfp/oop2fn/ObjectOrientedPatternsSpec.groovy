@@ -249,4 +249,33 @@ class ObjectOrientedPatternsSpec extends Specification {
     }
     // end::oop2fn_15[]
 
+    // tag::oop2fn_16[]
+
+    List<ImmutableVideo> findAllFaultyVideo(List<ImmutableVideo> videoList, Closure<Boolean> validationStrategy) {
+        return videoList.findAll(validationStrategy)
+    }
+
+    Closure<Boolean> validationStrategy1 = { ImmutableVideo video -> video.type == 'mp4' }
+    Closure<Boolean> validationStrategy2 = { ImmutableVideo video -> video.length < 700  }
+
+    // end::oop2fn_16[]
+
+    // tag::oop2fn_17[]
+    void 'Changing the validation strategy'() {
+        given:'A list of cars'
+            List<ImmutableVideo> videoList = [
+                [name: 'video1', type: 'avi', length: 1000],
+                [name: 'video2', type: 'mp4', length: 1000],
+                [name: 'video3', type: 'avi', length: 500] ,
+                [name: 'video4', type: 'mp4', length: 1000],
+                [name: 'video5', type: 'mp4', length: 50]
+            ].asImmutable() as ImmutableVideo[]
+        when: 'applying different strategies to the same list'
+            def videoResultList1 = findAllFaultyVideo(videoList, validationStrategy1)
+            def videoResultList2 = findAllFaultyVideo(videoList, validationStrategy2)
+        then: 'you will have different result size'
+            videoResultList1.size() == 3
+            videoResultList2.size() == 2
+    }
+    // end::oop2fn_17[]
 }

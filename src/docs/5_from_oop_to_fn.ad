@@ -302,11 +302,36 @@ include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn
 Because we're using functions we can be more flexible about how to compose and reuse
 different combinations of functions.
 
-NOTE: By the way, I normally type many of the examples but this is intentional because I want reader
-to know what the functions really return. Depending on the situation typing is really up to you 
+NOTE: By the way, in many of the examples variables are typed. This is intentional because I want
+reader to know what the functions really return. Depending on the situation typing is really up to
+you 
 
 [source, groovy]
 .Building a reusable function on the fly
 ----
 include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_15,indent=0] 
 ----
+
+=== Strategy
+
+The intent of this pattern is to declare a process that uses an algoritm that can be implemented in
+several ways
+
+Lets say we are working in a video cassette company (an we're in the 90's :P). We belong to the
+quality department and we want to filter those videos not passing minimal standard validation. But
+the problem is that depending on the country the minimal validation changes.
+
+[source, groovy]
+.Different strategies
+----
+include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_16,indent=0] 
+----
+
+[source, groovy]
+.Strategy test
+----
+include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_17,indent=0] 
+----
+
+
+
