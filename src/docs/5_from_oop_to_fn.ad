@@ -327,6 +327,11 @@ the problem is that depending on the country the minimal validation changes.
 include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_16,indent=0] 
 ----
 
+<1> The validation strategy is applied to the collection filter
+<2> Because we want to use good functional practices we dont want anybody to alter the result list
+<3> The first strategy will detect as invalid mp4 videos
+<4> The second strategy will detect as invalid videos with size less than 700 bytes
+
 [source, groovy]
 .Strategy test
 ----
