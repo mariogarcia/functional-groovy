@@ -831,6 +831,26 @@ the problem is that depending on the country the minimal validation changes.</p>
 <pre class="prettyprint groovy language-groovy"><code>include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_16,indent=0]</code></pre>
 </div>
 </div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The validation strategy is applied to the collection filter</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Because we want to use good functional practices we dont want anybody to alter the result list</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The first strategy will detect as invalid mp4 videos</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The second strategy will detect as invalid videos with size less than 700 bytes</td>
+</tr>
+</table>
+</div>
 <div class="listingblock">
 <div class="title">Strategy test</div>
 <div class="content">
@@ -843,7 +863,7 @@ the problem is that depending on the country the minimal validation changes.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-07-05 01:05:58 CEST
+Last updated 2014-07-05 11:21:28 CEST
 </div>
 </div>
 </body>

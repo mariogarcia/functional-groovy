@@ -1977,13 +1977,35 @@ the problem is that depending on the country the minimal validation changes.</p>
 <div class="content">
 <pre class="prettyprint groovy language-groovy"><code>
 List&lt;ImmutableVideo&gt; findAllFaultyVideo(List&lt;ImmutableVideo&gt; videoList, Closure&lt;Boolean&gt; validationStrategy) {
-    return videoList.findAll(validationStrategy)
+    return videoList
+        .findAll(validationStrategy) <i class="conum" data-value="1"></i><b>(1)</b>
+        .asImmutable() <i class="conum" data-value="2"></i><b>(2)</b>
 }
 
-Closure&lt;Boolean&gt; validationStrategy1 = { ImmutableVideo video -&gt; video.type == 'mp4' }
-Closure&lt;Boolean&gt; validationStrategy2 = { ImmutableVideo video -&gt; video.length &lt; 700  }
+Closure&lt;Boolean&gt; strategy1 = { ImmutableVideo video -&gt; video.type == 'mp4' } <i class="conum" data-value="3"></i><b>(3)</b>
+Closure&lt;Boolean&gt; strategy2 = { ImmutableVideo video -&gt; video.length &lt; 700  } <i class="conum" data-value="4"></i><b>(4)</b>
 </code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The validation strategy is applied to the collection filter</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Because we want to use good functional practices we dont want anybody to alter the result list</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The first strategy will detect as invalid mp4 videos</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The second strategy will detect as invalid videos with size less than 700 bytes</td>
+</tr>
+</table>
 </div>
 <div class="listingblock">
 <div class="title">Strategy test</div>
@@ -1998,11 +2020,11 @@ Closure&lt;Boolean&gt; validationStrategy2 = { ImmutableVideo video -&gt; video.
             [name: 'video5', type: 'mp4', length: 50]
         ].asImmutable() as ImmutableVideo[]
     when: 'applying different strategies to the same list'
-        def videoResultList1 = findAllFaultyVideo(videoList, validationStrategy1)
-        def videoResultList2 = findAllFaultyVideo(videoList, validationStrategy2)
+        def result1 = findAllFaultyVideo(videoList, strategy1)
+        def result2 = findAllFaultyVideo(videoList, strategy2)
     then: 'you will have different result size'
-        videoResultList1.size() == 3
-        videoResultList2.size() == 2
+        result1.size() == 3
+        result2.size() == 2
 }</code></pre>
 </div>
 </div>
