@@ -398,6 +398,7 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] { cursor: default; }
 <li><a href="#_replacing_iterator">5.5. Replacing Iterator</a></li>
 <li><a href="#_template_pattern">5.6. Template pattern</a></li>
 <li><a href="#_strategy">5.7. Strategy</a></li>
+<li><a href="#_fighting_null_object">5.8. Fighting Null Object</a></li>
 </ul>
 </li>
 <li><a href="#_functional_patterns">6. Functional Patterns</a></li>
@@ -2025,6 +2026,281 @@ Closure&lt;Boolean&gt; strategy2 = { ImmutableVideo video -&gt; video.length &lt
     then: 'you will have different result size'
         result1.size() == 3
         result2.size() == 2
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_fighting_null_object">5.8. Fighting Null Object</h3>
+<div class="paragraph">
+<p>Null pointer exceptions are the plague of our era in computing programming. There are studies on how
+many millions are wasted because of this problem.</p>
+</div>
+<div class="paragraph">
+<p>Here I&#8217;m going to show you a couple solutions to tackle this problem:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Groovy truth</p>
+</li>
+<li>
+<p>Optional pattern</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The problem of <strong><em>NullPointerException</em></strong> is not only the sad surprise of an exception during
+runtime but also the amount of lines of code you have to spend to make your code <strong><em>"safe"</em></strong>.
+There is a lot of boilerplate code involved.</p>
+</div>
+<div class="paragraph">
+<p>I will use a really simple example to try to show the problem and the possible solutions to it.</p>
+</div>
+<div class="paragraph">
+<p>We have a method to get the number of letters of a given word. You can pass a String or
+unfortunately a null value.</p>
+</div>
+<div class="listingblock">
+<div class="title">Null</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>Integer countLetters(String name) {
+    return name.length() <i class="conum" data-value="1"></i><b>(1)</b>
+}
+
+void 'Fighting NPE: Groovy truth'() {
+    given: 'A word'
+        def word = null
+    when: 'Invoking the method'
+        def result = countLetters(word) <i class="conum" data-value="2"></i><b>(2)</b>
+    then: 'A NPE will be thrown'
+        thrown(NullPointerException)
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The method calls to the lenght method of the value passed as parameter</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>When the value of the variable passed as parameter is null the method will throw a NPE trying
+to access a method from a null value.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Although using the Groovy <strong><em>safe</em></strong> operator (<strong><em>?</em></strong>) is not the one-for-all solution. It is
+a good starting point to avoid NPE problems.</p>
+</div>
+<div class="listingblock">
+<div class="title">Groovy safe operator</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>Integer countLettersGroovyTruth(String name) {
+    return name?.length() <i class="conum" data-value="1"></i><b>(1)</b>
+}
+
+void 'Fighting NPE: Groovy truth'() {
+    given: 'A word'
+        def word = null
+    when: 'Invoking the method'
+        def result = countLettersGroovyTruth(word) <i class="conum" data-value="2"></i><b>(2)</b>
+    then: 'No exception will be thrown'
+        notThrown(NullPointerException)
+    and: 'The method to return null'
+        result == null
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>We mark the reference as safe.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>When trying to access some methods, or fields from that object, Groovy wil check whether
+the reference is null or not. In case it were null then the evaluation won&#8217;t go any further and
+the expression will return null.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The null value in Groovy is not the null of Java. It&#8217;s backed by <strong><em>NullObject</em></strong>.</p>
+</div>
+<div class="listingblock">
+<div class="title">Null is not what it seems</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>void 'Null is not null'() {
+    expect: 'That null is not what it seems'
+        null.getClass() == org.codehaus.groovy.runtime.NullObject
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This object helps us to apply one of the principals of the Groovy truth. So whenever we had
+a null reference we can use it as a boolean value, which of course always will evaluate to
+<strong><em>false</em></strong>.</p>
+</div>
+<div class="listingblock">
+<div class="title">Groovy truth</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>void isNullThis(anything) {
+    if (!anything) {
+        println "Is null"
+    } else {
+        println anything.class.simpleName
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Null as boolean</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>void isNullThis(anything) {
+    if (!anything) {
+        println "Is null"
+    } else {
+        println anything.class.simpleName
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Ok, <strong><em>null</em></strong> is an instance of <strong><em>NullObject</em></strong>, so How this helps ? Well if you check out
+the list of methods NullObject has you will figure out some things. The most remarkable is
+that you don&#8217;t have to use safety when accessing collections.</p>
+</div>
+<div class="listingblock">
+<div class="title">Collections are safe</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>List&lt;String&gt; doSomething(List&lt;String&gt; words) {
+    return words
+        .findAll { it.startsWith('j') }
+        .collect { it.toUpperCase() }
+}
+
+void 'Collections are safe'() {
+    given: 'two different collections'
+        def cities = null
+        def names = ['john', 'jeronimo', 'james']
+    when: 'filtering and transforming cities'
+        def citiesResult = doSomething(cities)
+    and: 'doing the same for names'
+        def namesResult = doSomething(names)
+    then: 'we should get at least an empty list'
+        citiesResult == []
+        namesResult == ['JOHN', 'JERONIMO', 'JAMES']
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This is because all instances of a <strong><em>GroovyObject</em></strong> have some methods by default (methods
+declared in <strong><em>DefaultGroovyMethods</em></strong> class)</p>
+</div>
+<div class="paragraph">
+<p>Unfortunately when dealing with plain pogos or primitive wrappers this functionality doesn&#8217;t
+help a lot. Imagine we were using the <strong><em>findAll</em></strong> or <strong><em>collect</em></strong> methods to avoid NPE&#8230; that
+would be insane don&#8217;t you think ? Or maybe not ?</p>
+</div>
+<div class="listingblock">
+<div class="title">Plain objects are not easy to deal with</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>void 'Groovy truth: insane ?'() {
+    when: 'mapping values from a non safe reference'
+        def result =
+            source
+                .collect { it }
+                .join()
+                .toUpperCase()
+    then: 'the result should be the expected'
+        result == expected
+    where: 'possible values could be'
+        source | expected
+        null   | ""
+        "john" | "JOHN"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In order not to end doing that kind of coding, Groovy has the <strong><em>elvis</em></strong> operator, which a way
+of providing a default value.</p>
+</div>
+<div class="listingblock">
+<div class="title">Elvis comes to the rescue</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>void 'Using elvis operator'() {
+    when: 'preparing the item'
+        def name = source ?: 'john doe' <i class="conum" data-value="1"></i><b>(1)</b>
+    then: 'all values should have more than one letter'
+        name.toUpperCase() == expected <i class="conum" data-value="2"></i><b>(2)</b>
+    where: 'possible values are'
+        source  | expected
+        null    | "JOHN DOE"
+        "peter" | "PETER"
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>In case the value is null use <em>john doe</em> as value</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>You can call safely to <strong><em>toUpperCase</em></strong> method</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Another elvis example</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>void 'Using elvis operator: another example'() {
+    when: 'creating default reference'
+        def video2Process = video ?: new ImmutableVideo(name:'unknown') <i class="conum" data-value="1"></i><b>(1)</b>
+        def result =
+            new ImmutableVideo(
+                name: "${video2Process.name}-processed",
+                type: "ogg"
+            )
+    then: 'no exception is thrown even if it was a null ref'
+        notThrown(NullPointerException)
+    and: 'transformation has been applied'
+        result.name?.contains('processed')
+        result.type == 'ogg'
+    where: 'possible values are'
+        video &lt;&lt; [
+            null,
+            new Video(name: 'documentary.mp4', type: 'mp4')
+        ]
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Introducing Optional pattern</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>void 'Using Optional pattern: dealing with nulls'() {
+    when: 'creating default reference'
+        Option&lt;ImmutableVideo&gt; result =
+            Option
+                .from(video) <i class="conum" data-value="1"></i><b>(1)</b>
+                .map { ImmutableVideo v -&gt; <i class="conum" data-value="2"></i><b>(2)</b>
+                    new ImmutableVideo(
+                        name: "${v.name}-processed",
+                        type: v.type)
+                }
+    then: 'no exception is thrown even if it was a null ref'
+        notThrown(NullPointerException)
+and: 'transformation has been applied'
+    result.hasValue() == hasValue
+    where: 'possible values are'
+        video                                                        | hasValue
+            new ImmutableVideo(name: 'documentary.mp4', type: 'mp4') | true
+            null                                                     | false
 }</code></pre>
 </div>
 </div>
