@@ -338,5 +338,116 @@ include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn
 include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_17,indent=0] 
 ----
 
+=== Fighting Null Object 
 
+Null pointer exceptions are the plague of our era in computing programming. There are studies on how
+many millions are wasted because of this problem.
 
+Here I'm going to show you a couple solutions to tackle this problem:
+
+* Groovy truth 
+* Optional pattern
+
+The problem of *_NullPointerException_* is not only the sad surprise of an exception during
+runtime but also the amount of lines of code you have to spend to make your code *_"safe"_*. 
+There is a lot of boilerplate code involved.
+
+I will use a really simple example to try to show the problem and the possible solutions to it.
+
+We have a method to get the number of letters of a given word. You can pass a String or
+unfortunately a null value.
+
+[source, groovy]
+.Null
+----
+include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_18,indent=0] 
+----
+
+<1> The method calls to the lenght method of the value passed as parameter
+<2> When the value of the variable passed as parameter is null the method will throw a NPE trying
+to access a method from a null value.
+
+Although using the Groovy *_safe_* operator (*_?_*) is not the one-for-all solution. It is 
+a good starting point to avoid NPE problems.
+
+[source, groovy]
+.Groovy safe operator
+----
+include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_19,indent=0] 
+----
+
+<1> We mark the reference as safe. 
+<2> When trying to access some methods, or fields from that object, Groovy wil check whether
+the reference is null or not. In case it were null then the evaluation won't go any further and
+the expression will return null.
+
+The null value in Groovy is not the null of Java. It's backed by *_NullObject_*.
+
+[source, groovy]
+.Null is not what it seems
+----
+include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_20,indent=0] 
+----
+
+This object helps us to apply one of the principals of the Groovy truth. So whenever we had
+a null reference we can use it as a boolean value, which of course always will evaluate to 
+*_false_*. 
+
+[source, groovy]
+.Groovy truth
+----
+include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_20b,indent=0] 
+----
+
+[source, groovy]
+.Null as boolean
+----
+include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_20b,indent=0] 
+----
+
+Ok, *_null_* is an instance of *_NullObject_*, so How this helps ? Well if you check out 
+the list of methods NullObject has you will figure out some things. The most remarkable is
+that you don't have to use safety when accessing collections.
+
+[source, groovy]
+.Collections are safe
+----
+include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_21,indent=0] 
+----
+
+This is because all instances of a *_GroovyObject_* have some methods by default (methods 
+declared in *_DefaultGroovyMethods_* class) 
+
+Unfortunately when dealing with plain pogos or primitive wrappers this functionality doesn't
+help a lot. Imagine we were using the *_findAll_* or *_collect_* methods to avoid NPE... that
+would be insane don't you think ? Or maybe not ?
+
+[source, groovy]
+.Plain objects are not easy to deal with
+----
+include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_20d,indent=0] 
+----
+
+In order not to end doing that kind of coding, Groovy has the *_elvis_* operator, which a way
+of providing a default value.
+
+[source, groovy]
+.Elvis comes to the rescue
+----
+include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_22,indent=0] 
+----
+
+<1> In case the value is null use 'john doe' as value
+<2> You can call safely to *_toUpperCase_* method
+
+[source, groovy]
+.Another elvis example
+----
+include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_23,indent=0] 
+----
+
+[source, groovy]
+.Introducing Optional pattern
+----
+include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_24,indent=0] 
+----

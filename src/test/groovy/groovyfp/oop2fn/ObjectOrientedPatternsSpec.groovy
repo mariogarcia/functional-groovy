@@ -280,4 +280,159 @@ class ObjectOrientedPatternsSpec extends Specification {
             result2.size() == 2
     }
     // end::oop2fn_17[]
+
+    // tag::oop2fn_18[]
+    Integer countLetters(String name) {
+        return name.length() // <1>
+    }
+
+    void 'Fighting NPE: Groovy truth'() {
+        given: 'A word'
+            def word = null
+        when: 'Invoking the method'
+            def result = countLetters(word) // <2>
+        then: 'A NPE will be thrown'
+            thrown(NullPointerException)
+    }
+    // end::oop2fn_18[]
+
+    // tag::oop2fn_19[]
+    Integer countLettersGroovyTruth(String name) {
+        return name?.length() // <1>
+    }
+
+    void 'Fighting NPE: Groovy truth'() {
+        given: 'A word'
+            def word = null
+        when: 'Invoking the method'
+            def result = countLettersGroovyTruth(word) // <2>
+        then: 'No exception will be thrown'
+            notThrown(NullPointerException)
+        and: 'The method to return null'
+            result == null
+    }
+    // end::oop2fn_19[]
+
+    // tag::oop2fn_20[]
+    void 'Null is not null'() {
+        expect: 'That null is not what it seems'
+            null.getClass() == org.codehaus.groovy.runtime.NullObject
+    }
+    // end::oop2fn_20[]
+
+    // tag::oop2fn_20b[]
+    void isNullThis(anything) {
+        if (!anything) {
+            println "Is null"
+        } else {
+            println anything.class.simpleName
+        }
+    }
+    // end::oop2fn_20b[]
+
+    // tag::oop2fn_20c[]
+    void 'Groovy truth'() {
+        given: 'a null reference'
+            def name = null
+        expect: 'null can be treated as a boolean value'
+            name == null
+            !name
+            name.asBoolean() == false
+    }
+    // end::oop2fn_20c[]
+
+    // tag::oop2fn_20d[]
+    void 'Groovy truth: insane ?'() {
+        when: 'mapping values from a non safe reference'
+            def result =
+                source
+                    .collect { it }
+                    .join()
+                    .toUpperCase()
+        then: 'the result should be the expected'
+            result == expected
+        where: 'possible values could be'
+            source | expected
+            null   | ""
+            "john" | "JOHN"
+    }
+    // end::oop2fn_20d[]
+
+    // tag::oop2fn_21[]
+    List<String> doSomething(List<String> words) {
+        return words
+            .findAll { it.startsWith('j') }
+            .collect { it.toUpperCase() }
+    }
+
+    void 'Collections are safe'() {
+        given: 'two different collections'
+            def cities = null
+            def names = ['john', 'jeronimo', 'james']
+        when: 'filtering and transforming cities'
+            def citiesResult = doSomething(cities)
+        and: 'doing the same for names'
+            def namesResult = doSomething(names)
+        then: 'we should get at least an empty list'
+            citiesResult == []
+            namesResult == ['JOHN', 'JERONIMO', 'JAMES']
+    }
+    // end::oop2fn_21[]
+
+    // tag::oop2fn_22[]
+    void 'Using elvis operator'() {
+        when: 'preparing the item'
+            def name = source ?: 'john doe' // <1>
+        then: 'all values should have more than one letter'
+            name.toUpperCase() == expected // <2>
+        where: 'possible values are'
+            source  | expected
+            null    | "JOHN DOE"
+            "peter" | "PETER"
+    }
+    // end::oop2fn_22[]
+
+    // tag::oop2fn_23[]
+    void 'Using elvis operator: another example'() {
+        when: 'creating default reference'
+            def video2Process = video ?: new ImmutableVideo(name:'unknown') // <1>
+            def result =
+                new ImmutableVideo(
+                    name: "${video2Process.name}-processed",
+                    type: "ogg"
+                )
+        then: 'no exception is thrown even if it was a null ref'
+            notThrown(NullPointerException)
+        and: 'transformation has been applied'
+            result.name?.contains('processed')
+            result.type == 'ogg'
+        where: 'possible values are'
+            video << [
+                null,
+                new Video(name: 'documentary.mp4', type: 'mp4')
+            ]
+    }
+    // end::oop2fn_23[]
+
+    // tag::oop2fn_24[]
+    void 'Using Optional pattern: dealing with nulls'() {
+        when: 'creating default reference'
+            Option<ImmutableVideo> result =
+                Option
+                    .from(video) // <1>
+                    .map { ImmutableVideo v -> // <2>
+                        new ImmutableVideo(
+                            name: "${v.name}-processed",
+                            type: v.type)
+                    }
+        then: 'no exception is thrown even if it was a null ref'
+            notThrown(NullPointerException)
+    and: 'transformation has been applied'
+        result.hasValue() == hasValue
+        where: 'possible values are'
+            video                                                        | hasValue
+                new ImmutableVideo(name: 'documentary.mp4', type: 'mp4') | true
+                null                                                     | false
+    }
+    // end::oop2fn_24[]
 }

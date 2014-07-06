@@ -1,4 +1,4 @@
-package groovyfp.option
+package groovyfp.oop2fn
 
 import spock.lang.Specification
 
