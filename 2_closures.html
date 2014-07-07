@@ -370,6 +370,18 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] { cursor: default; }
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#_closures">Closures</a></li>
+<li>
+<ul class="sectlevel2">
+<li><a href="#_definition">Definition</a></li>
+<li><a href="#_collections">Collections</a></li>
+<li><a href="#_composition">Composition</a></li>
+<li><a href="#_currying">Currying</a></li>
+<li><a href="#_delegation_strategy">Delegation strategy</a></li>
+<li><a href="#_memoization">Memoization</a></li>
+<li><a href="#_trampoline">Trampoline</a></li>
+<li><a href="#_functional_interface_coercion">Functional interface coercion</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -377,15 +389,202 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] { cursor: default; }
 <div class="sect1">
 <h2 id="_closures">Closures</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="_definition">Definition</h3>
+<div class="paragraph">
+<p>Until I find out a better definition, I came up with the following informal definition:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>A <strong><em>closure</em></strong> is a function which allows access to variables declared in its surrounding scope when
+the closure was declared.</p>
+</div>
+<div class="paragraph">
+<p>Normally this surrounding scope in Groovy means local variables and non-local variables inside its
+upper lexical scopes until class fields.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>The minimal version of a closure could be:</p>
+</div>
+<div class="listingblock">
+<div class="title">Declaring a closure</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures1,indent=0]</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>A closure may have closure aguments</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Statements</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>And an implicit variable</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Closures always return a value (even though it could be void).</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Closures can be declared in as class fields, static fields, and local variables.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="icon-note" title="Note"></i>
+</td>
+<td class="content">
+I&#8217;ve included the typed version because sometimes people forgot about the fact that a closure is a
+function, and like any other function it could return something.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Lets review the principals of a closure:</p>
+</div>
+<div class="listingblock">
+<div class="title">Using a closure</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures2,indent=0]</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>A closure can access non-local variables available in upper lexical scopes when the closure was declared</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>A closure can access local variables</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Has its own execution body</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Because it is a function, can be executed</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Closures may reference variables external to their own definition. This includes local variables,
+method parameters, and object instance members. However, a closure may only reference those
+variables that the compiler can lexically deduce from the physical location of the closure
+definition within the source file.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="icon-important" title="Important"></i>
+</td>
+<td class="content">
+It&#8217;s very important to keep in mind that a closure "sees" those variables available when the closure
+was declared, not when it&#8217;s used.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_collections">Collections</h3>
+<div class="paragraph">
+<p>Closures are widely used in Groovy. One of the most common places are collections. In the
+following example we want to get 2 times each element of the collection.</p>
+</div>
+<div class="listingblock">
+<div class="title">Using closures in API</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures3,indent=0]</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Anonymous closure with implicit variable. In this case the variable refers to every
+element in the collection.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>You can also declare the closure and use it later as a parameter to another function.</p>
+</div>
+<div class="listingblock">
+<div class="title">Using closures in API</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures4,indent=0]</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Declaring the closure</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Passing closures as parameters to other functions (closures or methods)</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_composition">Composition</h3>
+<div class="paragraph">
+<p>(TODO)</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_currying">Currying</h3>
+<div class="paragraph">
+<p>(TODO)</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_delegation_strategy">Delegation strategy</h3>
+<div class="paragraph">
+<p>(TODO)</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_memoization">Memoization</h3>
+<div class="paragraph">
+<p>(TODO)</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_trampoline">Trampoline</h3>
+<div class="paragraph">
+<p>(TODO)</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_functional_interface_coercion">Functional interface coercion</h3>
 <div class="paragraph">
 <p>(TODO)</p>
 </div>
 </div>
 </div>
 </div>
+</div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-06-27 07:31:28 CEST
+Last updated 2014-07-07 18:36:28 CEST
 </div>
 </div>
 </body>
