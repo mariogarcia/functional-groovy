@@ -1,3 +1,105 @@
 == Closures 
 
+=== Definition
+
+Until I find a better definition, I came up with the following "informal" definition: 
+
+""
+A *_closure_* is a function which allows access to variables declared in its surrounding scope when
+the closure was declared.
+
+Normally this surrounding scope in Groovy means local variables and non-local variables inside its
+upper lexical scopes up to class fields.
+""
+
+The minimal version of a closure could be:
+
+[source, groovy]
+.Declaring a closure
+----
+include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures1,indent=0] 
+----
+
+<1> A closure may have closure aguments
+<2> A closure body may have statements
+<3> A closure may have an implicit variable
+<4> Closures always return a value (even though it could be void).
+
+Closures can be declared in as class fields, static fields, and local variables.
+
+NOTE: I've included the typed version because sometimes people forgot about the fact that a closure is a
+function, and like any other function it could return something.
+
+Lets review the principals of a closure:
+
+[source, groovy]
+.Using a closure
+----
+include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures2,indent=0] 
+----
+
+<1> A closure can access non-local variables available in upper lexical scopes when the closure was declared
+<2> A closure can access local variables
+<3> Has its own execution body
+<4> Because it is a function, can be executed
+
+Closures may reference variables external to their own definition. This includes local variables,
+method parameters, and object instance members. However, a closure may only reference those
+variables that the compiler can lexically deduce from the physical location of the closure
+definition within the source file.  
+
+IMPORTANT: It's very important to keep in mind that a closure "sees" those variables available when the closure
+was declared, not when it's used. 
+
+=== Getting started 
+
+Closures are widely used in Groovy. One of the most common places are collections. In the
+following example we want to get 2 times each element of the collection.
+
+[source, groovy]
+.Using closures in API
+----
+include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures3,indent=0] 
+----
+
+The collect method receives a parameter of type *_Closure_* that transforms every item in
+the collection.
+
+<1> Anonymous closure with implicit variable. In this case the variable refers to every
+element in the collection.
+
+You can also declare the closure and use it later as a parameter to another function.
+
+[source, groovy]
+.Using closures in API
+----
+include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures4,indent=0] 
+----
+
+<1> Declaring the closure
+<2> Passing closures as parameters to other functions (closures or methods) 
+
+=== Composition
+
 (TODO)
+
+=== Currying
+
+(TODO)
+
+=== Delegation strategy
+
+(TODO)
+
+=== Memoization 
+
+(TODO)
+
+=== Trampoline 
+
+(TODO)
+
+=== Functional interface coercion
+
+(TODO)
+
