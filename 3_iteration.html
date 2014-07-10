@@ -374,6 +374,7 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] { cursor: default; }
 <ul class="sectlevel2">
 <li><a href="#_more_concise">More concise</a></li>
 <li><a href="#_reusability">Reusability</a></li>
+<li><a href="#_composition">Composition</a></li>
 </ul>
 </li>
 </ul>
@@ -401,6 +402,9 @@ how to loop through the collection, Don&#8217;t you thing ?</p>
 </li>
 <li>
 <p>Reusability</p>
+</li>
+<li>
+<p>Composition</p>
 </li>
 <li>
 <p>Internal optimizations</p>
@@ -639,12 +643,59 @@ dedicated to closures.
 </table>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_composition">Composition</h3>
+<div class="paragraph">
+<p>Today&#8217;s specifications may change. Lets say I want to trim all strings coming from a given
+collection. But then my boss comes and tells me he wants all words uppercase.</p>
+</div>
+<div class="listingblock">
+<div class="title">Looping more than neccessary</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{testDir}/groovyfp/exit/ExternalIterationIsEvilSpec.groovy[tags=composition_1,indent=0]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The problem is that we&#8217;re looping the word list twice</p>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>first to trim all words and then</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>we&#8217;re looping again to convert every word to uppercase.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>With composing both behaviors we can apply both at once for every word. We will be saving
+a loop for every new transformation. That&#8217;s worth knowing right ?</p>
+</div>
+<div class="listingblock">
+<div class="title">Composing behavior</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{testDir}/groovyfp/exit/ExternalIterationIsEvilSpec.groovy[tags=composition_2,indent=0]</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>This is a special notation for composing closures. The composition has to be read from right
+to left. The first behavior to be taken is the first on the right.</td>
+</tr>
+</table>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-06-29 20:44:01 CEST
+Last updated 2014-07-10 10:44:14 CEST
 </div>
 </div>
 </body>
