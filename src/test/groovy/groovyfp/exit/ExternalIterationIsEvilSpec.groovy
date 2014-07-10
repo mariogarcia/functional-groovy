@@ -200,4 +200,39 @@ class ExternalIterationIsEvil extends Specification {
             numbers3Sum == 134
     }
     // end::external_iteration_11[]
+
+
+    // tag::composition_1[]
+    void 'Specifications change. Looping Twice'() {
+        given: 'a list of words'
+            def words = [' animal', ' person', 'something else ']
+        and: 'a couple of transformations'
+            def trim = { it.trim() }
+            def toUpperCase = { it.toUpperCase() }
+        when: 'applying transformations one after another'
+            def result =
+                words
+                    .collect(trim) // <1>
+                    .collect(toUpperCase) // <2>
+        then: 'we should get a cleaned list of words'
+            result == ['ANIMAL', 'PERSON', 'SOMETHING ELSE']
+    }
+
+    // end::composition_1[]
+
+    // tag::composition_2[]
+    void 'Specifications change. Composition'() {
+        given: 'a list of words'
+            def words = [' animal', ' person', 'something else ']
+        and: 'a couple of transformations'
+            def trim = { it.trim() }
+            def toUpperCase = { it.toUpperCase() }
+            def trimAndUpperCase = toUpperCase << trim // <1>
+        when: 'applying transformations one after another'
+            def result = words.collect(trimAndUpperCase)
+        then: 'we should get a cleaned list of words'
+            result == ['ANIMAL', 'PERSON', 'SOMETHING ELSE']
+    }
+    // end::composition_2[]
+
 }

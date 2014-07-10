@@ -10,6 +10,7 @@ There are some reasons I would recommend you to start using internal iteration:
 
 * Is more concise and clear
 * Reusability
+* Composition
 * Internal optimizations 
 
 === More concise
@@ -168,3 +169,30 @@ expression is only saying: I want to get a new function with the first parameter
 the following value *_{ it > 20 && it < 100}_*. Anyway I recommend you to review the chaper
 dedicated to closures.
 
+=== Composition
+
+Today's specifications may change. Lets say I want to trim all strings coming from a given
+collection. But then my boss comes and tells me he wants all words uppercase.
+
+[source, groovy]
+.Looping more than neccessary
+----
+include::{testDir}/groovyfp/exit/ExternalIterationIsEvilSpec.groovy[tags=composition_1,indent=0] 
+----
+
+The problem is that we're looping the word list twice
+
+<1> first to trim all words and then 
+<2> we're looping again to convert every word to uppercase.
+
+With composing both behaviors we can apply both at once for every word. We will be saving
+a loop for every new transformation. That's worth knowing right ? 
+
+[source, groovy]
+.Composing behavior
+----
+include::{testDir}/groovyfp/exit/ExternalIterationIsEvilSpec.groovy[tags=composition_2,indent=0] 
+----
+
+<1> This is a special notation for composing closures. The composition has to be read from right
+to left. The first behavior to be taken is the first on the right.
