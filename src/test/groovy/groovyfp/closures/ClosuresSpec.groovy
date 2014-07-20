@@ -143,5 +143,76 @@ class ClosuresSpec extends Specification {
     }
     // end::closures8[]
 
+    // tag::closures9[]
+    void 'Composing for filtering: no composition'() {
+        given: 'a huge list of numbers'
+            def numbers = (1..1000)
+        when: 'applying several filters...wrong'
+            def result =
+                numbers
+                    .findAll { it % 2 == 0 }
+                    .findAll { it > 100 }
+                    .sum()
+        then: 'we should get the expected result'
+            result == 247950
+    }
+    // end::closures9[]
+
+    // tag::closures10[]
+    Closure<Boolean> combineFiltersVerbose(final Closure<Boolean>... filters) {
+        Closure<Boolean> allFiltersCombined = { Integer number, Closure<Boolean>... allFilters -> // <1>
+            allFilters*.call(number).every { it }
+        }
+
+        // <2>
+        return allFiltersCombined.rcurry(filters)
+    }
+
+    void 'Combining filters with rcurry'() {
+        given: 'a huge list of numbers'
+            def numbers = (1..1000)
+        and: 'composing filtering'
+            def even = { it % 2 == 0 }
+            def greaterThanHundred = { it > 100 }
+            // <3>
+            def byCriteria =
+                combineFiltersVerbose(
+                    even,
+                    greaterThanHundred
+                )
+        when: 'applying several filters'
+            def result = numbers.findAll(byCriteria).sum() // <4>
+        then: 'we should get the expected result'
+            result == 247950
+    }
+    // end::closures10[]
+
+    // tag::closures11[]
+    Closure<Boolean> combineFilters(final Closure<Boolean>... filters) {
+        // <1>
+        return { Integer number ->
+            filters*.call(number).every { it }
+        }
+    }
+
+    void 'Combining filters with closure combination'() {
+        given: 'a huge list of numbers'
+            def numbers = (1..1000)
+        and: 'composing filtering'
+            def even = { it % 2 == 0 }
+            def greaterThanHundred = { it > 100 }
+            // <2>
+            def byCriteria =
+                combineFilters(
+                    even,
+                    greaterThanHundred
+                )
+        when: 'applying several filters'
+            def result = numbers.findAll(byCriteria).sum() // <3>
+        then: 'we should get the expected result'
+            result == 247950
+    }
+    // end::closures11[]
+
 }
 

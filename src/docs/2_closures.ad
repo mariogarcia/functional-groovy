@@ -81,8 +81,6 @@ include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures4,indent=0
 
 === Composition
 
-==== Applied to transformations
-
 Sometimes we end with a lot of functions used all over the code, but many
 times used in different ways, orders...etc.
 
@@ -148,11 +146,70 @@ to a list of numbers that eventually are going to be added up.
 <4> At this point I'm able to reuse the basic functionality to apply any single or
 combined function to it.
 
-==== Applied to filtering 
-
 === Currying
 
+==== What is currying ? 
+
 (TODO)
+
+==== Using curry, ncurry, rcurry
+
+(TODO)
+
+==== Currying combining closures 
+
+The same way we wanted to compose functions to transform values we may want to
+do the same with filtering.
+
+This time we will change the perspective. Instead of applying composed filter
+I think is more interesting how to aggregate filters in order to apply them.
+
+Think about an SQL operation, we wouln't want the database engine to apply 
+each filter for every row and aggregate the result from the previous execution right ?
+That would be crazy ? So if the database engine doesn't do it, neither do I.
+
+Our starting point is the less efective implementation where we're repeating our
+loop per each filter
+
+[source, groovy]
+.Filtering several times
+----
+include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures9,indent=0] 
+----
+
+I can't combine both filters as I did with transformation in the previous chapter.  Because the
+result of applying a filter is a boolean value. Than boolean value will be passed as the argument of
+the next function in line, and it will fail because all our filters are expecting a number.
+
+The strategy requires *_"currying"_*. 
+
+Let's show how to do it with normal *_Xcurry_* methods. Beware this won't be nice :(
+
+[source, groovy]
+.Combining filters using rcurry 
+----
+include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures10,indent=0] 
+----
+
+<1> First we create a closure with two parameters. We need to set the filters. All filters should be executed for every number
+<2> We need to use rcurry to set filters, because var-args arguments can only be the last parameter of a function
+<3> Passing all filter we want to apply in order
+<4> Filtering numbers
+
+[source, groovy]
+.Combining filters using closure combination
+----
+include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures11,indent=0] 
+----
+
+<1> In just one call we are using the behavior of closures to set the filters we will be
+using without having to use any Xcurry function
+<2> Passing all filter we want to apply in order
+<3> Filtering numbers
+
+Why I can do step number 1 ? Because the closure's *filter* value is set when the closure is
+declared with the references at that time.  Afterwards those values won't change. Anyway I made sure
+that couln't happen because I declare *_filters_* as a *_final_* parameter.
 
 === Delegation strategy
 
