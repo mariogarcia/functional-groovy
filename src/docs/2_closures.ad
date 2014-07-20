@@ -81,7 +81,74 @@ include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures4,indent=0
 
 === Composition
 
-(TODO)
+==== Applied to transformations
+
+Sometimes we end with a lot of functions used all over the code, but many
+times used in different ways, orders...etc.
+
+Imagine you have a problem and you only know there will be two numbers
+as an input and the result will be decimal. Your boss tells you to 
+add them up until he knows what the final calculation will be.
+
+Well it's not that bad isn't it ? It is going to be a simple sum, lets
+hardcode it and leave it alone.
+
+[source, groovy]
+.Harcoding solution which is likely to change
+----
+include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures5,indent=0] 
+----
+
+Now your boss comes again and gives you the whole formula: All numbers should be
+multiplied 2 times and then be divided by 10 and eventually yes they should be
+added up.
+
+Ok, now you have to modify your code:
+
+[source, groovy]
+.Modifying your logic
+----
+include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures6,indent=0] 
+----
+
+You may be thinking the code is still legibible and there is nothing wrong to
+keep it that way. Well I disagree. First of all you are looping the collection
+twice, that could be a lot of numbers, be carefull with that. And the second ...
+will see that later ;)
+
+I'm going to compose first two functions to be applied only once per item before
+adding up all numbers.
+
+[source, groovy]
+.Composing
+----
+include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures7,indent=0] 
+----
+
+<1> Declaring first part of the calculation
+<2> Declaring second part of the calculation
+<3> Combining both of them. Execution will be from left to right. First multiplication, 
+then division
+<4> Using the combined function per each item
+
+Composition could be done from left to right or the other way around, it depends on the developer's
+decision. But this has to change a little bit more. We still have our functions
+
+[source, groovy]
+.Composing
+----
+include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures8,indent=0] 
+----
+
+<1> I've moved functions that I will probably reuse to static methods. That way I can
+combine them without harcode them in my methods
+<2> In this method I describe the problem I've been dealing with. Applying a function
+to a list of numbers that eventually are going to be added up.
+<3> I'm using the composed function here
+<4> At this point I'm able to reuse the basic functionality to apply any single or
+combined function to it.
+
+==== Applied to filtering 
 
 === Currying
 
