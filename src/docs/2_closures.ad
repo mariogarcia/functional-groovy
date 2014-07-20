@@ -207,7 +207,7 @@ using without having to use any Xcurry function
 <2> Passing all filter we want to apply in order
 <3> Filtering numbers
 
-Why I can do step number 1 ? Because the closure's *filter* value is set when the closure is
+Why can I do step number 1 ? Because the closure's *filter* value is set when the closure is
 declared with the references at that time.  Afterwards those values won't change. Anyway I made sure
 that couln't happen because I declare *_filters_* as a *_final_* parameter.
 
