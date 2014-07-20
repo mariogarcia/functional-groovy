@@ -628,13 +628,343 @@ element in the collection.</td>
 <div class="sect2">
 <h3 id="_composition">2.3. Composition</h3>
 <div class="paragraph">
-<p>(TODO)</p>
+<p>Sometimes we end with a lot of functions used all over the code, but many
+times used in different ways, orders&#8230;etc.</p>
+</div>
+<div class="paragraph">
+<p>Imagine you have a problem and you only know there will be two numbers
+as an input and the result will be decimal. Your boss tells you to
+add them up until he knows what the final calculation will be.</p>
+</div>
+<div class="paragraph">
+<p>Well it&#8217;s not that bad isn&#8217;t it ? It is going to be a simple sum, lets
+hardcode it and leave it alone.</p>
+</div>
+<div class="listingblock">
+<div class="title">Harcoding solution which is likely to change</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>Integer calculate1(Integer... numbers) {
+    return numbers.sum()
+}
+
+void 'Composition: Just one calculation. No composition'() {
+    given: 'two numbers as input'
+        def first = 1
+        def second = 2
+    when: 'invoking the function'
+        def result = calculate1(first, second)
+    then: 'we should be getting the sum'
+        result == 3
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now your boss comes again and gives you the whole formula: All numbers should be
+multiplied 2 times and then be divided by 10 and eventually yes they should be
+added up.</p>
+</div>
+<div class="paragraph">
+<p>Ok, now you have to modify your code:</p>
+</div>
+<div class="listingblock">
+<div class="title">Modifying your logic</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>Double calculate2(Integer... numbers) {
+    return numbers
+        .collect { it * 2 }
+        .collect { it / 10 }
+        .sum()
+}
+
+void 'Composition: Calculation gets bigger. No composition'() {
+    given: 'two numbers as input'
+        def first = 10
+        def second = 20
+    when: 'invoking the function'
+        def result = calculate2(first, second)
+    then: 'the result should be the expected'
+        result == 6
+}
+</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You may be thinking the code is still legibible and there is nothing wrong to
+keep it that way. Well I disagree. First of all you are looping the collection
+twice, that could be a lot of numbers, be carefull with that. And the second &#8230;
+will see that later ;)</p>
+</div>
+<div class="paragraph">
+<p>I&#8217;m going to compose first two functions to be applied only once per item before
+adding up all numbers.</p>
+</div>
+<div class="listingblock">
+<div class="title">Composing</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>Double calculate3(Integer... numbers) {
+    def twoTimes = { it * 2 } <i class="conum" data-value="1"></i><b>(1)</b>
+    def divideByTen = { it / 10 } <i class="conum" data-value="2"></i><b>(2)</b>
+    def composedFn = twoTimes &gt;&gt; divideByTen <i class="conum" data-value="3"></i><b>(3)</b>
+
+    return numbers
+        .collect(composedFn) <i class="conum" data-value="4"></i><b>(4)</b>
+        .sum()
+}
+
+void 'Composition: Calculation gets bigger. Composing'() {
+    given: 'two numbers as input'
+        def first = 10
+        def second = 20
+    when: 'invoking the function'
+        def result = calculate3(first, second)
+    then: 'the result should be the expected'
+        result == 6
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Declaring first part of the calculation</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Declaring second part of the calculation</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Combining both of them. Execution will be from left to right. First multiplication,
+then division</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Using the combined function per each item</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Composition could be done from left to right or the other way around, it depends on the developer&#8217;s
+decision. But this has to change a little bit more. We still have our functions</p>
+</div>
+<div class="listingblock">
+<div class="title">Composing</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code><i class="conum" data-value="1"></i><b>(1)</b>
+Double calculate4(Integer... numbers) {
+    def operation =
+        Calculations.divideByTen &lt;&lt;
+        Calculations.twoTimes
+
+    return numbers.collect(operation).sum()
+}
+
+<i class="conum" data-value="2"></i><b>(2)</b>
+Double applyFunctionAndSum(Closure&lt;Number&gt; fn, Integer... numbers) {
+    return numbers.collect(fn).sum()
+}
+
+void 'Composition: Calculation gets bigger. Composing'() {
+    given: 'two numbers as input'
+        def first = 10
+        def second = 20
+    when: 'invoking the function'
+        def result1 = calculate4(first, second) <i class="conum" data-value="3"></i><b>(3)</b>
+        def result2 =
+            applyFunctionAndSum(Calculations.twoTimes, first, second) <i class="conum" data-value="4"></i><b>(4)</b>
+    then: 'the result should be the expected'
+        result1 == 6
+        result2 == 60
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>I&#8217;ve moved functions that I will probably reuse to static methods. That way I can
+combine them without harcode them in my methods</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>In this method I describe the problem I&#8217;ve been dealing with. Applying a function
+to a list of numbers that eventually are going to be added up.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>I&#8217;m using the composed function here</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>At this point I&#8217;m able to reuse the basic functionality to apply any single or
+combined function to it.</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_currying">2.4. Currying</h3>
+<div class="sect3">
+<h4 id="_what_is_currying">2.4.1. What is currying ?</h4>
 <div class="paragraph">
 <p>(TODO)</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_using_curry_ncurry_rcurry">2.4.2. Using curry, ncurry, rcurry</h4>
+<div class="paragraph">
+<p>(TODO)</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_currying_combining_closures">2.4.3. Currying combining closures</h4>
+<div class="paragraph">
+<p>The same way we wanted to compose functions to transform values we may want to
+do the same with filtering.</p>
+</div>
+<div class="paragraph">
+<p>This time we will change the perspective. Instead of applying composed filter
+I think is more interesting how to aggregate filters in order to apply them.</p>
+</div>
+<div class="paragraph">
+<p>Think about an SQL operation, we wouln&#8217;t want the database engine to apply
+each filter for every row and aggregate the result from the previous execution right ?
+That would be crazy ? So if the database engine doesn&#8217;t do it, neither do I.</p>
+</div>
+<div class="paragraph">
+<p>Our starting point is the less efective implementation where we&#8217;re repeating our
+loop per each filter</p>
+</div>
+<div class="listingblock">
+<div class="title">Filtering several times</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>void 'Composing for filtering: no composition'() {
+    given: 'a huge list of numbers'
+        def numbers = (1..1000)
+    when: 'applying several filters...wrong'
+        def result =
+            numbers
+                .findAll { it % 2 == 0 }
+                .findAll { it &gt; 100 }
+                .sum()
+    then: 'we should get the expected result'
+        result == 247950
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>I can&#8217;t combine both filters as I did with transformation in the previous chapter.  Because the
+result of applying a filter is a boolean value. Than boolean value will be passed as the argument of
+the next function in line, and it will fail because all our filters are expecting a number.</p>
+</div>
+<div class="paragraph">
+<p>The strategy requires <strong><em>"currying"</em></strong>.</p>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s show how to do it with normal <strong><em>Xcurry</em></strong> methods. Beware this won&#8217;t be nice :(</p>
+</div>
+<div class="listingblock">
+<div class="title">Combining filters using rcurry</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>Closure&lt;Boolean&gt; combineFiltersVerbose(final Closure&lt;Boolean&gt;... filters) {
+    Closure&lt;Boolean&gt; allFiltersCombined = { Integer number, Closure&lt;Boolean&gt;... allFilters -&gt; <i class="conum" data-value="1"></i><b>(1)</b>
+        allFilters*.call(number).every { it }
+    }
+
+    <i class="conum" data-value="2"></i><b>(2)</b>
+    return allFiltersCombined.rcurry(filters)
+}
+
+void 'Combining filters with rcurry'() {
+    given: 'a huge list of numbers'
+        def numbers = (1..1000)
+    and: 'composing filtering'
+        def even = { it % 2 == 0 }
+        def greaterThanHundred = { it &gt; 100 }
+        <i class="conum" data-value="3"></i><b>(3)</b>
+        def byCriteria =
+            combineFiltersVerbose(
+                even,
+                greaterThanHundred
+            )
+    when: 'applying several filters'
+        def result = numbers.findAll(byCriteria).sum() <i class="conum" data-value="4"></i><b>(4)</b>
+    then: 'we should get the expected result'
+        result == 247950
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>First we create a closure with two parameters. We need to set the filters. All filters should be executed for every number</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>We need to use rcurry to set filters, because var-args arguments can only be the last parameter of a function</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Passing all filter we want to apply in order</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Filtering numbers</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Combining filters using closure combination</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>Closure&lt;Boolean&gt; combineFilters(final Closure&lt;Boolean&gt;... filters) {
+    <i class="conum" data-value="1"></i><b>(1)</b>
+    return { Integer number -&gt;
+        filters*.call(number).every { it }
+    }
+}
+
+void 'Combining filters with closure combination'() {
+    given: 'a huge list of numbers'
+        def numbers = (1..1000)
+    and: 'composing filtering'
+        def even = { it % 2 == 0 }
+        def greaterThanHundred = { it &gt; 100 }
+        <i class="conum" data-value="2"></i><b>(2)</b>
+        def byCriteria =
+            combineFilters(
+                even,
+                greaterThanHundred
+            )
+    when: 'applying several filters'
+        def result = numbers.findAll(byCriteria).sum() <i class="conum" data-value="3"></i><b>(3)</b>
+    then: 'we should get the expected result'
+        result == 247950
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>In just one call we are using the behavior of closures to set the filters we will be
+using without having to use any Xcurry function</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Passing all filter we want to apply in order</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Filtering numbers</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Why I can do step number 1 ? Because the closure&#8217;s <strong>filter</strong> value is set when the closure is
+declared with the references at that time.  Afterwards those values won&#8217;t change. Anyway I made sure
+that couln&#8217;t happen because I declare <strong><em>filters</em></strong> as a <strong><em>final</em></strong> parameter.</p>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -2641,7 +2971,7 @@ and: 'transformation has been applied'
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-06-27 00:15:02 CEST
+Last updated 2014-07-20 21:14:42 CEST
 </div>
 </div>
 </body>
