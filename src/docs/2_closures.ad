@@ -221,7 +221,40 @@ that couln't happen because I declare *_filters_* as a *_final_* parameter.
 
 === Trampoline 
 
-(TODO)
+When writing recursive code, sometimes we can overflow the size of the stack and get and
+Stackoverflow exception. To prevent that situation, Groovy gives us two solutions:
+
+* Closure's *_trampoline()_* method
+* *_@TailRecursion_* AST transformation
+
+A good example is to try to add up a list of numbers recursively.
+
+[source, groovy]
+.Recursion with trampoline()
+----
+include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures12,indent=0] 
+----
+
+<1> We need to declare sumRecursively and then attach its behabior to the actual variable
+<2> Within the function every time we make a recursive call we must call to the "trampoline" 
+version of the function
+<3> Finally to init the whole process execute a "trampoline" version of the closure
+
+It works ok but it seems a little bit complicated. Get a version with trampoline()
+then not forget to call trampoline with arguments...mmmmm  
+
+*_@TailRecursive_* transformation helps you to avoid dealing with that kind of details.
+You just focus on the implementation and it handles how to make the function to a 
+recursive one. This AST transformation is avaiable since version 2.3 of Groovy.
+
+The only requirement here is to put the recursive call as the last expression in the 
+method body (at the tail, that's why it's called tail recursion optimization).
+
+[source, groovy]
+.Recursion with @TailRecursive 
+----
+include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures13,indent=0] 
+----
 
 === Functional interface coercion
 

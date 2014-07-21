@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-    compile 'org.codehaus.groovy:groovy:2.2.1'
+    compile 'org.codehaus.groovy:groovy:2.3.2'
     compile 'org.codehaus.gpars:gpars:1.2.0'
     compile('com.bloidonia:groovy-stream:0.6.2') {
         exclude group: 'groovy'

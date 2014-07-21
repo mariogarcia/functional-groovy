@@ -214,5 +214,48 @@ class ClosuresSpec extends Specification {
     }
     // end::closures11[]
 
+    // tag::closures12[]
+    void 'Trampoline: Adding up numbers recursively'() {
+        given: 'a closure prepared to call itself recursively'
+            def sumRecursively // <1>
+            sumRecursively = { List<Integer> numbers, aggregator = 0 ->
+                if (!numbers) {
+                    return aggregator
+                } else {
+                    sumRecursively.trampoline( // <2>
+                            numbers.tail(),
+                            aggregator + numbers.head())
+                }
+            }
+        when: 'usisng the transformed version of closure'
+            sumRecursively = sumRecursively.trampoline() // <3>
+            def result = sumRecursively(1..10000)
+        then: 'we should get the result without the stackoverflow exception'
+            result == 50005000
+    }
+    // end::closures12[]
+
+
+    // tag::closures13[]
+    @groovy.transform.TailRecursive
+    Integer recursiveSum(List<Integer> numbers, Integer aggregator = 0) {
+        if (!numbers) {
+            return aggregator
+        } else {
+            return recursiveSum(
+                numbers.tail(),
+                numbers.head() + aggregator
+            )
+        }
+    }
+
+    void 'TailRecursive: recursive sum'() {
+        when: 'using the transformed method'
+            def result = recursiveSum(1..10000)
+        then: 'we should get the result without the stackoverflow exception'
+            result == 50005000
+    }
+    // end::closures13[]
+
 }
 
