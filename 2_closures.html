@@ -774,7 +774,63 @@ that couln&#8217;t happen because I declare <strong><em>filters</em></strong> as
 <div class="sect2">
 <h3 id="_trampoline">Trampoline</h3>
 <div class="paragraph">
-<p>(TODO)</p>
+<p>When writing recursive code, sometimes we can overflow the size of the stack and get and
+Stackoverflow exception. To prevent that situation, Groovy gives us two solutions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Closure&#8217;s <strong><em>trampoline()</em></strong> method</p>
+</li>
+<li>
+<p><strong><em>@TailRecursion</em></strong> AST transformation</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>A good example is to try to add up a list of numbers recursively.</p>
+</div>
+<div class="listingblock">
+<div class="title">Recursion with trampoline()</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures12,indent=0]</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>We need to declare sumRecursively and then attach its behabior to the actual variable</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Within the function every time we make a recursive call we must call to the "trampoline"
+version of the function</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Finally to init the whole process execute a "trampoline" version of the closure</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>It works ok but it seems a little bit complicated. Get a version with trampoline()
+then not forget to call trampoline with arguments&#8230;mmmmm</p>
+</div>
+<div class="paragraph">
+<p><strong><em>@TailRecursive</em></strong> transformation helps you to avoid dealing with that kind of details.
+You just focus on the implementation and it handles how to make the function to a
+recursive one. This AST transformation is avaiable since version 2.3 of Groovy.</p>
+</div>
+<div class="paragraph">
+<p>The only requirement here is to put the recursive call as the last expression in the
+method body (at the tail, that&#8217;s why it&#8217;s called tail recursion optimization).</p>
+</div>
+<div class="listingblock">
+<div class="title">Recursion with @TailRecursive</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures13,indent=0]</code></pre>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -788,7 +844,7 @@ that couln&#8217;t happen because I declare <strong><em>filters</em></strong> as
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-07-20 22:52:11 CEST
+Last updated 2014-07-21 04:27:00 CEST
 </div>
 </div>
 </body>
