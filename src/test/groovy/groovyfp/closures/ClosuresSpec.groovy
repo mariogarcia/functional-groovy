@@ -161,11 +161,10 @@ class ClosuresSpec extends Specification {
     // tag::closures10[]
     Closure<Boolean> combineFiltersVerbose(final Closure<Boolean>... filters) {
         Closure<Boolean> allFiltersCombined = { Integer number, Closure<Boolean>... allFilters -> // <1>
-            allFilters*.call(number).every { it }
+            allFilters*.call(number).every()
         }
 
-        // <2>
-        return allFiltersCombined.rcurry(filters)
+        return allFiltersCombined.rcurry(filters) // <2>
     }
 
     void 'Combining filters with rcurry'() {
@@ -174,12 +173,7 @@ class ClosuresSpec extends Specification {
         and: 'composing filtering'
             def even = { it % 2 == 0 }
             def greaterThanHundred = { it > 100 }
-            // <3>
-            def byCriteria =
-                combineFiltersVerbose(
-                    even,
-                    greaterThanHundred
-                )
+            def byCriteria = combineFiltersVerbose(even, greaterThanHundred) // <3>
         when: 'applying several filters'
             def result = numbers.findAll(byCriteria).sum() // <4>
         then: 'we should get the expected result'
@@ -189,9 +183,8 @@ class ClosuresSpec extends Specification {
 
     // tag::closures11[]
     Closure<Boolean> combineFilters(final Closure<Boolean>... filters) {
-        // <1>
-        return { Integer number ->
-            filters*.call(number).every { it }
+        return { Integer number -> // <1>
+            filters*.call(number).every()
         }
     }
 
@@ -201,12 +194,7 @@ class ClosuresSpec extends Specification {
         and: 'composing filtering'
             def even = { it % 2 == 0 }
             def greaterThanHundred = { it > 100 }
-            // <2>
-            def byCriteria =
-                combineFilters(
-                    even,
-                    greaterThanHundred
-                )
+            def byCriteria = combineFilters(even, greaterThanHundred) // <2>
         when: 'applying several filters'
             def result = numbers.findAll(byCriteria).sum() // <3>
         then: 'we should get the expected result'
@@ -256,6 +244,47 @@ class ClosuresSpec extends Specification {
             result == 50005000
     }
     // end::closures13[]
+
+    // tag::closures14[]
+    void 'curry(...): partial application'() {
+        given: 'a function taking a certain number of args'
+            def fn1 = { a, b, c -> a + b + c } // <1>
+        when: 'producting another functions'
+            def fn2 = fn1.curry(1) // <2>
+            def fn3 = fn1.curry(1, 2, 3) // <3>
+        then: 'different applications'
+            fn2(4, 5) == 10
+            fn3() == 6
+    }
+    // end::closures14[]
+
+    // tag::closures15[]
+    void 'rcurry(...): partial application'() {
+        given: 'a source function'
+            def fn1 = { String name, Integer age, String city ->
+                return "$name is $age and is from $city"
+            }
+        when: 'producing new funtions'
+            def fn2 = fn1.rcurry('Madrid')
+            def fn3 = fn1.rcurry(22, 'Barcelona')
+        then: 'we could use them in several different ways'
+            fn2('John', 37) == 'John is 37 and is from Madrid'
+            fn3('Ronnie') == 'Ronnie is 22 and is from Barcelona'
+    }
+    // end::closures15[]
+
+    // tag::closures16[]
+    void 'ncurry(...): partial application'() {
+        given: 'a source function'
+            def fn1 = { String name, Integer age, String city ->
+                return "$name is $age and is from $city"
+            }
+        when: 'producing a new function'
+            def fn2 = fn1.ncurry(1,22) // <1>
+        then: 'we should get the expected result'
+            fn2('John', 'Madrid') == 'John is 22 and is from Madrid'
+    }
+    // end::closures16[]
 
 }
 

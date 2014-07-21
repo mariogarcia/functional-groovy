@@ -150,22 +150,110 @@ combined function to it.
 
 ==== What is currying ? 
 
-(TODO)
+The term takes its name from the american mathematician Haskell Curry. A good formal definition
+could be:
+
+[,Wikipedia]
+""
+Currying is the technique of transforming a function that takes multiple arguments in such a way
+that it can be called as a chain of functions each with a single argument.
+""
+
+_Currying_ is a special case of *_partial application_* which is:
+
+[, Wikipedia]
+""
+In computer science, partial application (or partial function application) refers to the process of
+fixing a number of arguments to a function, producing another function of smaller arity...
+""
+
+Why are both definitions important ? Well, although I've just showed you the formal definition of
+both _currying_ and _partial application_ in Groovy we tend to use the term _currying_ most of the
+time meaning partial applications. From now on I will using the formal definitions mentioned above.
 
 ==== Using curry, ncurry, rcurry
 
-(TODO)
+There are three specialized methods for the Closure type in order to produce 
+partial applications of your closures.
 
-==== Currying combining closures 
+The first one is *_curry_*. This method takes a var-arg parameter in order to set any number of
+available closure parameters and return the partial application of it.
 
-The same way we wanted to compose functions to transform values we may want to
-do the same with filtering.
+[source, groovy]
+.curry(...)
+----
+include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures14,indent=0] 
+----
 
-This time we will change the perspective. Instead of applying composed filter
-I think is more interesting how to aggregate filters in order to apply them.
+<1> A function having 3 parameters
+<2> We set the first parameter of the source function producing a new function with
+two parameters
+<3> This time we may want to set all parameters to pospone the execution of the function
+
+Using *_curry(...)_* you can pass at most the same number of arguments of the source closure,
+otherwise you will get an IllegalAgumentException. The parameters are set from left to right.
+
+In case you wanted to produce partial applications of a given function applying fixed values
+from right to left, then you should be using *_rcurry(...)_* method.
+
+[source, groovy]
+.rcurry(...)
+----
+include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures15,indent=0] 
+----
+
+*_rcurry_* may seem a little bit awkward because notice how parameters are passed
+to _rcurry_. One may expect to keep inverse order from right to left, I mean...
+if we had this function:
+
+[source, groovy]
+.rcurry(...) explanation
+----
+def myFunction = { String a, Integer b, Double c -> /*...*/ }
+----
+
+If we wanted to set two fixed parameters I may expect that rcurry should be applied like this:
+
+[source, groovy]
+.rcurry(...) wrong use 
+----
+// WRONG 
+def myFunction2 = myFunction1.rcurry(22.2, 3) 
+----
+
+But instead _rcurry_ expects to kee the same order:
+
+[source, groovy]
+.rcurry(...) correct 
+----
+// CORRECT 
+def myFunction2 = myFunction1.rcurry(3, 22.2) 
+----
+
+Last but not least. If you would like to produce a partial application of a given closure for any
+parameter at any position you can use *_ncurry_*.
+
+[source, groovy]
+.ncurry(...)
+----
+include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures16,indent=0] 
+----
+
+<1> Here we want to set only the second parameter from the left hand side.
+
+When using *_ncurry_* you just place the cursor at a given point and start setting
+fixed parameters from left to right.
+
+==== Combining closures 
+
+The same way we wanted to compose functions to transform values, we may want to
+do the same thing with filtering.
+
+This time we will change perspective. Instead of applying composed filters I think it would be more
+interesting how to aggregate filters in order to apply them, for example, to a collection.
 
 Think about an SQL operation, we wouln't want the database engine to apply 
-each filter for every row and aggregate the result from the previous execution right ?
+each filter for every row and aggregate the result from the previous execution, Would we?
 That would be crazy ? So if the database engine doesn't do it, neither do I.
 
 Our starting point is the less efective implementation where we're repeating our
@@ -181,9 +269,8 @@ I can't combine both filters as I did with transformation in the previous chapte
 result of applying a filter is a boolean value. Than boolean value will be passed as the argument of
 the next function in line, and it will fail because all our filters are expecting a number.
 
-The strategy requires *_"currying"_*. 
-
-Let's show how to do it with normal *_Xcurry_* methods. Beware this won't be nice :(
+The strategy requires to apply a partial application of the function.  Let's show how to do it with
+normal *_Xcurry_* methods. 
 
 [source, groovy]
 .Combining filters using rcurry 
@@ -191,13 +278,23 @@ Let's show how to do it with normal *_Xcurry_* methods. Beware this won't be nic
 include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures10,indent=0] 
 ----
 
-<1> First we create a closure with two parameters. We need to set the filters. All filters should be executed for every number
+<1> First we create a closure with two parameters. We need to add some filters. All filters should be executed for every number
 <2> We need to use rcurry to set filters, because var-args arguments can only be the last parameter of a function
 <3> Passing all filter we want to apply in order
 <4> Filtering numbers
 
+Now we will be applying all filters for every single item, just once. We made
+our filtering process more efficient. Well done !!
+
+It's true that sometimes it's a little bit verbose to use _Xcurry(...)_ methods but
+it's also true that using that technique functions are more reusable.
+
+Here there is another technique which consist of making functions return other functions. Eventually
+is what _Xcurry(...)_ methods will do for you underneath, but sometimes may look clearer to the reader what
+the partial application tries to do.
+
 [source, groovy]
-.Combining filters using closure combination
+.Combining filters making a closure to return another closure
 ----
 include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures11,indent=0] 
 ----
