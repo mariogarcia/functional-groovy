@@ -807,28 +807,183 @@ combined function to it.</td>
 <div class="sect3">
 <h4 id="_what_is_currying">2.4.1. What is currying ?</h4>
 <div class="paragraph">
-<p>(TODO)</p>
+<p>The term takes its name from the american mathematician Haskell Curry. A good formal definition
+could be:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Currying is the technique of transforming a function that takes multiple arguments in such a way
+that it can be called as a chain of functions each with a single argument.</p>
+</div>
+</blockquote>
+<div class="attribution">
+&#8212; Wikipedia
+</div>
+</div>
+<div class="paragraph">
+<p><em>Currying</em> is a special case of <strong><em>partial application</em></strong> which is:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>In computer science, partial application (or partial function application) refers to the process of
+fixing a number of arguments to a function, producing another function of smaller arity&#8230;</p>
+</div>
+</blockquote>
+<div class="attribution">
+&#8212; Wikipedia
+</div>
+</div>
+<div class="paragraph">
+<p>Why are both definitions important ? Well, although I&#8217;ve just showed you the formal definition of
+both <em>currying</em> and <em>partial application</em> in Groovy we tend to use the term <em>currying</em> most of the
+time meaning partial applications. From now on I will using the formal definitions mentioned above.</p>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_using_curry_ncurry_rcurry">2.4.2. Using curry, ncurry, rcurry</h4>
 <div class="paragraph">
-<p>(TODO)</p>
+<p>There are three specialized methods for the Closure type in order to produce
+partial applications of your closures.</p>
+</div>
+<div class="paragraph">
+<p>The first one is <strong><em>curry</em></strong>. This method takes a var-arg parameter in order to set any number of
+available closure parameters and return the partial application of it.</p>
+</div>
+<div class="listingblock">
+<div class="title">curry(&#8230;)</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>void 'curry(...): partial application'() {
+    given: 'a function taking a certain number of args'
+        def fn1 = { a, b, c -&gt; a + b + c } <i class="conum" data-value="1"></i><b>(1)</b>
+    when: 'producting another functions'
+        def fn2 = fn1.curry(1) <i class="conum" data-value="2"></i><b>(2)</b>
+        def fn3 = fn1.curry(1, 2, 3) <i class="conum" data-value="3"></i><b>(3)</b>
+    then: 'different applications'
+        fn2(4, 5) == 10
+        fn3() == 6
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>A function having 3 parameters</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>We set the first parameter of the source function producing a new function with
+two parameters</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>This time we may want to set all parameters to pospone the execution of the function</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Using <strong><em>curry(&#8230;)</em></strong> you can pass at most the same number of arguments of the source closure,
+otherwise you will get an IllegalAgumentException. The parameters are set from left to right.</p>
+</div>
+<div class="paragraph">
+<p>In case you wanted to produce partial applications of a given function applying fixed values
+from right to left, then you should be using <strong><em>rcurry(&#8230;)</em></strong> method.</p>
+</div>
+<div class="listingblock">
+<div class="title">rcurry(&#8230;)</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>void 'rcurry(...): partial application'() {
+    given: 'a source function'
+        def fn1 = { String name, Integer age, String city -&gt;
+            return "$name is $age and is from $city"
+        }
+    when: 'producing new funtions'
+        def fn2 = fn1.rcurry('Madrid')
+        def fn3 = fn1.rcurry(22, 'Barcelona')
+    then: 'we could use them in several different ways'
+        fn2('John', 37) == 'John is 37 and is from Madrid'
+        fn3('Ronnie') == 'Ronnie is 22 and is from Barcelona'
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong><em>rcurry</em></strong> may seem a little bit awkward because notice how parameters are passed
+to <em>rcurry</em>. One may expect to keep inverse order from right to left, I mean&#8230;
+if we had this function:</p>
+</div>
+<div class="listingblock">
+<div class="title">rcurry(&#8230;) explanation</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>def myFunction = { String a, Integer b, Double c -&gt; /*...*/ }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If we wanted to set two fixed parameters I may expect that rcurry should be applied like this:</p>
+</div>
+<div class="listingblock">
+<div class="title">rcurry(&#8230;) wrong use</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>// WRONG
+def myFunction2 = myFunction1.rcurry(22.2, 3)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>But instead <em>rcurry</em> expects to kee the same order:</p>
+</div>
+<div class="listingblock">
+<div class="title">rcurry(&#8230;) correct</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>// CORRECT
+def myFunction2 = myFunction1.rcurry(3, 22.2)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Last but not least. If you would like to produce a partial application of a given closure for any
+parameter at any position you can use <strong><em>ncurry</em></strong>.</p>
+</div>
+<div class="listingblock">
+<div class="title">ncurry(&#8230;)</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>void 'ncurry(...): partial application'() {
+    given: 'a source function'
+        def fn1 = { String name, Integer age, String city -&gt;
+            return "$name is $age and is from $city"
+        }
+    when: 'producing a new function'
+        def fn2 = fn1.ncurry(1,22) <i class="conum" data-value="1"></i><b>(1)</b>
+    then: 'we should get the expected result'
+        fn2('John', 'Madrid') == 'John is 22 and is from Madrid'
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Here we want to set only the second parameter from the left hand side.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>When using <strong><em>ncurry</em></strong> you just place the cursor at a given point and start setting
+fixed parameters from left to right.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_currying_combining_closures">2.4.3. Currying combining closures</h4>
+<h4 id="_combining_closures">2.4.3. Combining closures</h4>
 <div class="paragraph">
-<p>The same way we wanted to compose functions to transform values we may want to
-do the same with filtering.</p>
+<p>The same way we wanted to compose functions to transform values, we may want to
+do the same thing with filtering.</p>
 </div>
 <div class="paragraph">
-<p>This time we will change the perspective. Instead of applying composed filter
-I think is more interesting how to aggregate filters in order to apply them.</p>
+<p>This time we will change perspective. Instead of applying composed filters I think it would be more
+interesting how to aggregate filters in order to apply them, for example, to a collection.</p>
 </div>
 <div class="paragraph">
 <p>Think about an SQL operation, we wouln&#8217;t want the database engine to apply
-each filter for every row and aggregate the result from the previous execution right ?
+each filter for every row and aggregate the result from the previous execution, Would we?
 That would be crazy ? So if the database engine doesn&#8217;t do it, neither do I.</p>
 </div>
 <div class="paragraph">
@@ -858,21 +1013,18 @@ result of applying a filter is a boolean value. Than boolean value will be passe
 the next function in line, and it will fail because all our filters are expecting a number.</p>
 </div>
 <div class="paragraph">
-<p>The strategy requires <strong><em>"currying"</em></strong>.</p>
-</div>
-<div class="paragraph">
-<p>Let&#8217;s show how to do it with normal <strong><em>Xcurry</em></strong> methods. Beware this won&#8217;t be nice :(</p>
+<p>The strategy requires to apply a partial application of the function.  Let&#8217;s show how to do it with
+normal <strong><em>Xcurry</em></strong> methods.</p>
 </div>
 <div class="listingblock">
 <div class="title">Combining filters using rcurry</div>
 <div class="content">
 <pre class="prettyprint groovy language-groovy"><code>Closure&lt;Boolean&gt; combineFiltersVerbose(final Closure&lt;Boolean&gt;... filters) {
     Closure&lt;Boolean&gt; allFiltersCombined = { Integer number, Closure&lt;Boolean&gt;... allFilters -&gt; <i class="conum" data-value="1"></i><b>(1)</b>
-        allFilters*.call(number).every { it }
+        allFilters*.call(number).every()
     }
 
-    <i class="conum" data-value="2"></i><b>(2)</b>
-    return allFiltersCombined.rcurry(filters)
+    return allFiltersCombined.rcurry(filters) <i class="conum" data-value="2"></i><b>(2)</b>
 }
 
 void 'Combining filters with rcurry'() {
@@ -881,12 +1033,7 @@ void 'Combining filters with rcurry'() {
     and: 'composing filtering'
         def even = { it % 2 == 0 }
         def greaterThanHundred = { it &gt; 100 }
-        <i class="conum" data-value="3"></i><b>(3)</b>
-        def byCriteria =
-            combineFiltersVerbose(
-                even,
-                greaterThanHundred
-            )
+        def byCriteria = combineFiltersVerbose(even, greaterThanHundred) <i class="conum" data-value="3"></i><b>(3)</b>
     when: 'applying several filters'
         def result = numbers.findAll(byCriteria).sum() <i class="conum" data-value="4"></i><b>(4)</b>
     then: 'we should get the expected result'
@@ -898,7 +1045,7 @@ void 'Combining filters with rcurry'() {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>First we create a closure with two parameters. We need to set the filters. All filters should be executed for every number</td>
+<td>First we create a closure with two parameters. We need to add some filters. All filters should be executed for every number</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -914,13 +1061,25 @@ void 'Combining filters with rcurry'() {
 </tr>
 </table>
 </div>
+<div class="paragraph">
+<p>Now we will be applying all filters for every single item, just once. We made
+our filtering process more efficient. Well done !!</p>
+</div>
+<div class="paragraph">
+<p>It&#8217;s true that sometimes it&#8217;s a little bit verbose to use <em>Xcurry(&#8230;)</em> methods but
+it&#8217;s also true that using that technique functions are more reusable.</p>
+</div>
+<div class="paragraph">
+<p>Here there is another technique which consist of making functions return other functions. Eventually
+is what <em>Xcurry(&#8230;)</em> methods will do for you underneath, but sometimes may look clearer to the reader what
+the partial application tries to do.</p>
+</div>
 <div class="listingblock">
-<div class="title">Combining filters using closure combination</div>
+<div class="title">Combining filters making a closure to return another closure</div>
 <div class="content">
 <pre class="prettyprint groovy language-groovy"><code>Closure&lt;Boolean&gt; combineFilters(final Closure&lt;Boolean&gt;... filters) {
-    <i class="conum" data-value="1"></i><b>(1)</b>
-    return { Integer number -&gt;
-        filters*.call(number).every { it }
+    return { Integer number -&gt; <i class="conum" data-value="1"></i><b>(1)</b>
+        filters*.call(number).every()
     }
 }
 
@@ -930,12 +1089,7 @@ void 'Combining filters with closure combination'() {
     and: 'composing filtering'
         def even = { it % 2 == 0 }
         def greaterThanHundred = { it &gt; 100 }
-        <i class="conum" data-value="2"></i><b>(2)</b>
-        def byCriteria =
-            combineFilters(
-                even,
-                greaterThanHundred
-            )
+        def byCriteria = combineFilters(even, greaterThanHundred) <i class="conum" data-value="2"></i><b>(2)</b>
     when: 'applying several filters'
         def result = numbers.findAll(byCriteria).sum() <i class="conum" data-value="3"></i><b>(3)</b>
     then: 'we should get the expected result'
