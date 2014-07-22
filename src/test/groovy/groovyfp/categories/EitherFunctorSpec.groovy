@@ -22,12 +22,28 @@ class EitherFunctorSpec extends Specification {
     // end::functor2[]
 
     // tag::functor3[]
-    void 'mapping identity function overy every item in a container has no effect'() {
-        given: 'identity'
+    void 'first law'() {
+        when: 'mapping identity function overy every item in a container'
             def identity = { Integer v -> v }
-        expect: 'applied to functor it has no effect'
+        then: 'it has no effect'
             right(1).fmap(identity).value == 1
     }
     // end::functor3[]
+
+    // tag::functor4[]
+    void 'second law'() {
+        when: 'Mapping a composition of two functions over every item in a container'
+            def inc = { Integer v -> v + 1 }
+            def twoTimes = { Integer v -> v * 2 }
+            def composition = inc >> twoTimes
+        then: 'the same as first mapping one function'
+        and: 'then mapping the other'
+            right(1)
+                .fmap(composition)
+                .value == right(right(1).fmap(inc).value)
+                            .fmap(twoTimes)
+                            .value
+    }
+    // end::functor4[]
 
 }

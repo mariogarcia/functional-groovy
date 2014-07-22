@@ -2,6 +2,8 @@
 
 === Functors
 
+==== Implementation
+
 [source, groovy]
 .Functor
 ----
@@ -20,14 +22,30 @@ include::{sourceDir}/groovyfp/categories/EitherFunctor.groovy[indent=0]
 include::{testDir}/groovyfp/categories/EitherFunctorSpec.groovy[tags=functor1, indent=0] 
 ----
 
-
 [source, groovy]
 .Using Either functor (cont.)
 ----
 include::{testDir}/groovyfp/categories/EitherFunctorSpec.groovy[tags=functor2, indent=0] 
 ----
 
+==== Laws 
 
+* Mapping the identity function overy every item in a container has not effect
+
+[source, groovy]
+.First law
+----
+include::{testDir}/groovyfp/categories/EitherFunctorSpec.groovy[tags=functor3, indent=0] 
+----
+
+* Mapping a composition of two functions over every item in a container is
+the same as first mapping one function, and then mapping the other.
+
+[source, groovy]
+.Second law
+----
+include::{testDir}/groovyfp/categories/EitherFunctorSpec.groovy[tags=functor4, indent=0] 
+----
 
 ==== Applicative
 
