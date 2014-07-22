@@ -1,3 +1,38 @@
 == The M-Word
 
-(TODO)
+=== Functors
+
+[source, groovy]
+.Functor
+----
+include::{sourceDir}/groovyfp/categories/Functor.groovy[indent=0] 
+----
+
+[source, groovy]
+.Functor implementation
+----
+include::{sourceDir}/groovyfp/categories/EitherFunctor.groovy[indent=0] 
+----
+
+[source, groovy]
+.Using Either functor
+----
+include::{testDir}/groovyfp/categories/EitherFunctorSpec.groovy[tags=functor1, indent=0] 
+----
+
+
+[source, groovy]
+.Using Either functor (cont.)
+----
+include::{testDir}/groovyfp/categories/EitherFunctorSpec.groovy[tags=functor2, indent=0] 
+----
+
+
+
+==== Applicative
+
+[source, groovy]
+.Applicative
+----
+include::{sourceDir}/groovyfp/categories/Applicative.groovy[indent=0] 
+----
