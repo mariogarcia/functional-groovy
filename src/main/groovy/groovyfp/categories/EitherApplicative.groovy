@@ -1,13 +1,33 @@
 package groovyfp.categories
 
-class EitherApplicative<T> extends EitherFunctor<T> implements Applicative {
+class EitherApplicative<T> implements Applicative, Functor<T> {
 
-    Applicative fapply(Applicative av) {
+    static enum Type {
+        LEFT, RIGHT
+    }
+
+    T value
+    Type type
+
+    EitherApplicative<T> fmap(Closure fn) {
+        return (type == Type.LEFT) ? this : right(fn(value))
+    }
+
+    EitherApplicative fapply(Applicative av) {
         return (type == Type.LEFT) ? this : av.fmap(value)
     }
 
-    Applicative pure(Object v) {
+    EitherApplicative pure(Object v) {
         return right(v)
     }
+
+    static EitherApplicative<T> right(T v) {
+        return new EitherApplicative<T>(value: v, type: Type.RIGHT)
+    }
+
+    static EitherApplicative<T> left(T v) {
+        return new EitherApplicative<T>(value: v, type: Type.LEFT)
+    }
+
 
 }

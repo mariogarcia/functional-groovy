@@ -1,14 +1,16 @@
 package groovyfp.categories
 
-import static EitherFunctor.right
-import static EitherFunctor.left
+import static EitherApplicative.right
+import static EitherApplicative.left
 
 import spock.lang.Specification
 
 class EitherApplicativeSpec extends Specification {
     void 'Applicative: Either applicative implementation'() {
-        expect: ''
-            true
+        when:
+            def inc = { Integer v -> v + 1 }
+        then:
+            left(null).fapply(right(1)).value == null
     }
 }
 

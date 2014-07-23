@@ -1,6 +1,10 @@
 == The M-Word
 
-=== Functors
+=== Functor
+
+Generally speaking a +Functor+ is any type you can map a function over. A +Functor+ represents a
+container/wrapper of some sort, along with the ability to apply a function to elements wrapped in
+the container
 
 ==== Implementation
 
@@ -47,10 +51,28 @@ the same as first mapping one function, and then mapping the other.
 include::{testDir}/groovyfp/categories/EitherFunctorSpec.groovy[tags=functor4, indent=0] 
 ----
 
-==== Applicative
+=== Applicative
 
 [source, groovy]
 .Applicative
 ----
 include::{sourceDir}/groovyfp/categories/Applicative.groovy[indent=0] 
 ----
+
+
+=== Monad
+
+[source, groovy]
+.Monad
+----
+include::{sourceDir}/groovyfp/categories/Monad.groovy[indent=0] 
+----
+
+[source, groovy]
+.Either demo
+----
+include::{testDir}/groovyfp/categories/EitherSpec.groovy[tags=eithermonad1, indent=0] 
+----
+
+
+

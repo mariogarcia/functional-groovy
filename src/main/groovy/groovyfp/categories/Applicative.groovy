@@ -1,6 +1,6 @@
 package groovyfp.categories
 
-interface Applicative extends Functor {
+interface Applicative {
     Applicative fapply(Applicative av)
     Applicative pure(Object v)
     Object getValue()
