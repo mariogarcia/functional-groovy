@@ -4,75 +4,46 @@
 
 Generally speaking a +Functor+ is any type you can map a function over. A +Functor+ represents a
 container/wrapper of some sort, along with the ability to apply a function to elements wrapped in
-the container
+the container 
+
+The formal definition of a Functor in Haskell is:
+
+[source, haskell]
+.Functor definition
+----
+class Functor f where
+    fmap :: (a -> b) -> fa -> fb
+----
+
+What does it mean ? Well it means that in order to build a new instance of a 
++Functor+ type the type should implement a *fmap* method.
+
+The *fmap* method receives a function *(a -> b)* which transforms an object
+of type *a* in another object of type *b*, and also a *Functor* of type *a* 
+and finally returns a functor of type *b*.
+
+How could we implement this ?
 
 ==== Implementation
 
-[source, groovy]
+[source, java]
 .Functor
 ----
-include::{sourceDir}/groovyfp/categories/Functor.groovy[indent=0] 
+include::{sourceDirJava}/groovyfp/categories/Functor.java[indent=0] 
 ----
 
-[source, groovy]
-.Functor implementation
-----
-include::{sourceDir}/groovyfp/categories/EitherFunctor.groovy[indent=0] 
-----
+So basically a functor allows us to apply a value to a function. Imagine we
+had a function adding 3 to any number. In Haskell we would be seeing this:
 
-[source, groovy]
-.Using Either functor
+[source,haskell]
+.Haskell example
 ----
-include::{testDir}/groovyfp/categories/EitherFunctorSpec.groovy[tags=functor1, indent=0] 
+fmap (+3) (Just 1)
 ----
 
-[source, groovy]
-.Using Either functor (cont.)
-----
-include::{testDir}/groovyfp/categories/EitherFunctorSpec.groovy[tags=functor2, indent=0] 
-----
+I'll try to reproduce the same behavior, now with Groovy :) We will be following
+these steps:
 
-==== Laws 
-
-* Mapping the identity function overy every item in a container has not effect
-
-[source, groovy]
-.First law
-----
-include::{testDir}/groovyfp/categories/EitherFunctorSpec.groovy[tags=functor3, indent=0] 
-----
-
-* Mapping a composition of two functions over every item in a container is
-the same as first mapping one function, and then mapping the other.
-
-[source, groovy]
-.Second law
-----
-include::{testDir}/groovyfp/categories/EitherFunctorSpec.groovy[tags=functor4, indent=0] 
-----
-
-=== Applicative
-
-[source, groovy]
-.Applicative
-----
-include::{sourceDir}/groovyfp/categories/Applicative.groovy[indent=0] 
-----
-
-
-=== Monad
-
-[source, groovy]
-.Monad
-----
-include::{sourceDir}/groovyfp/categories/Monad.groovy[indent=0] 
-----
-
-[source, groovy]
-.Either demo
-----
-include::{testDir}/groovyfp/categories/EitherSpec.groovy[tags=eithermonad1, indent=0] 
-----
-
-
-
+* We need a function receiving a number and returning a number
+* Then the functor will receive the function and will know how to unwrap the
+value and after applying the function how to wrap it again.
