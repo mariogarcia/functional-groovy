@@ -19,21 +19,17 @@ public class Maybe<A> implements Monad<A> {
 
     @Override
     public <T> Monad<T> bind(Function<A, ? extends Monad<T>> fn) {
-        return justOrNothing(fn.apply(value).getValue());
+        return isNothing() ? (Monad<T>) nothing() : just(fn.apply(value).getValue());
     }
 
     @Override
     public <B> Applicative<B> fapply(Applicative<Function<A, B>> afn) {
-        return justOrNothing(afn.getValue().apply(value));
+        return isNothing() ? (Applicative<B>) nothing() : just(afn.getValue().apply(value));
     }
 
     @Override
     public <B> Functor<B> fmap(Function<A, B> fn) {
-        return justOrNothing(fn.apply(value));
-    }
-    
-    private <B> Maybe<B> justOrNothing(B b) {
-        return b != null ? new Maybe(b) : new Maybe(null);
+        return isNothing() ? (Functor<B>) nothing() : just(fn.apply(value));
     }
     
     public static <T> Maybe<T> just(T value) {
@@ -42,6 +38,10 @@ public class Maybe<A> implements Monad<A> {
     
     public static <T> Maybe<T> nothing() {
         return new Maybe(null);
+    }
+    
+    public Boolean isNothing() {
+        return this.value == null;
     }
     
 }
