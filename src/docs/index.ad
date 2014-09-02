@@ -2,6 +2,7 @@
 :numbered:                                                                                                                              
 :testDir: ../../src/test/groovy
 :sourceDir: ../../src/main/groovy
+:sourceDirJava: ../../src/main/java
   
 include::src/docs/1_intro.ad[]
 
