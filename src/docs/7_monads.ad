@@ -6,6 +6,9 @@ Generally speaking a +Functor+ is any type you can map a function over. A +Funct
 container/wrapper of some sort, along with the ability to apply a function to elements wrapped in
 the container 
 
+So a +Functor+ is a container. It contains a value. That value can be transformed
+by functions applied to the container. Not to the value directly.
+
 The formal definition of a Functor in Haskell is:
 
 [source, haskell]
@@ -16,11 +19,11 @@ class Functor f where
 ----
 
 What does it mean ? Well it means that in order to build a new instance of a 
-+Functor+ type the type should implement a *fmap* method.
++Functor+ type the type should implement a +fmap+ method.
 
-The *fmap* method receives a function *(a -> b)* which transforms an object
-of type *a* in another object of type *b*, and also a *Functor* of type *a* 
-and finally returns a functor of type *b*.
+The +fmap+ method receives a function +(a -> b)+ which transforms an object
+of type +a+ in another object of type +b+, it also receives a +Functor+ of type +a+ 
+and finally returns a functor of type +b+.
 
 How could we implement this ?
 
@@ -32,8 +35,14 @@ How could we implement this ?
 include::{sourceDirJava}/groovyfp/categories/Functor.java[indent=0] 
 ----
 
-So basically a functor allows us to apply a value to a function. Imagine we
-had a function adding 3 to any number. In Haskell we would be seeing this:
+So basically a functor allows us to transform the contained value applying a function. 
+There're some differences between the Java(TM) implementation and the Haskell one.
+
+* +(a->b)+ becomes +Function<A,B>+
+* +fa+ parameter will be the instance of the functor itself
+* +fb+ becomes +Functor<B>+
+
+Imagine we had a function adding 3 to any number. In Haskell we would be seeing this:
 
 [source,haskell]
 .Haskell example
@@ -87,3 +96,33 @@ a certain type.
 ----
 include::{testDir}/groovyfp/categories/FunctorSpec.groovy[tags=functorspec1,indent=0] 
 ----
+
+Ok but how +Maybe.Just+ gets something and transform it to another functor. Lets see
+what the +fmap+ implementation does:
+
+[source,java]
+.Maybe Functor#fmap implementation
+----
+include::{sourceDirJava}/groovyfp/categories/Maybe.java[tags=functorspec2,indent=0]
+----
+
+First I'll try to describe which types are involved:
+
+* +JUST+ is the value contained by the Maybe instance (which among other things is a functor).
+* +<B>+ is the type of the function applied. Then
+the Maybe implementation wraps that value into another instance of a functor
+(this time another Just instance).
+
+Basically here the +fmap+ method takes as an argument a function transforming
+the contained value in the source functor and then wraps it again in another
+functor instance. 
+
+=== Applicative Functor
+
+Remember I was saying a +Functor+ is a container, a box if you like containing
+a simple value. You can think about +Applicative+ like a +Functor+ containing
+a +Function+. Why then the name of +Applicative+ ? I'm not quite sure, but
+I think it comes from the idea that a function *can be applied* to some other values.
+
+
+

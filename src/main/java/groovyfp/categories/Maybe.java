@@ -28,10 +28,12 @@ public abstract class Maybe<TYPE> implements Monad<TYPE>, Applicative<TYPE>, Fun
             return this.fmap(afn.getValue());
         }
 
+        // tag::functorspec2[]
         @Override
         public <B> Just<B> fmap(Function<JUST, B> fn) {
             return new Just(fn.apply(getValue()));
         }
+        // end::functorspec2[]
 
         @Override
         public <B> Just<?> bind(Function<JUST, Monad<B>> fn) {
