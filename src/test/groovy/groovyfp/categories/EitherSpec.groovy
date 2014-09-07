@@ -72,9 +72,8 @@ class EitherSpec extends Specification {
         then: 'if apply a valid value then the function will be applied'
             right(1).bind(div).value == 1
         and: 'otherwise if using 0 I will get a left zero'
-            with(right(0).bind(div)) {
+            with(left(0).bind(div)) {
                 value == 0
-                type == Either.Type.LEFT
             }
     }
 }

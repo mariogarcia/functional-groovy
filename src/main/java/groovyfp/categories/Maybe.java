@@ -2,46 +2,72 @@ package groovyfp.categories;
 
 /**
  *
- * @param <A>
+ * @param <TYPE>
  */
-public class Maybe<A> implements Monad<A> {
+public abstract class Maybe<TYPE> implements Monad<TYPE>, Applicative<TYPE>, Functor<TYPE> {
 
-    private final A value;
+    private final TYPE value;
+
+    public Maybe(TYPE value) {
+        this.value = value;
+    }
     
-    private Maybe(final A a) {
-        this.value = a;
-    }   
-
     @Override
-    public A getValue() {
+    public TYPE getValue() {
         return this.value;
     }
 
-    @Override
-    public <T> Monad<T> bind(Function<A, ? extends Monad<T>> fn) {
-        return isNothing() ? (Monad<T>) nothing() : just(fn.apply(value).getValue());
-    }
+    static class Just<JUST> extends Maybe<JUST> {
 
-    @Override
-    public <B> Applicative<B> fapply(Applicative<Function<A, B>> afn) {
-        return isNothing() ? (Applicative<B>) nothing() : just(afn.getValue().apply(value));
-    }
+        public Just(JUST value) {
+            super(value);
+        }
 
-    @Override
-    public <B> Functor<B> fmap(Function<A, B> fn) {
-        return isNothing() ? (Functor<B>) nothing() : just(fn.apply(value));
+        @Override
+        public <B> Just<B> fapply(Applicative<Function<JUST, B>> afn) {
+            return this.fmap(afn.getValue());
+        }
+
+        @Override
+        public <B> Just<B> fmap(Function<JUST, B> fn) {
+            return new Just(fn.apply(getValue()));
+        }
+
+        @Override
+        public <B> Just<?> bind(Function<JUST, Monad<B>> fn) {
+            return this.fmap(fn);
+        }
     }
     
-    public static <T> Maybe<T> just(T value) {
-        return new Maybe(value);
+    static class Nothing<NOTHING> extends Maybe<NOTHING> {
+
+        public Nothing() {
+            super(null);
+        }
+
+        @Override
+        public <B> Nothing<?> bind(Function<NOTHING, Monad<B>> fn) {
+            return new Nothing();
+        }
+
+        @Override
+        public <B> Nothing<B> fapply(Applicative<Function<NOTHING, B>> afn) {
+            return new Nothing();
+        }
+
+        @Override
+        public <B> Nothing<B> fmap(Function<NOTHING, B> fn) {
+            return new Nothing();
+        }
+    
     }
     
-    public static <T> Maybe<T> nothing() {
-        return new Maybe(null);
+    static <T> Just<T> just(T value) {
+        return new Just(value);
     }
     
-    public Boolean isNothing() {
-        return this.value == null;
+    static <T> Nothing<T> nothing() {
+        return new Nothing();
     }
     
 }

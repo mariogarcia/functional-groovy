@@ -41,9 +41,49 @@ had a function adding 3 to any number. In Haskell we would be seeing this:
 fmap (+3) (Just 1)
 ----
 
-I'll try to reproduce the same behavior, now with Groovy :) We will be following
+I'll try to reproduce the same behavior, this time with Groovy :) We will be following
 these steps:
 
 * We need a function receiving a number and returning a number
 * Then the functor will receive the function and will know how to unwrap the
 value and after applying the function how to wrap it again.
+
+==== Function (a->b)
+
+A function represents a transformation applied to a given input, giving
+a certain result.
+
+We need a function adding 3 to any given number. Here is a simple java interface
+defining a function:
+
+[source,java]
+.Function
+----
+include::{sourceDirJava}/groovyfp/categories/Function.java[indent=0] 
+----
+
+Because this interface is in fact a functional interface, it could be
+substituted by a Closure expression. So instead of building a new class or
+building a verbose inner class implementation we will be using a closure
+to define a new implementation of the *Function* interface.
+
+[source,groovy]
+.Function<Integer,Integer>
+----
+include::{testDir}/groovyfp/categories/FunctionSpec.groovy[tags=function1,indent=0] 
+----
+
+NOTE: Be aware that because closures only declare the return type you should add 
+the type to the closure parameter if you care about input type.
+
+==== Functor<A>
+
+Well now we need an instance of a functor of type *A*, pass to the functor
+our previously created function and expect to receive a certain value with
+a certain type.
+
+[source,groovy]
+.Functor<Integer>
+----
+include::{testDir}/groovyfp/categories/FunctorSpec.groovy[tags=functorspec1,indent=0] 
+----

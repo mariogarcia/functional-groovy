@@ -2,51 +2,91 @@ package groovyfp.categories;
 
 /**
  *
+ * @author mario
+ * @param <TYPE>
  */
-public class Either<A> implements Monad<A> {
-
-    static enum Type {
-        LEFT, RIGHT
-    }
+public abstract class Either<TYPE> implements Monad<TYPE> {
     
-    private A value;
-    private Type type;
+    private final TYPE value;
     
-    private Either(A value, Type type) {
+    public Either(TYPE value) {
         this.value = value;
-        this.type = type;
     }
-    
     @Override
-    public <T> Monad<T> bind(Function<A, ? extends Monad<T>> fn) {
-        return isLeft() ? (Monad<T>) left(value) : fn.apply(value);
-    }
-
-    @Override
-    public A getValue() {
+    public TYPE getValue() {
         return this.value;
     }
+    
+    public boolean isLeft() {
+        return false;
+    }
+    
+    public boolean isRight() {
+        return false;
+    }
+    
+    static class Right<R> extends Either<R> {
 
-    @Override
-    public <B> Applicative<B> fapply(Applicative<Function<A, B>> afn) {
-        return isLeft() ? (Monad<B>)left(value) : right(afn.getValue().apply(value));
-    }
-    
-    public Boolean isLeft() {
-        return this.type == Type.LEFT;
-    }
+        public Right(R value) {
+            super(value);
+        }
+        
+        @Override
+        public boolean isRight() {
+            return true;
+        }
 
-    @Override
-    public <B> Functor<B> fmap(Function<A, B> fn) {
-        return isLeft() ? (Monad<B>) left(value) : right(fn.apply(value));
+        @Override
+        public <B> Right<?> bind(Function<R,Monad<B>> fn) {
+            return right(fn.apply(getValue()).getValue());
+        }
+
+        @Override
+        public <B> Right<B> fapply(Applicative<Function<R, B>> afn) {
+            return right(afn.getValue().apply(getValue()));
+        }
+        
+        @Override
+        public <B> Right<B> fmap(Function<R, B> fn) {
+            return right(fn.apply(getValue()));
+        }
+        
     }
     
-    public static <T> Either<T> left(T value) {
-        return new Either(value, Type.LEFT);
+    static class Left<L> extends Either<L> {
+
+        public Left(L value) {
+            super(value);
+        }
+
+        @Override
+        public boolean isLeft() {
+            return true;
+        }
+        
+        @Override
+        public <B> Left<?> bind(Function<L, Monad<B>> fn) {
+            return new Left(getValue());
+        }
+
+        @Override
+        public <B> Left<B> fapply(Applicative<Function<L, B>> afn) {
+            return new Left(getValue());
+        }
+        
+        @Override
+        public <B> Left<B> fmap(Function<L, B> fn) {
+            return new Left(getValue());
+        }
+        
     }
     
-    public static <T> Either<T> right(T value) {
-        return new Either(value, Type.RIGHT);
+    static <T> Right<T> right(T value) {
+        return new Right(value);
+    }
+    
+    static <T> Left<T> left(T value) {
+        return new Left(value);
     }
     
 }
