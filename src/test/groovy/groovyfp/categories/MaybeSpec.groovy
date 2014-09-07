@@ -2,6 +2,7 @@ package groovyfp.categories
 
 import static Maybe.just
 import static Maybe.nothing
+import groovyfp.categories.Maybe.Nothing
 
 import spock.lang.Specification
 
@@ -11,12 +12,15 @@ import spock.lang.Specification
 class MaybeSpec extends Specification {
 
     void 'Applicative: Maybe applicative implementation'() {
-        when: 'using a function to increment a value'
-            def inc = { Integer v -> v + 1 } as Function
+        when: 'combining two closures'
+            def inc = { Integer v -> v + 1 } 
+            def byTwo = { Integer v -> v * 2 }
+        and: 'using the combination as a Function'
+            def combination = (inc >> byTwo) as Function
         then: 'if the value is nothing the function shouldnt be applied'
-            nothing().fapply(just(inc)).value == null
+            nothing().fapply(just(combination)).value == null
         and: 'otherwise if the initial value is correct the function will work'
-            just(1).fapply(just(inc)).value == 2
+            just(1).fapply(just(combination)).value == 4
     }
    
 }

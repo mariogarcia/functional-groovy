@@ -1,13 +1,39 @@
 == The M-Word
 
++Category Theory+ is a huge topic not related *per se* to programming, but 
+nowadays is the basis of what functional programming has become today.
+
+In this chapter I'll try to explain and give examples of some terms
+taken from Category Theory and why they could be useful to us as programmers
+in our daily work.
+
+Many of the examples are based on +Haskell+ programming language. 
+As a pure functional language is the best place if you want to learn
+the basis of functional programming, and also because there aren't
+much documentation out there other than Haskell. Here you have
+my two cents :)
+
+I'm aware that terms like +Functor+, +Monad+...etc seem to be something
+strange, odd, difficult for most of the programmers born in the OOP era 
+(including myself by the way).
+
+I know it's difficult... bad news: it becomes harder along the way, good news
+... there is no good news. I'm jocking good news is that the more you
+learn about +Category Theory+ applied to functional programming the more
+you understand how to use functional programming at work... but stop! 
+it's about time... *LETS DO THIS* 
+
+
 === Functor
 
-Generally speaking a +Functor+ is any type you can map a function over. A +Functor+ represents a
-container/wrapper of some sort, along with the ability to apply a function to elements wrapped in
-the container 
+In +Category Theory+ a +Functor+ is a mapping between categories...WHaAaAAAaaTT?? O_o
 
-So a +Functor+ is a container. It contains a value. That value can be transformed
-by functions applied to the container. Not to the value directly.
+A +Functor+ represents a container/wrapper of some sort, along with the ability 
+to apply a function to elements wrapped in the container. 
+
+Ok, so a +Functor+ is like a +container+, like a +box+. It contains a value. 
+That value can be transformed by functions applied to the container,
+not to the value directly.
 
 The formal definition of a Functor in Haskell is:
 
@@ -15,7 +41,7 @@ The formal definition of a Functor in Haskell is:
 .Functor definition
 ----
 class Functor f where
-    fmap :: (a -> b) -> fa -> fb
+    fmap :: (a -> b) -> f a -> f b
 ----
 
 What does it mean ? Well it means that in order to build a new instance of a 
@@ -30,10 +56,14 @@ How could we implement this ?
 ==== Implementation
 
 [source, java]
-.Functor
+.Functor (Java)
 ----
 include::{sourceDirJava}/groovyfp/categories/Functor.java[indent=0] 
 ----
+
+NOTE: Some of the interfaces or classes shown here are implemented in plain
+Java(TM). I'm planning to migrate them to Groovy 2.3+ with +@CompileStatic+ any time
+soon.
 
 So basically a functor allows us to transform the contained value applying a function. 
 There're some differences between the Java(TM) implementation and the Haskell one.
@@ -42,7 +72,7 @@ There're some differences between the Java(TM) implementation and the Haskell on
 * +fa+ parameter will be the instance of the functor itself
 * +fb+ becomes +Functor<B>+
 
-Imagine we had a function adding 3 to any number. In Haskell we would be seeing this:
+Now imagine we had a function adding 3 to any number. In Haskell we would be seeing this:
 
 [source,haskell]
 .Haskell example
@@ -53,7 +83,7 @@ fmap (+3) (Just 1)
 I'll try to reproduce the same behavior, this time with Groovy :) We will be following
 these steps:
 
-* We need a function receiving a number and returning a number
+* We need a function receiving a number and returning a number +(a->b)+
 * Then the functor will receive the function and will know how to unwrap the
 value and after applying the function how to wrap it again.
 
@@ -66,7 +96,7 @@ We need a function adding 3 to any given number. Here is a simple java interface
 defining a function:
 
 [source,java]
-.Function
+.Function (Java)
 ----
 include::{sourceDirJava}/groovyfp/categories/Function.java[indent=0] 
 ----
@@ -119,10 +149,24 @@ functor instance.
 
 === Applicative Functor
 
-Remember I was saying a +Functor+ is a container, a box if you like containing
-a simple value. You can think about +Applicative+ like a +Functor+ containing
-a +Function+. Why then the name of +Applicative+ ? I'm not quite sure, but
-I think it comes from the idea that a function *can be applied* to some other values.
+Remember I was saying a +Functor+ is a container, a box if you like, containing
+a simple value ? You can think about +Applicative+ like a +Functor+ containing
+a +Function+. This time the +box+ contains a +Function+.
 
+Why then the name of +Applicative+ ? I'm not quite sure, but
+I think it came from the idea that a function *can be applied* 
+to some other values.
 
+In Haskell:
 
+[source,haskell]
+----
+(<*>) :: Applicative f => f (a->b) -> (f a -> f b)
+----
+
+==== Implementation
+
+[source,java]
+----
+include::{sourceDirJava}/groovyfp/categories/Applicative.java[indent=0]
+----
