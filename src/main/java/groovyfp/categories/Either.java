@@ -37,11 +37,6 @@ public abstract class Either<TYPE> implements Monad<TYPE> {
         }
 
         @Override
-        public <B> Monad<B> bind(Function<R,Monad<B>> fn) {
-            return fn.apply(getValue());
-        }
-
-        @Override
         public <B> Right<B> fapply(Applicative<Function<R, B>> afn) {
             return this.fmap(afn.getValue());
         }
@@ -49,6 +44,11 @@ public abstract class Either<TYPE> implements Monad<TYPE> {
         @Override
         public <B> Right<B> fmap(Function<R, B> fn) {
             return right(fn.apply(getValue()));
+        }
+
+        @Override
+        public <B, MONAD extends Monad<B>> MONAD bind(Function<R, MONAD> fn) {
+            return fn.apply(getValue());
         }
         
     }
@@ -65,11 +65,6 @@ public abstract class Either<TYPE> implements Monad<TYPE> {
         }
         
         @Override
-        public <B> Monad<B> bind(Function<L, Monad<B>> fn) {
-            return new Left(getValue());
-        }
-
-        @Override
         public <B> Left<B> fapply(Applicative<Function<L, B>> afn) {
             return new Left(getValue());
         }
@@ -77,6 +72,11 @@ public abstract class Either<TYPE> implements Monad<TYPE> {
         @Override
         public <B> Left<B> fmap(Function<L, B> fn) {
             return new Left(getValue());
+        }
+
+        @Override
+        public <B, MONAD extends Monad<B>> MONAD bind(Function<L, MONAD> fn) {
+            return (MONAD) new Left(getValue());
         }
         
     }

@@ -36,9 +36,10 @@ public abstract class Maybe<TYPE> implements Monad<TYPE>, Applicative<TYPE>, Fun
         // end::functorspec2[]
 
         @Override
-        public <B> Monad<B> bind(Function<JUST, Monad<B>> fn) {
+        public <B, MONAD extends Monad<B>> MONAD bind(Function<JUST, MONAD> fn) {
             return fn.apply(getValue());
         }
+      
     }
     
     static class Nothing<NOTHING> extends Maybe<NOTHING> {
@@ -46,12 +47,7 @@ public abstract class Maybe<TYPE> implements Monad<TYPE>, Applicative<TYPE>, Fun
         public Nothing() {
             super(null);
         }
-
-        @Override
-        public <B> Monad<B> bind(Function<NOTHING, Monad<B>> fn) {
-            return new Nothing();
-        }
-
+        
         @Override
         public <B> Nothing<B> fapply(Applicative<Function<NOTHING, B>> afn) {
             return new Nothing();
@@ -60,6 +56,11 @@ public abstract class Maybe<TYPE> implements Monad<TYPE>, Applicative<TYPE>, Fun
         @Override
         public <B> Nothing<B> fmap(Function<NOTHING, B> fn) {
             return new Nothing();
+        }
+
+        @Override
+        public <B, MONAD extends Monad<B>> MONAD bind(Function<NOTHING, MONAD> fn) {
+            return (MONAD) new Nothing();
         }
     
     }
