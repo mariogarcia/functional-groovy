@@ -2,9 +2,9 @@ package groovyfp.categories;
 
 /**
  *
- * @param <VALUE>
+ * @param <A>
  */
-public interface Applicative<VALUE> extends Functor<VALUE> {
-    public VALUE getValue();
-    public <B> Applicative<B> fapply(Applicative<Function<VALUE,B>> afn);
+public interface Applicative<A> extends Functor<A> {
+    public A getValue();
+    public <B> Applicative<B> fapply(Applicative<Function<A,B>> afn);
 }

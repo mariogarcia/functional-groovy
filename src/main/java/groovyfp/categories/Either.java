@@ -2,18 +2,17 @@ package groovyfp.categories;
 
 /**
  *
- * @author mario
- * @param <TYPE>
+ * @param <A>
  */
-public abstract class Either<TYPE> implements Monad<TYPE> {
+public abstract class Either<A> implements Monad<A> {
     
-    private final TYPE value;
+    private final A value;
     
-    protected Either(TYPE value) {
+    protected Either(A value) {
         this.value = value;
     }
     @Override
-    public TYPE getValue() {
+    public A getValue() {
         return this.value;
     }
     

@@ -2,8 +2,8 @@ package groovyfp.categories;
 
 /**
  *
- * @param <VALUE>
+ * @param <A>
  */
-public interface Monad<VALUE> extends Applicative<VALUE> {
-    public <B, MONAD extends Monad<B>> MONAD bind(Function<VALUE,MONAD> fn);
+public interface Monad<A> extends Applicative<A> {
+    public <B,M extends Monad<B>> M bind(Function<A,M> fn);
 }

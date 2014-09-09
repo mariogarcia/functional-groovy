@@ -2,18 +2,18 @@ package groovyfp.categories;
 
 /**
  *
- * @param <TYPE>
+ * @param <A>
  */
-public abstract class Maybe<TYPE> implements Monad<TYPE> {
+public abstract class Maybe<A> implements Monad<A> {
 
-    private final TYPE value;
+    private final A value;
 
-    protected Maybe(TYPE value) {
+    protected Maybe(A value) {
         this.value = value;
     }
     
     @Override
-    public TYPE getValue() {
+    public A getValue() {
         return this.value;
     }
 

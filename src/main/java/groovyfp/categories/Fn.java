@@ -6,19 +6,19 @@ package groovyfp.categories;
  */
 public final class Fn {
     
-    public static <T> Either.Left<T> Left(T source) {
+    public static <A> Either.Left<A> Left(A source) {
         return Either.left(source);
     }
     
-    public static <T> Either.Right<T> Right(T source) {
+    public static <A> Either.Right<A> Right(A source) {
         return Either.right(source);
     }
     
-    public static <T> Maybe.Just<T> Just(T source) {
+    public static <A> Maybe.Just<A> Just(A source) {
         return Maybe.just(source);
     }
     
-    public static <T> Maybe.Nothing<T> Nothing() {
+    public static <A> Maybe.Nothing<A> Nothing() {
         return Maybe.nothing();
     }
     
