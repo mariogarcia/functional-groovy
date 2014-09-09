@@ -4,11 +4,11 @@ package groovyfp.categories;
  *
  * @param <TYPE>
  */
-public abstract class Maybe<TYPE> implements Monad<TYPE>, Applicative<TYPE>, Functor<TYPE> {
+public abstract class Maybe<TYPE> implements Monad<TYPE> {
 
     private final TYPE value;
 
-    public Maybe(TYPE value) {
+    protected Maybe(TYPE value) {
         this.value = value;
     }
     
@@ -17,7 +17,7 @@ public abstract class Maybe<TYPE> implements Monad<TYPE>, Applicative<TYPE>, Fun
         return this.value;
     }
 
-    static class Just<JUST> extends Maybe<JUST> {
+    public static class Just<JUST> extends Maybe<JUST> {
 
         public Just(JUST value) {
             super(value);
@@ -36,13 +36,13 @@ public abstract class Maybe<TYPE> implements Monad<TYPE>, Applicative<TYPE>, Fun
         // end::functorspec2[]
 
         @Override
-        public <B, MONAD extends Monad<B>> MONAD bind(Function<JUST, MONAD> fn) {
+        public <B, M extends Monad<B>> M bind(Function<JUST, M> fn) {
             return fn.apply(getValue());
         }
       
     }
     
-    static class Nothing<NOTHING> extends Maybe<NOTHING> {
+    public static class Nothing<NOTHING> extends Maybe<NOTHING> {
 
         public Nothing() {
             super(null);
@@ -59,18 +59,18 @@ public abstract class Maybe<TYPE> implements Monad<TYPE>, Applicative<TYPE>, Fun
         }
 
         @Override
-        public <B, MONAD extends Monad<B>> MONAD bind(Function<NOTHING, MONAD> fn) {
-            return (MONAD) new Nothing();
+        public <B, M extends Monad<B>> M bind(Function<NOTHING, M> fn) {
+            return (M) new Nothing();
         }
     
     }
     
-    static <T> Just<T> just(T value) {
-        return new Just(value);
+    public static <T> Maybe.Just<T> just(T value) {
+        return new Maybe.Just(value);
     }
     
-    static <T> Nothing<T> nothing() {
-        return new Nothing();
+    public static <T> Maybe.Nothing<T> nothing() {
+        return new Maybe.Nothing();
     }
     
 }

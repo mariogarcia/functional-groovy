@@ -9,7 +9,7 @@ public abstract class Either<TYPE> implements Monad<TYPE> {
     
     private final TYPE value;
     
-    public Either(TYPE value) {
+    protected Either(TYPE value) {
         this.value = value;
     }
     @Override
@@ -25,7 +25,7 @@ public abstract class Either<TYPE> implements Monad<TYPE> {
         return false;
     }
     
-    static class Right<R> extends Either<R> {
+    public static class Right<R> extends Either<R> {
 
         public Right(R value) {
             super(value);
@@ -47,13 +47,13 @@ public abstract class Either<TYPE> implements Monad<TYPE> {
         }
 
         @Override
-        public <B, MONAD extends Monad<B>> MONAD bind(Function<R, MONAD> fn) {
+        public <B, M extends Monad<B>> M bind(Function<R, M> fn) {
             return fn.apply(getValue());
         }
         
     }
     
-    static class Left<L> extends Either<L> {
+    public static class Left<L> extends Either<L> {
 
         public Left(L value) {
             super(value);
@@ -75,17 +75,17 @@ public abstract class Either<TYPE> implements Monad<TYPE> {
         }
 
         @Override
-        public <B, MONAD extends Monad<B>> MONAD bind(Function<L, MONAD> fn) {
-            return (MONAD) new Left(getValue());
+        public <B, M extends Monad<B>> M bind(Function<L, M> fn) {
+            return (M) new Left(getValue());
         }
         
     }
     
-    static <T> Right<T> right(T value) {
+    public static <T> Right<T> right(T value) {
         return new Right(value);
     }
     
-    static <T> Left<T> left(T value) {
+    public static <T> Left<T> left(T value) {
         return new Left(value);
     }
     
