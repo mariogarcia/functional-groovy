@@ -53,7 +53,7 @@ and finally returns a functor of type +b+.
 
 How could we implement this ?
 
-==== Implementation
+==== Example
 
 [source, java]
 .Functor (Java)
@@ -164,9 +164,56 @@ In Haskell:
 (<*>) :: Applicative f => f (a->b) -> (f a -> f b)
 ----
 
-==== Implementation
+This time instead of containing a plain value the functor has a function. So
+we can read the Haskell function as a function receiving an applicative +f (a->b)+ (a 
+functor containing a function transforming from a to b) and returns the
+transformation from a functor containing a to a functor containing b +(f a -> f b)+. 
+
+==== Example
 
 [source,java]
 ----
 include::{sourceDirJava}/groovyfp/categories/Applicative.java[indent=0]
 ----
+
+We have included in our Java(TM) version a way of accessing the inner value 
+forcing any +Applicative+ to implement the +getValue()+ method.
+
+But the  most important method is +fapply+ which in in charge of receiving another
+applicative and use the value of that applicative and apply it to the inner value
+of the instance of the source applicative.
+
+Lets take a look to the implementation of the +fapply+ method in the 
++Maybe.Right+ class we can see how it works.
+
+[source,java]
+----
+include::{sourceDirJava}/groovyfp/categories/Maybe.java[tags=fapply,indent=0]
+----
+
+How can we use it ?
+
+In this example I'm using implementations of +Maybe+. This implementation is not 
+only an +Applicative+ but a +Functor+ (which is implied) and a +Monad+. Instead
+of creating object with +new+ operator every object has a static method to do it.
+
+[source,groovy]
+----
+include::{testDir}/groovyfp/categories/MaybeSpec.groovy[tags=imports,indent=0]
+----
+
+This is the example:
+
+[source,groovy]
+----
+include::{testDir}/groovyfp/categories/MaybeSpec.groovy[tags=fapplyspec,indent=0]
+----
+
+<1> The implementation of the +Maybe.Nothing+ +fapply+ method doesn't apply the 
+function to the current instance and returns  an instance of +new Nothing(null)+
+<2> The implementation of +the Maybe.Just+ +fapply+ method applies current value 
+to the function contained within the +Applicative+ passed as parameter.
+
+=== Monad
+
+What is a Monad ?
