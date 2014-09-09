@@ -6,20 +6,24 @@ package groovyfp.categories;
  */
 public final class Fn {
     
-    static <T> Either.Left<T> Left(T source) {
+    public static <T> Either.Left<T> Left(T source) {
         return Either.left(source);
     }
     
-    static <T> Either.Right<T> Right(T source) {
+    public static <T> Either.Right<T> Right(T source) {
         return Either.right(source);
     }
     
-    static <T> Maybe.Just<T> Just(T source) {
+    public static <T> Maybe.Just<T> Just(T source) {
         return Maybe.just(source);
     }
     
-    static <T> Maybe.Nothing<T> Nothing() {
+    public static <T> Maybe.Nothing<T> Nothing() {
         return Maybe.nothing();
     }
     
+    public static <A,B,M extends Monad<B>> M bind(A a, Function<A,M> fn) {
+        return fn.apply(a);
+    }
+
 }
