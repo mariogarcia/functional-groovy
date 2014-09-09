@@ -5,5 +5,5 @@ package groovyfp.categories;
  * @param <A>
  */
 public interface Functor<A> {
-    public <B> Functor<B> fmap(Function<A,B> fn);
+    public <B, F extends Functor<B>> F fmap(Function<A,B> fn);
 }
