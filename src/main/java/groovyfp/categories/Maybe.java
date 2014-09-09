@@ -23,10 +23,12 @@ public abstract class Maybe<TYPE> implements Monad<TYPE>, Applicative<TYPE>, Fun
             super(value);
         }
 
+        // tag::fapply[]
         @Override
         public <B> Just<B> fapply(Applicative<Function<JUST, B>> afn) {
             return this.fmap(afn.getValue());
         }
+        // end::fapply[]
 
         // tag::functorspec2[]
         @Override
