@@ -6,13 +6,14 @@ package groovyfp.categories;
  */
 public abstract class Either<A> implements Monad<A> {
     
-    private final A value;
+    private final Type<A> value;
     
-    protected Either(A value) {
+    protected Either(Type<A> value) {
         this.value = value;
     }
+    
     @Override
-    public A getValue() {
+    public Type<A> getValue() {
         return this.value;
     }
     
@@ -26,7 +27,7 @@ public abstract class Either<A> implements Monad<A> {
     
     public static class Right<R> extends Either<R> {
 
-        public Right(R value) {
+        public Right(Type<R> value) {
             super(value);
         }
         
@@ -37,25 +38,25 @@ public abstract class Either<A> implements Monad<A> {
 
         @Override
         public <B> Right<B> fapply(Applicative<Function<R, B>> afn) {
-            return this.fmap(afn.getValue());
+            return this.fmap(afn.getValue().getValue());
         }
 
 
         @Override
         public <B, M extends Monad<B>> M bind(Function<R, M> fn) {
-            return fn.apply(getValue());
+            return fn.apply(getValue().getValue());
         }
 
         @Override
         public <B, F extends Functor<B>> F fmap(Function<R, B> fn) {
-            return (F) right(fn.apply(getValue()));
+            return (F) right(fn.apply(getValue().getValue()));
         }
         
     }
     
     public static class Left<L> extends Either<L> {
 
-        public Left(L value) {
+        public Left(Type<L> value) {
             super(value);
         }
 
@@ -83,11 +84,11 @@ public abstract class Either<A> implements Monad<A> {
     }
     
     public static <T> Right<T> right(T value) {
-        return new Right(value);
+        return new Right(new Type(value));
     }
     
     public static <T> Left<T> left(T value) {
-        return new Left(value);
+        return new Left(new Type(value));
     }
     
 }

@@ -15,7 +15,7 @@ class FunctorSpec extends Specification {
         when: 'applying the function to functor to get another functor'
             Functor<Integer> result = boxOfFive.fmap(plus_3)
         then: 'the result should be the expected'
-            result.value == 8
+            result.value.value == 8
     }
     // end::functorspec1[]
 }

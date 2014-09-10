@@ -11,7 +11,7 @@ class EitherSpec extends Specification {
         when:
             def inc = { Integer v -> v + 1 }
         then:
-            left(null).fapply(right(1)).value == null
+            left(null).fapply(right(1)).value.value == null
     }
     
     // tag::functor2[]
@@ -19,10 +19,10 @@ class EitherSpec extends Specification {
         given: 'a function we want to apply'
             def inc = { Integer v -> v + 1 }
         expect: 'to return the result of applying the function when RIGHT'
-            right(1).fmap(inc).value == 2
-            right(2).fmap(inc).value == 3
+            right(1).fmap(inc).value.value == 2
+            right(2).fmap(inc).value.value == 3
         and: 'to return the same input when LEFT'
-            left(null).fmap(inc).value == null
+            left(null).fmap(inc).value.value == null
     }
     // end::functor2[]
 
@@ -31,7 +31,7 @@ class EitherSpec extends Specification {
         when: 'mapping identity function overy every item in a container'
             def identity = { Integer v -> v }
         then: 'it has no effect'
-            right(1).fmap(identity).value == 1
+            right(1).fmap(identity).value.value == 1
     }
     // end::functor3[]
 
@@ -45,9 +45,9 @@ class EitherSpec extends Specification {
         and: 'then mapping the other'
             right(1)
                 .fmap(composition)
-                .value == right(right(1).fmap(inc).value)
+                .value.value == right(right(1).fmap(inc).value.value)
                             .fmap(twoTimes)
-                            .value
+                            .value.value
     }
     // end::functor4[]
     
@@ -58,9 +58,9 @@ class EitherSpec extends Specification {
         and: 'the monad bind function'
             def mfn = { x -> Either.right(inc(x)) }
         then: 'when applying to a right the monad will progress'
-            right(1).bind(mfn).value == 2
+            right(1).bind(mfn).value.value == 2
         and: 'when applying to a left it wont go any further'
-            left(1).bind(mfn).value == 1
+            left(1).bind(mfn).value.value == 1
     }
     // end::eithermonad1[]
     
@@ -70,10 +70,10 @@ class EitherSpec extends Specification {
                 return v == 0 ? Either.left(v)  : Either.right(1/v) 
             }
         then: 'if apply a valid value then the function will be applied'
-            right(1).bind(div).value == 1
+            right(1).bind(div).value.value == 1
         and: 'otherwise if using 0 I will get a left zero'
             with(left(0).bind(div)) {
-                value == 0
+                value.value == 0
             }
     }
   
@@ -100,7 +100,7 @@ class EitherSpec extends Specification {
                     .bind(lookByCity)
         then: 'there should be only one item'
             result.isLeft()
-            result.value.name == name_of_the_result
+            result.value.value.name == name_of_the_result
         where: 'samples used in this spec are'
             sample          |   name_of_the_result
             firstSample     |       'john'

@@ -20,9 +20,10 @@ class FnSpec extends Specification {
             Maybe.Just<Integer> result = fmap(Just("hi"), fn)
         then: 'result should be the expected'
             result instanceof Maybe.Just
-            result.value == 2
+            result.value.value == 2
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     void 'Binding'() {
         when: 'Building a nested binding expression'
             Maybe.Just<Integer> result = 
@@ -31,9 +32,10 @@ class FnSpec extends Specification {
                         Just(y + 1)
                     }
                 }
+            Type<Integer> type = result.getValue()
         then: 'Result should be 2 more'
             result instanceof Maybe.Just
-            result.value == 3
+            type.getValue() == 3
     }
 
 }
