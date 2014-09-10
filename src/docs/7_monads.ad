@@ -217,3 +217,24 @@ to the function contained within the +Applicative+ passed as parameter.
 === Monad
 
 What is a Monad ?
+
+While +Functor+ applied a function to a wrapped value, and an +Applicative+ 
+applied a wrapped function to a wrapped value, a +Monad+ applies a function
+to a wrapped value and returns a wrapped value.
+
+Because +Monad+ is an +Applicative+ and an +Applicative+ is a +Functor+, likewise 
+a +Monad+ has some inherit methods such as +fmap+ or  +fapply+. But the method
+that makes a +Monad+ a +Monad+ is the +bind+ method (or +>>=+ which is its alias
+in Haskell).
+
+How does +bind+ looks like ? Like always , first step, Haskell syntax:
+
+[source,haskell]
+----
+class Monad m where    
+    (>>=) :: m a -> (a -> m b) -> m b
+----
+
+A bind method receives a wrapped value +m a+ then a function +(a -> m b)+ which
+transforms the wrapped value to another wrapped value, and finally returns the
+transformation result +m b+.
