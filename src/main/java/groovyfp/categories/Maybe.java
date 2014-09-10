@@ -6,40 +6,40 @@ package groovyfp.categories;
  */
 public abstract class Maybe<A> implements Monad<A> {
 
-    private final Type<A> value;
+    private final Type<A> typedRef;
 
-    protected Maybe(Type<A> value) {
-        this.value = value;
+    protected Maybe(Type<A> valueRef) {
+        this.typedRef = valueRef;
     }
 
     @Override
-    public Type<A> getValue() {
-        return this.value;
+    public Type<A> getTypedRef() {
+        return this.typedRef;
     }
 
     public static class Just<JUST> extends Maybe<JUST> {
 
-        public Just(Type<JUST> value) {
-            super(value);
+        public Just(Type<JUST> valueRef) {
+            super(valueRef);
         }
 
         // tag::fapply[]
         @Override
         public <B> Just<B> fapply(Applicative<Function<JUST, B>> afn) {
-            return this.fmap(afn.getValue().getValue());
+            return this.fmap(afn.getTypedRef().getValue());
         }
         // end::fapply[]
 
         // tag::functorspec2[]
         @Override
         public <B, F extends Functor<B>> F fmap(Function<JUST, B> fn) {
-            return (F) just(fn.apply(this.getValue().getValue()));
+            return (F) just(fn.apply(this.getTypedRef().getValue()));
         }
         // end::functorspec2[]
 
         @Override
         public <B, M extends Monad<B>> M bind(Function<JUST, M> fn) {
-            return fn.apply(getValue().getValue());
+            return fn.apply(getTypedRef().getValue());
         }
 
     }

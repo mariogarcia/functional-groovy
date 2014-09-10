@@ -6,15 +6,15 @@ package groovyfp.categories;
  */
 public abstract class Either<A> implements Monad<A> {
     
-    private final Type<A> value;
+    private final Type<A> typedRef;
     
     protected Either(Type<A> value) {
-        this.value = value;
+        this.typedRef = value;
     }
     
     @Override
-    public Type<A> getValue() {
-        return this.value;
+    public Type<A> getTypedRef() {
+        return this.typedRef;
     }
     
     public boolean isLeft() {
@@ -27,8 +27,8 @@ public abstract class Either<A> implements Monad<A> {
     
     public static class Right<R> extends Either<R> {
 
-        public Right(Type<R> value) {
-            super(value);
+        public Right(Type<R> valueRef) {
+            super(valueRef);
         }
         
         @Override
@@ -38,26 +38,26 @@ public abstract class Either<A> implements Monad<A> {
 
         @Override
         public <B> Right<B> fapply(Applicative<Function<R, B>> afn) {
-            return this.fmap(afn.getValue().getValue());
+            return this.fmap(afn.getTypedRef().getValue());
         }
 
 
         @Override
         public <B, M extends Monad<B>> M bind(Function<R, M> fn) {
-            return fn.apply(getValue().getValue());
+            return fn.apply(getTypedRef().getValue());
         }
 
         @Override
         public <B, F extends Functor<B>> F fmap(Function<R, B> fn) {
-            return (F) right(fn.apply(getValue().getValue()));
+            return (F) right(fn.apply(getTypedRef().getValue()));
         }
         
     }
     
     public static class Left<L> extends Either<L> {
 
-        public Left(Type<L> value) {
-            super(value);
+        public Left(Type<L> valueRef) {
+            super(valueRef);
         }
 
         @Override
@@ -67,18 +67,18 @@ public abstract class Either<A> implements Monad<A> {
         
         @Override
         public <B> Left<B> fapply(Applicative<Function<L, B>> afn) {
-            return new Left(getValue());
+            return new Left(getTypedRef());
         }
         
 
         @Override
         public <B, M extends Monad<B>> M bind(Function<L, M> fn) {
-            return (M) new Left(getValue());
+            return (M) new Left(getTypedRef());
         }
 
         @Override
         public <B, F extends Functor<B>> F fmap(Function<L, B> fn) {
-            return (F) new Left(getValue());
+            return (F) new Left(getTypedRef());
         }
         
     }

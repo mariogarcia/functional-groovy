@@ -20,9 +20,9 @@ class MaybeSpec extends Specification {
         and: 'using the combination as a Function'
             def combination = (inc >> byTwo) as Function
         then: 'if the value is nothing the function shouldnt be applied'
-            nothing().fapply(just(combination)).value.value == null // <1>
+            nothing().fapply(just(combination)).typedRef.value == null // <1>
         and: 'otherwise if the initial value is correct the function will work'            
-            just(1).fapply(just(combination)).value.value == 4 // <2>
+            just(1).fapply(just(combination)).typedRef.value == 4 // <2>
     }
     // end::fapplyspec[]
    
