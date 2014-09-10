@@ -76,5 +76,61 @@ class EitherSpec extends Specification {
                 value == 0
             }
     }
+  
+    void 'using Maybe to chain failback searchs'() {
+        given:'a base function to search by a certain criteria'
+            def baseSearch = { Closure<Boolean> search ->
+                return { List sample ->
+                    def pr = sample.find(search)
+                    // if found then return left to shortcircuit further
+                    // searchs
+                    pr ? Either.left(pr) : Either.right(sample)
+                }
+            }
+        and: 'composed criterias on top of the base function'
+            // they become Function<A,Monad<B>>
+            def lookByNameJohn = baseSearch { it.name == 'john' }
+            def lookByAgeGreaterThan = baseSearch { it.age > 50 }
+            def lookByCity = baseSearch { it.city == 'dublin' }
+        when: 'chaining all search criterias'
+            Either result = 
+                Either.right(sample)
+                    .bind(lookByNameJohn)
+                    .bind(lookByAgeGreaterThan)
+                    .bind(lookByCity)
+        then: 'there should be only one item'
+            result.isLeft()
+            result.value.name == name_of_the_result
+        where: 'samples used in this spec are'
+            sample          |   name_of_the_result
+            firstSample     |       'john'
+            secondSample    |       'peter'
+            thirdSample     |       'rob'
+    }
+    
+    List<Map> getFirstSample() {
+        return [
+            [name: 'john', age: 32, city: 'barcelona'],
+            [name: 'peter', age: 51, city: 'london'],
+            [name: 'rob', age: 32, city: 'dublin']
+        ]
+    }
+    
+    List<Map> getSecondSample() {
+        return [
+            [name: 'peter', age: 51, city: 'london'],
+            [name: 'rob', age: 32, city: 'dublin'],
+            [name: 'johnny', age: 32, city: 'barcelona']
+        ]
+    }
+    
+    List<Map> getThirdSample() {
+        return [            
+            [name: 'rob', age: 32, city: 'dublin'],
+            [name: 'johnny', age: 32, city: 'barcelona'],            
+            [name: 'peter', age: 50, city: 'london']
+        ]
+    }
+        
 }
 
