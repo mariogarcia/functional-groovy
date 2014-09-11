@@ -2,7 +2,7 @@ package groovyfp.categories
 
 import static groovyfp.categories.Fn.bind
 import static groovyfp.categories.Fn.fmap
-import static groovyfp.categories.Fn.Just
+import static groovyfp.categories.Fn.just
 
 import groovy.transform.CompileStatic
 import groovy.transform.TypeCheckingMode
@@ -17,7 +17,7 @@ class FnSpec extends Specification {
             Function<String,Integer> fn =
                 { String word -> return word.length() } as Function<String,Integer>
         when: 'applying fmap::(a->b) -> fa -> fb'
-            Maybe.Just<Integer> result = fmap(Just("hi"), fn)
+            Maybe.Just<Integer> result = fmap(just("hi"), fn)
         then: 'result should be the expected'
             result instanceof Maybe.Just
             result.typedRef.value == 2
@@ -27,9 +27,9 @@ class FnSpec extends Specification {
     void 'Binding'() {
         when: 'Building a nested binding expression'
             Maybe.Just<Integer> result = 
-                bind(1) { Integer x ->
-                    bind(x + 1) { Integer y ->
-                        Just(y + 1)
+                bind(just(1)) { Integer x ->
+                    bind(just(x + 1)) { Integer y ->
+                        just(y + 1)
                     }
                 }
         then: 'Result should be 2 more'
