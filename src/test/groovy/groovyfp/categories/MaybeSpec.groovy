@@ -25,6 +25,35 @@ class MaybeSpec extends Specification {
             just(1).fapply(just(combination)).typedRef.value == 4 // <2>
     }
     // end::fapplyspec[]
+    
+    // tag::maybebind[]
+    void 'Monad: using maybe to shortcircuit a process'() {
+        given: 'a function dividing only even numbers'
+            def half = { BigDecimal possible ->
+                return possible.intValue() % 2 == 0 ?
+                    Maybe.just(possible.div(2)) :
+                    Maybe.nothing()                
+            }
+        and: 'another function multiplying by three'
+            def threeTimes = { BigDecimal possible ->
+                return Maybe.just(possible * 3)
+            }
+        when: 'starting the process'
+            Integer result = 
+                Maybe.just(sampleNumber)
+                    .bind(half) // <1>
+                    .bind(half) // <2>
+                    .bind(threeTimes) // <3>
+                    .typedRef.value
+        then: 'checking the result'
+            result == expected
+        where: 'sample numbers and expectations are'
+            sampleNumber | expected
+                100      |    75
+                200      |   150
+                 50      |   null
+    }
+    // end::maybebind[]
    
 }
 

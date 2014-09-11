@@ -37,10 +37,12 @@ public abstract class Maybe<A> implements Monad<A> {
         }
         // end::functorspec2[]
 
+        // tag::justbind[]
         @Override
         public <B, M extends Monad<B>> M bind(Function<JUST, M> fn) {
             return fn.apply(getTypedRef().getValue());
         }
+        // end::justbind[]
 
     }
 
@@ -61,10 +63,12 @@ public abstract class Maybe<A> implements Monad<A> {
             return (M) new Nothing();
         }
 
+        // tag::nothingbind[]
         @Override
         public <B, F extends Functor<B>> F fmap(Function<NOTHING, B> fn) {
-        return (F)new Nothing();
+            return (F) new Nothing();
         }
+        // end::nothingbind[]
 
     }
 

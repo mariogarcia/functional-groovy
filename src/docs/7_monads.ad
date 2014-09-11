@@ -238,3 +238,53 @@ class Monad m where
 A bind method receives a wrapped value +m a+ then a function +(a -> m b)+ which
 transforms the wrapped value to another wrapped value, and finally returns the
 transformation result +m b+.
+
+==== Example
+
+In my humble representation of a Monad type in Java(TM) I came up with the 
+following code:
+
+[source,java]
+----
+include::{sourceDirJava}/groovyfp/categories/Monad.java[indent=0]
+----
+
+To see how to use this abstraction lets use it in a simple exercise:
+
+""
+Given a number, I want to divide it by half two times, and then if still
+not decimal, multiplied by three.
+""
+
+Because all even numbers will become decimals as soon as I try to dividing them
+by half I want to stop the process as soon as the process detects that number
+is no longer eligible to success.
+
+[source,groovy]
+----
+include::{testDir}/groovyfp/categories/MaybeSpec.groovy[tags=maybebind,indent=0]
+----
+
+<1> tries to divide, if not even returns nothing otherwise returns division result.
+<2> tries again to divide the number under the same premises.
+<3> If division ended successfully only then applies multiplication.
+
+The nice thing about this plan is that if any of the previous steps ended with
+a +Maybe.Nothing+ instance the process won't go any further.
+
+In order to understand what happens underneath, why process doesn't continue, 
+I would like to show you both implementation of +Maybe.Just+ and +Maybe.Nothing+.
+
+While +Maybe.Just+ applies the function:
+
+[source,java]
+----
+include::{sourceDirJava}/groovyfp/categories/Maybe.java[tags=justbind,indent=0]
+----
+
++Maybe.Nothing+ like its name, *does nothing* :P
+
+[source,java]
+----
+include::{sourceDirJava}/groovyfp/categories/Maybe.java[tags=nothingbind,indent=0]
+----
