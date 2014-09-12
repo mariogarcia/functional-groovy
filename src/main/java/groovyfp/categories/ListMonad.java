@@ -25,7 +25,12 @@ public class ListMonad<A> implements Monad<A>{
 
     @Override
     public <B, M extends Monad<B>> M bind(Function<A, M> fn) {
-        return null; // TODO
+        List<B> items = new ArrayList<>();
+        for (A a : this.value) {
+            ListMonad<B> transformed = (ListMonad<B>) fn.apply(a);
+            items.addAll(transformed.getTypedRef().getValue());
+        }
+        return (M) list(items);
     }
 
     @Override
