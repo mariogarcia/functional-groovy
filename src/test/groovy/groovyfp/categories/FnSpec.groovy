@@ -26,7 +26,7 @@ class FnSpec extends Specification {
     @CompileStatic(TypeCheckingMode.SKIP)
     void 'Binding'() {
         when: 'Building a nested binding expression'
-            Maybe.Just<Integer> result = 
+            Maybe.Just<Integer> result =
                 bind(just(1)) { Integer x ->
                     bind(just(x + 1)) { Integer y ->
                         just(y + 1)
@@ -35,6 +35,17 @@ class FnSpec extends Specification {
         then: 'Result should be 2 more'
             result instanceof Maybe.Just
             result.typedRef.value == 3
+    }
+
+    @CompileStatic(TypeCheckingMode.SKIP)
+    void 'Using bind with a list monad: looks like comprehensions'() {
+        given: 'a list monad'
+            ListMonad<Integer> numbers = [1,2,3,4]
+        when: 'applying a function to bind'
+            ListMonad<Integer> result =
+                bind(numbers){ x -> [x, x + 1] as ListMonad }
+        then: 'we should get the expected sequence'
+            result.typedRef.value == [1,2,2,3,3,4,4,5]
     }
 
 }
