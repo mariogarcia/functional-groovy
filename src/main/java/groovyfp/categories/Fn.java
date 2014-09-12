@@ -1,5 +1,7 @@
 package groovyfp.categories;
 
+import java.util.List;
+
 /**
  *
  */
@@ -15,6 +17,14 @@ public final class Fn {
 
     public static <A> Maybe.Just<A> just(A source) {
         return Maybe.just(source);
+    }
+
+    public static <A> ListMonad<A> list(A... values) {
+        return ListMonad.list(values);
+    }
+
+    public static <A> ListMonad<A> list(List<A> values) {
+        return ListMonad.list(values);
     }
 
     public static <A> Maybe.Nothing<A> nothing() {

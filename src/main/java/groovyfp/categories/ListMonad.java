@@ -6,21 +6,14 @@ import java.util.List;
 
 /**
  * 
+ * @param <A>
  */
 public class ListMonad<A> implements Monad<A>{
 
-    private List<A> value;
+    private final List<A> value;
     
     public ListMonad(List<A> values) {
         this.value = values;
-    }
-    
-    public static <T> ListMonad<T> list(T... values){
-        return list(Arrays.asList(values));
-    }
-    
-    public static <T> ListMonad <T> list(List<T> values){
-        return new ListMonad<>(values);
     }
 
     @Override
@@ -50,6 +43,14 @@ public class ListMonad<A> implements Monad<A>{
             transformed.add(fn.apply(v));
         }
         return (F) new ListMonad<>(transformed);
+    }
+    
+    public static <T> ListMonad<T> list(T... values){
+        return list(Arrays.asList(values));
+    }
+    
+    public static <T> ListMonad <T> list(List<T> values){
+        return new ListMonad<>(values);
     }
     
 }

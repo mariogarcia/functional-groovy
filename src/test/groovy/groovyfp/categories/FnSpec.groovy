@@ -3,6 +3,7 @@ package groovyfp.categories
 import static groovyfp.categories.Fn.bind
 import static groovyfp.categories.Fn.fmap
 import static groovyfp.categories.Fn.just
+import static groovyfp.categories.Fn.list
 
 import groovy.transform.CompileStatic
 import groovy.transform.TypeCheckingMode
@@ -40,7 +41,7 @@ class FnSpec extends Specification {
     @CompileStatic(TypeCheckingMode.SKIP)
     void 'Using bind with a list monad: looks like comprehensions'() {
         given: 'a list monad'
-            ListMonad<Integer> numbers = [1,2,3,4]
+            ListMonad<Integer> numbers = list(1,2,3,4)
         when: 'applying a function to bind'
             ListMonad<Integer> result =
                 bind(numbers){ x -> [x, x + 1] as ListMonad }
