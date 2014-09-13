@@ -1,5 +1,7 @@
 == The M-Word
 
+=== Introduction
+
 +Category Theory+ is a huge topic not related *per se* to programming, but 
 nowadays is the basis of what functional programming has become today.
 
@@ -179,6 +181,13 @@ include::{sourceDirJava}/groovyfp/categories/Applicative.java[indent=0]
 We have included in our Java(TM) version a way of accessing the inner value 
 forcing any +Applicative+ to implement the +getValue()+ method.
 
+NOTE: Instead of +getValue+ returning a raw value I've implemented +getTypedRef+ which
+returns a wrapper having the raw instance.
+I did it becauseI didn't found a solution to resolve the problem of having the ListMonad sharing
+the same interface with Monads sharing single values and still respecting the
++fmap+, +fapply+ and +bind+ methods. I'm not perfect so I will be very happy if
+someone gives me a better solution :)
+
 But the  most important method is +fapply+ which in in charge of receiving another
 applicative and use the value of that applicative and apply it to the inner value
 of the instance of the source applicative.
@@ -239,8 +248,6 @@ A bind method receives a wrapped value +m a+ then a function +(a -> m b)+ which
 transforms the wrapped value to another wrapped value, and finally returns the
 transformation result +m b+.
 
-==== Example
-
 In my humble representation of a Monad type in Java(TM) I came up with the 
 following code:
 
@@ -249,7 +256,21 @@ following code:
 include::{sourceDirJava}/groovyfp/categories/Monad.java[indent=0]
 ----
 
-To see how to use this abstraction lets use it in a simple exercise:
+==== Maybe
+
+The +Maybe+ is normally used to avoid asking whether the value is null or it
+can contain any value. That's why the +Maybe+ object has two children: 
++Maybe.Just+ and +Maybe.Nothing+. 
+
+NOTE: In the JDK 8 you can find the +Optional+ type. Sometimes is also called
++Option+.
+
+As we'll be seeing along this chapter is that monads like +Maybe+, +Either+ or
++ListMonad+ will allow to apply functions over the wrapped value, only if the
+wrapped value is considered *valid*. Otherwise the wrapped value will be 
+returned.
+
+To see how to use +Maybe+ lets use it in a simple exercise:
 
 ""
 Given a number, I want to divide it by half two times, and then if still
@@ -282,9 +303,63 @@ While +Maybe.Just+ applies the function:
 include::{sourceDirJava}/groovyfp/categories/Maybe.java[tags=justbind,indent=0]
 ----
 
-+Maybe.Nothing+ like its name, *does nothing* :P
++Maybe.Nothing+ like its name, *does nothing* but to return the current value :P
 
 [source,java]
 ----
 include::{sourceDirJava}/groovyfp/categories/Maybe.java[tags=nothingbind,indent=0]
 ----
+
+==== Either
+
+Either monad is also one of the classics. The +Either+ monad instance can 
+represent correct or error.
+
+As imperative programmer I'm used to choose between branches in my code using
+conditional structures such as +if+. As Groovy programmer I've gone one step
+further and I've met the +Groovy Truth+ that helps me a lot classifying
+instances between those which could be seen as a false statement and those 
+which can be taken as a true statement.
+
+But what if we go beyond ? What if we had a type saying it could be right or
+wrong depending on its own but still having content ?.
+
+The following example tries to search certain type of people from a given list.
+The search will stop once a person has been found with any of the given rules.
+
+[source,java]
+----
+include::{testDir}/groovyfp/categories/EitherSpec.groovy[tags=eithermonadsearch,indent=0]
+----
+
+First of all, I need to apologise because in this example It seems I've used Either just
+to do the opposite. This time think +Either.Left+ as something telling us to 
+stop looking because we've found what we were looking for.
+
+<1> +baseSearch+ is a function that returns another function. 
+That inner function returns an +Either.Left+ instance with the result inside 
+if the +search+ function passed as parameter succeeded. I want the function to
+return +Either.Left+ because I know when an +Either.Left+ is returned no further
+action is done. And because I've found what I was looking for, I don't want the
+search to go any further.
+<2> I've created three different functions valid to be used in an +fmap+ function. That
+means they receive an unwrapped value but they will return a wrapped value.
+<3> Given the source we will try to apply three types of search in order to find
+someone. Because the rules of the monad, I know if the first search fails the
+second will be triggered, and so on. In case any of them succeed the value will be
+return immediately.
+
+==== ListMonad
+
+Collections in general are one of the most used data structures ever. 
+Some languages use collections only as data structures and some others make 
+them implement monadic semantics in order to be able to do things like
++list comprehensions+.
+
+Imagine we want to generate a sequence of values. I want a list of the doubles
+and halfs of numbers from one to three. Lets see how it could look like in plain
+Groovy:
+
+
+
+

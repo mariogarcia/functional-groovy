@@ -1,5 +1,6 @@
 = Functional Groovy 
-:numbered:                                                                                                                              
+Mario Garcia
+:numbered:                                                                                                                 
 :testDir: ../../src/test/groovy
 :sourceDir: ../../src/main/groovy
 :sourceDirJava: ../../src/main/java
