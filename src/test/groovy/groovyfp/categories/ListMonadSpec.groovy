@@ -1,6 +1,7 @@
 package groovyfp.categories
 
 import static groovyfp.categories.ListMonad.list
+import static groovyfp.categories.Fn.bind
 import spock.lang.Specification
 
 /**
@@ -45,36 +46,20 @@ class ListMonadSpec extends Specification {
 
     // tag::listmonadvsplaingroovy1[]
     void 'Comparing list monad with plain Groovy (I)'() {
-        when: 'collecting number, its double and its half'
-            def result1 = (1..3).collect { x -> [x, x * 2, x / 2] }.flatten()
-            def result2 = list(1..3).bind { x -> [x, x * 2, x / 2 ] as ListMonad }
+        when: 'collecting number, its double and its half with plain Groovy'
+            def result1 =
+                (1..3)
+                    .collect { x -> [x, x * 2, x / 2] }
+                    .flatten()
+        and: 'with the list monad'
+            def result2 =
+                list(1..3)
+                    .bind { x -> [x, x * 2, x / 2 ] as ListMonad }
         then: 'all results should give the same result'
             result1 == [1,2,0.5,2,4,1,3,6,1.5]
             result1 == result2.typedRef.value
     }
     // end::listmonadvsplaingroovy1[]
-
-        // tag::listmonadvsplaingroovy2[]
-    void 'Comparing list monad with plain Groovy (II)'() {
-        when: 'collecting number, its double and its half'
-            def result1 = // <1>
-                (1..3)
-                    .findAll { x -> x % 2 == 0 }
-                    .collect { x -> [x, x * 2, x / 2] }
-                    .flatten()
-        and:
-            def result2 = // <2>
-                list(1..3)
-                    .bind { x ->
-                        (x % 2 == 0 ? [x] : []) as ListMonad
-                    }.bind { y ->
-                        [y, y * 2, y / 2 ] as ListMonad
-                    }
-        then: 'all results should give the same result'
-            result1 == [2,4,1]
-            result1 == result2.typedRef.value
-    }
-    // end::listmonadvsplaingroovy2[]
 
 }
 

@@ -356,10 +356,6 @@ Some languages use collections only as data structures and some others make
 them implement monadic semantics in order to be able to do things like
 +list comprehensions+.
 
-Imagine we want to generate a sequence of values. I want a list of the doubles
-and halfs of numbers from one to three. Lets see how it could look like in plain
-Groovy:
-
 
 
 
