@@ -18,3 +18,5 @@ include::src/docs/5_from_oop_to_fn.ad[]
 include::src/docs/6_fn_patterns.ad[]
 
 include::src/docs/7_monads.ad[]
+
+include::src/docs/8_persistent.ad[]
