@@ -34,7 +34,7 @@ class ClosuresSpec extends Specification {
     // end::closures2[]
 
     // tag::closures3[]
-    void 'Using closures with collections'() {
+    void 'Using closures with collections (I)'() {
         given: 'a collection of numbers'
             def numbers = [1, 2, 3, 4]
         when: 'collecting the double of each of them'
@@ -45,7 +45,7 @@ class ClosuresSpec extends Specification {
     // end::closures3[]
 
     // tag::closures4[]
-    void 'Using closures with collections'() {
+    void 'Using closures with collections (II)'() {
         given: 'a collection of numbers'
             def numbers = [1, 2, 3, 4]
         when: 'collecting the double of each of them'
@@ -103,7 +103,7 @@ class ClosuresSpec extends Specification {
             .sum()
     }
 
-    void 'Composition: Calculation gets bigger. Composing'() {
+    void 'Composition: Calculation gets bigger. Composing (I)'() {
         given: 'two numbers as input'
             def first = 10
             def second = 20
@@ -129,7 +129,7 @@ class ClosuresSpec extends Specification {
         return numbers.collect(fn).sum()
     }
 
-    void 'Composition: Calculation gets bigger. Composing'() {
+    void 'Composition: Calculation gets bigger. Composing (II)'() {
         given: 'two numbers as input'
             def first = 10
             def second = 20

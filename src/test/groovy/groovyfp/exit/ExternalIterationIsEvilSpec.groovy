@@ -33,7 +33,7 @@ class ExternalIterationIsEvil extends Specification {
     // end::external_iteration_2[]
 
     // tag::external_iteration_3[]
-    void 'Internal iteration'() {
+    void 'Internal iteration (I)'() {
         given: 'A collection we want to iterate'
             def expendables = ['Stallone', 'Staham', 'Couture']
             def upperCaseVersion = { String word -> word.toUpperCase() }
@@ -45,7 +45,7 @@ class ExternalIterationIsEvil extends Specification {
     // end::external_iteration_3[]
 
     // tag::external_iteration_4[]
-    void 'Internal iteration'() {
+    void 'Internal iteration (II)'() {
         given: 'A collection we want to iterate'
             def expendables = ['Stallone', 'Staham', 'Couture']
         when: 'Collecting the upper case version of the names'
@@ -140,7 +140,7 @@ class ExternalIterationIsEvil extends Specification {
     // end::external_iteration_8[]
 
     // tag::external_iteration_9[]
-    void 'Internal iteration: Reusability limited ?'() {
+    void 'Internal iteration: Reusability limited ? (I)'() {
         given: 'A collection of numbers'
             def numbers1 = [100, 20, 2, 54, 33, 14]
             def numbers2 = [100, 20, 2, 54, 33, 14]
@@ -162,7 +162,7 @@ class ExternalIterationIsEvil extends Specification {
     // end::external_iteration_9[]
 
     // tag::external_iteration_10[]
-    void 'Internal iteration: Reusability limited ?'() {
+    void 'Internal iteration: Reusability limited ? (II)'() {
         given: 'A collection of numbers'
             def numbers1 = [100, 20, 2, 54, 33, 14]
             def numbers2 = [100, 20, 2, 54, 33, 14]

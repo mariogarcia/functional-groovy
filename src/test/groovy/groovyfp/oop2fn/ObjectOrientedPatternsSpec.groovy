@@ -43,7 +43,7 @@ class ObjectOrientedPatternsSpec extends Specification {
     // end::oop2fn_3[]
 
     // tag::oop2fn_4[]
-    void 'State: using state wrong'() {
+    void 'State: using state wrong (I)'() {
         given: 'an object used in a closure'
             def state = new State(discount:50) // <1>
             def closure = { price ->
@@ -60,7 +60,7 @@ class ObjectOrientedPatternsSpec extends Specification {
     // end::oop2fn_4[]
 
     // tag::oop2fn_5[]
-    void 'State: using state wrong'() {
+    void 'State: using state wrong (II)'() {
         given: 'an object used in a closure'
             def state = new State(discount:50) // <1>
         and: 'reducing the closure avaiable scope when is created'
@@ -286,7 +286,7 @@ class ObjectOrientedPatternsSpec extends Specification {
         return name.length() // <1>
     }
 
-    void 'Fighting NPE: Groovy truth'() {
+    void 'Fighting NPE: Groovy truth (I)'() {
         given: 'A word'
             def word = null
         when: 'Invoking the method'
@@ -301,7 +301,7 @@ class ObjectOrientedPatternsSpec extends Specification {
         return name?.length() // <1>
     }
 
-    void 'Fighting NPE: Groovy truth'() {
+    void 'Fighting NPE: Groovy truth (II)'() {
         given: 'A word'
             def word = null
         when: 'Invoking the method'
