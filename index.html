@@ -367,6 +367,7 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] { cursor: default; }
 <body class="article toc2 toc-left">
 <div id="header">
 <h1>Functional Groovy</h1>
+<span id="author" class="author">Mario Garcia</span><br>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
@@ -378,6 +379,13 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] { cursor: default; }
 <li><a href="#_getting_started">2.2. Getting started</a></li>
 <li><a href="#_composition">2.3. Composition</a></li>
 <li><a href="#_currying">2.4. Currying</a></li>
+<li>
+<ul class="sectlevel3">
+<li><a href="#_what_is_currying">2.4.1. What is currying ?</a></li>
+<li><a href="#_using_curry_ncurry_rcurry">2.4.2. Using curry, ncurry, rcurry</a></li>
+<li><a href="#_combining_closures">2.4.3. Combining closures</a></li>
+</ul>
+</li>
 <li><a href="#_delegation_strategy">2.5. Delegation strategy</a></li>
 <li><a href="#_memoization">2.6. Memoization</a></li>
 <li><a href="#_trampoline">2.7. Trampoline</a></li>
@@ -397,6 +405,11 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] { cursor: default; }
 <ul class="sectlevel2">
 <li><a href="#_mind_the_lazyness">4.1. Mind the lazyness</a></li>
 <li><a href="#_stream_groovy">4.2. stream-groovy</a></li>
+<li>
+<ul class="sectlevel3">
+<li><a href="#_first_steps">4.2.1. First steps</a></li>
+</ul>
+</li>
 <li><a href="#_creating_a_stream">4.3. Creating a Stream</a></li>
 <li><a href="#_nba_time">4.4. NBA time</a></li>
 </ul>
@@ -416,6 +429,34 @@ span.icon > [class^="icon-"], span.icon > [class*=" icon-"] { cursor: default; }
 </li>
 <li><a href="#_functional_patterns">6. Functional Patterns</a></li>
 <li><a href="#_the_m_word">7. The M-Word</a></li>
+<li>
+<ul class="sectlevel2">
+<li><a href="#_introduction">7.1. Introduction</a></li>
+<li><a href="#_functor">7.2. Functor</a></li>
+<li>
+<ul class="sectlevel3">
+<li><a href="#_example">7.2.1. Example</a></li>
+<li><a href="#_function_a_b">7.2.2. Function (a&#8594;b)</a></li>
+<li><a href="#_functor_a">7.2.3. Functor&lt;A&gt;</a></li>
+</ul>
+</li>
+<li><a href="#_applicative_functor">7.3. Applicative Functor</a></li>
+<li>
+<ul class="sectlevel3">
+<li><a href="#_example_2">7.3.1. Example</a></li>
+</ul>
+</li>
+<li><a href="#_monad">7.4. Monad</a></li>
+<li>
+<ul class="sectlevel3">
+<li><a href="#_maybe">7.4.1. Maybe</a></li>
+<li><a href="#_either">7.4.2. Either</a></li>
+<li><a href="#_listmonad">7.4.3. ListMonad</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_persistent_collections">8. Persistent collections</a></li>
 </ul>
 </div>
 </div>
@@ -572,7 +613,7 @@ following example we want to get 2 times each element of the collection.</p>
 <div class="listingblock">
 <div class="title">Using closures in API</div>
 <div class="content">
-<pre class="prettyprint groovy language-groovy"><code>void 'Using closures with collections'() {
+<pre class="prettyprint groovy language-groovy"><code>void 'Using closures with collections (I)'() {
     given: 'a collection of numbers'
         def numbers = [1, 2, 3, 4]
     when: 'collecting the double of each of them'
@@ -601,7 +642,7 @@ element in the collection.</td>
 <div class="listingblock">
 <div class="title">Using closures in API</div>
 <div class="content">
-<pre class="prettyprint groovy language-groovy"><code>void 'Using closures with collections'() {
+<pre class="prettyprint groovy language-groovy"><code>void 'Using closures with collections (II)'() {
     given: 'a collection of numbers'
         def numbers = [1, 2, 3, 4]
     when: 'collecting the double of each of them'
@@ -711,7 +752,7 @@ adding up all numbers.</p>
         .sum()
 }
 
-void 'Composition: Calculation gets bigger. Composing'() {
+void 'Composition: Calculation gets bigger. Composing (I)'() {
     given: 'two numbers as input'
         def first = 10
         def second = 20
@@ -764,7 +805,7 @@ Double applyFunctionAndSum(Closure&lt;Number&gt; fn, Integer... numbers) {
     return numbers.collect(fn).sum()
 }
 
-void 'Composition: Calculation gets bigger. Composing'() {
+void 'Composition: Calculation gets bigger. Composing (II)'() {
     given: 'two numbers as input'
         def first = 10
         def second = 20
@@ -1329,7 +1370,7 @@ without having to specify how a collection should be traversed.</p>
 <div class="listingblock">
 <div class="title">Internal Iteration: Groovy</div>
 <div class="content">
-<pre class="prettyprint groovy language-groovy"><code>void 'Internal iteration'() {
+<pre class="prettyprint groovy language-groovy"><code>void 'Internal iteration (I)'() {
     given: 'A collection we want to iterate'
         def expendables = ['Stallone', 'Staham', 'Couture']
         def upperCaseVersion = { String word -&gt; word.toUpperCase() }
@@ -1351,7 +1392,7 @@ then passing it to the collect method</p>
 <div class="listingblock">
 <div class="title">Internal Iteration: Groovy</div>
 <div class="content">
-<pre class="prettyprint groovy language-groovy"><code>void 'Internal iteration'() {
+<pre class="prettyprint groovy language-groovy"><code>void 'Internal iteration (II)'() {
     given: 'A collection we want to iterate'
         def expendables = ['Stallone', 'Staham', 'Couture']
     when: 'Collecting the upper case version of the names'
@@ -1509,7 +1550,7 @@ too dirty&#8230; and looks worst :P</p>
 <div class="listingblock">
 <div class="title">Internal Iteration: Reusability limited to methods ?</div>
 <div class="content">
-<pre class="prettyprint groovy language-groovy"><code>void 'Internal iteration: Reusability limited ?'() {
+<pre class="prettyprint groovy language-groovy"><code>void 'Internal iteration: Reusability limited ? (I)'() {
     given: 'A collection of numbers'
         def numbers1 = [100, 20, 2, 54, 33, 14]
         def numbers2 = [100, 20, 2, 54, 33, 14]
@@ -1537,7 +1578,7 @@ As I said earlier <strong><em>functions</em></strong> / <strong><em>closures</em
 <div class="listingblock">
 <div class="title">Internal Iteration: Reusability limited to methods ?</div>
 <div class="content">
-<pre class="prettyprint groovy language-groovy"><code>void 'Internal iteration: Reusability limited ?'() {
+<pre class="prettyprint groovy language-groovy"><code>void 'Internal iteration: Reusability limited ? (II)'() {
     given: 'A collection of numbers'
         def numbers1 = [100, 20, 2, 54, 33, 14]
         def numbers2 = [100, 20, 2, 54, 33, 14]
@@ -2259,7 +2300,7 @@ one of the references the closure is using.</p>
 <div class="listingblock">
 <div class="title">State (Wrong)</div>
 <div class="content">
-<pre class="prettyprint groovy language-groovy"><code>void 'State: using state wrong'() {
+<pre class="prettyprint groovy language-groovy"><code>void 'State: using state wrong (I)'() {
     given: 'an object used in a closure'
         def state = new State(discount:50) <i class="conum" data-value="1"></i><b>(1)</b>
         def closure = { price -&gt;
@@ -2299,7 +2340,7 @@ example a little bit:</p>
 <div class="listingblock">
 <div class="title">State</div>
 <div class="content">
-<pre class="prettyprint groovy language-groovy"><code>void 'State: using state wrong'() {
+<pre class="prettyprint groovy language-groovy"><code>void 'State: using state wrong (II)'() {
     given: 'an object used in a closure'
         def state = new State(discount:50) <i class="conum" data-value="1"></i><b>(1)</b>
     and: 'reducing the closure avaiable scope when is created'
@@ -2957,7 +2998,7 @@ unfortunately a null value.</p>
     return name.length() <i class="conum" data-value="1"></i><b>(1)</b>
 }
 
-void 'Fighting NPE: Groovy truth'() {
+void 'Fighting NPE: Groovy truth (I)'() {
     given: 'A word'
         def word = null
     when: 'Invoking the method'
@@ -2991,7 +3032,7 @@ a good starting point to avoid NPE problems.</p>
     return name?.length() <i class="conum" data-value="1"></i><b>(1)</b>
 }
 
-void 'Fighting NPE: Groovy truth'() {
+void 'Fighting NPE: Groovy truth (II)'() {
     given: 'A word'
         def word = null
     when: 'Invoking the method'
@@ -3207,15 +3248,665 @@ and: 'transformation has been applied'
 <div class="sect1">
 <h2 id="_the_m_word">7. The M-Word</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="_introduction">7.1. Introduction</h3>
 <div class="paragraph">
-<p>(TODO)</p>
+<p><code>Category Theory</code> is a huge topic not related <strong>per se</strong> to programming, but
+nowadays is the basis of what functional programming has become today.</p>
+</div>
+<div class="paragraph">
+<p>In this chapter I&#8217;ll try to explain and give examples of some terms
+taken from Category Theory and why they could be useful to us as programmers
+in our daily work.</p>
+</div>
+<div class="paragraph">
+<p>Many of the examples are based on <code>Haskell</code> programming language.
+As a pure functional language is the best place if you want to learn
+the basis of functional programming, and also because there aren&#8217;t
+much documentation out there other than Haskell. Here you have
+my two cents :)</p>
+</div>
+<div class="paragraph">
+<p>I&#8217;m aware that terms like <code>Functor</code>, <code>Monad</code>&#8230;etc seem to be something
+strange, odd, difficult for most of the programmers born in the OOP era
+(including myself by the way).</p>
+</div>
+<div class="paragraph">
+<p>I know it&#8217;s difficult&#8230; bad news: it becomes harder along the way, good news
+&#8230; there is no good news. I&#8217;m jocking good news is that the more you
+learn about <code>Category Theory</code> applied to functional programming the more
+you understand how to use functional programming at work&#8230; but stop!
+it&#8217;s about time&#8230; <strong>LETS DO THIS</strong></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_functor">7.2. Functor</h3>
+<div class="paragraph">
+<p>In <code>Category Theory</code> a <code>Functor</code> is a mapping between categories&#8230;WHaAaAAAaaTT?? O_o</p>
+</div>
+<div class="paragraph">
+<p>A <code>Functor</code> represents a container/wrapper of some sort, along with the ability
+to apply a function to elements wrapped in the container.</p>
+</div>
+<div class="paragraph">
+<p>Ok, so a <code>Functor</code> is like a <code>container</code>, like a <code>box</code>. It contains a value.
+That value can be transformed by functions applied to the container,
+not to the value directly.</p>
+</div>
+<div class="paragraph">
+<p>The formal definition of a Functor in Haskell is:</p>
+</div>
+<div class="listingblock">
+<div class="title">Functor definition</div>
+<div class="content">
+<pre class="prettyprint haskell language-haskell"><code>class Functor f where
+    fmap :: (a -&gt; b) -&gt; f a -&gt; f b</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>What does it mean ? Well it means that in order to build a new instance of a
+<code>Functor</code> type the type should implement a <code>fmap</code> method.</p>
+</div>
+<div class="paragraph">
+<p>The <code>fmap</code> method receives a function <code>(a &#8594; b)</code> which transforms an object
+of type <code>a</code> in another object of type <code>b</code>, it also receives a <code>Functor</code> of type <code>a</code>
+and finally returns a functor of type <code>b</code>.</p>
+</div>
+<div class="paragraph">
+<p>How could we implement this ?</p>
+</div>
+<div class="sect3">
+<h4 id="_example">7.2.1. Example</h4>
+<div class="listingblock">
+<div class="title">Functor (Java)</div>
+<div class="content">
+<pre class="prettyprint java language-java"><code>package groovyfp.categories;
+
+/**
+ *
+ * @param &lt;A&gt;
+ */
+public interface Functor&lt;A&gt; {
+    public &lt;B, F extends Functor&lt;B&gt;&gt; F fmap(Function&lt;A,B&gt; fn);
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="icon-note" title="Note"></i>
+</td>
+<td class="content">
+Some of the interfaces or classes shown here are implemented in plain
+Java&#8482;. I&#8217;m planning to migrate them to Groovy 2.3+ with <code>@CompileStatic</code> any time
+soon.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>So basically a functor allows us to transform the contained value applying a function.
+There&#8217;re some differences between the Java&#8482; implementation and the Haskell one.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>(a&#8594;b)</code> becomes <code>Function&lt;A,B&gt;</code></p>
+</li>
+<li>
+<p><code>fa</code> parameter will be the instance of the functor itself</p>
+</li>
+<li>
+<p><code>fb</code> becomes <code>Functor&lt;B&gt;</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Now imagine we had a function adding 3 to any number. In Haskell we would be seeing this:</p>
+</div>
+<div class="listingblock">
+<div class="title">Haskell example</div>
+<div class="content">
+<pre class="prettyprint haskell language-haskell"><code>fmap (+3) (Just 1)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>I&#8217;ll try to reproduce the same behavior, this time with Groovy :) We will be following
+these steps:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>We need a function receiving a number and returning a number <code>(a&#8594;b)</code></p>
+</li>
+<li>
+<p>Then the functor will receive the function and will know how to unwrap the
+value and after applying the function how to wrap it again.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_function_a_b">7.2.2. Function (a&#8594;b)</h4>
+<div class="paragraph">
+<p>A function represents a transformation applied to a given input, giving
+a certain result.</p>
+</div>
+<div class="paragraph">
+<p>We need a function adding 3 to any given number. Here is a simple java interface
+defining a function:</p>
+</div>
+<div class="listingblock">
+<div class="title">Function (Java)</div>
+<div class="content">
+<pre class="prettyprint java language-java"><code>package groovyfp.categories;
+
+/**
+ *
+ */
+public interface Function&lt;A,B&gt; {
+    B apply(A input);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Because this interface is in fact a functional interface, it could be
+substituted by a Closure expression. So instead of building a new class or
+building a verbose inner class implementation we will be using a closure
+to define a new implementation of the <strong>Function</strong> interface.</p>
+</div>
+<div class="listingblock">
+<div class="title">Function&lt;Integer,Integer&gt;</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>void 'Building a simple function'() {
+    given: 'a function instance using closures'
+        Function&lt;Integer,Integer&gt; plus_3 = { Integer v -&gt;
+            v + 3
+        } as Function&lt;Integer,Integer&gt;
+    when:  'using it'
+        Integer result = plus_3.apply(5)
+    then: 'the value to be the number plus 3'
+        result == 8
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="icon-note" title="Note"></i>
+</td>
+<td class="content">
+Be aware that because closures only declare the return type you should add
+the type to the closure parameter if you care about input type.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_functor_a">7.2.3. Functor&lt;A&gt;</h4>
+<div class="paragraph">
+<p>Well now we need an instance of a functor of type <strong>A</strong>, pass to the functor
+our previously created function and expect to receive a certain value with
+a certain type.</p>
+</div>
+<div class="listingblock">
+<div class="title">Functor&lt;Integer&gt;</div>
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>void 'applying a given function to a functor'() {
+    given: 'a function'
+        Function&lt;Integer,Integer&gt; plus_3 = { Integer v -&gt; v + 3 }
+    and: 'a functor implementation. This time Maybe.Just implements functor'
+        Functor&lt;Integer&gt; boxOfFive = Maybe.just(5)
+    when: 'applying the function to functor to get another functor'
+        Functor&lt;Integer&gt; result = boxOfFive.fmap(plus_3)
+    then: 'the result should be the expected'
+        result.typedRef.value == 8
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Ok but how <code>Maybe.Just</code> gets something and transform it to another functor. Lets see
+what the <code>fmap</code> implementation does:</p>
+</div>
+<div class="listingblock">
+<div class="title">Maybe Functor#fmap implementation</div>
+<div class="content">
+<pre class="prettyprint java language-java"><code>@Override
+public &lt;B, F extends Functor&lt;B&gt;&gt; F fmap(Function&lt;JUST, B&gt; fn) {
+    return (F) just(fn.apply(this.getTypedRef().getValue()));
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>First I&#8217;ll try to describe which types are involved:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>JUST</code> is the value contained by the Maybe instance (which among other things is a functor).</p>
+</li>
+<li>
+<p><code>&lt;B&gt;</code> is the type of the function applied. Then
+the Maybe implementation wraps that value into another instance of a functor
+(this time another Just instance).</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Basically here the <code>fmap</code> method takes as an argument a function transforming
+the contained value in the source functor and then wraps it again in another
+functor instance.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_applicative_functor">7.3. Applicative Functor</h3>
+<div class="paragraph">
+<p>Remember I was saying a <code>Functor</code> is a container, a box if you like, containing
+a simple value ? You can think about <code>Applicative</code> like a <code>Functor</code> containing
+a <code>Function</code>. This time the <code>box</code> contains a <code>Function</code>.</p>
+</div>
+<div class="paragraph">
+<p>Why then the name of <code>Applicative</code> ? I&#8217;m not quite sure, but
+I think it came from the idea that a function <strong>can be applied</strong>
+to some other values.</p>
+</div>
+<div class="paragraph">
+<p>In Haskell:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint haskell language-haskell"><code>(&lt;*&gt;) :: Applicative f =&gt; f (a-&gt;b) -&gt; (f a -&gt; f b)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This time instead of containing a plain value the functor has a function. So
+we can read the Haskell function as a function receiving an applicative <code>f (a&#8594;b)</code> (a
+functor containing a function transforming from a to b) and returns the
+transformation from a functor containing a to a functor containing b <code>(f a &#8594; f b)</code>.</p>
+</div>
+<div class="sect3">
+<h4 id="_example_2">7.3.1. Example</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint java language-java"><code>package groovyfp.categories;
+
+/**
+ *
+ * @param &lt;A&gt;
+ */
+public interface Applicative&lt;A&gt; extends Functor&lt;A&gt; {
+    public &lt;U extends Type&lt;A&gt;&gt; U getTypedRef();
+    public &lt;B&gt; Applicative&lt;B&gt; fapply(Applicative&lt;Function&lt;A,B&gt;&gt; afn);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We have included in our Java&#8482; version a way of accessing the inner value
+forcing any <code>Applicative</code> to implement the <code>getValue()</code> method.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="icon-note" title="Note"></i>
+</td>
+<td class="content">
+Instead of <code>getValue</code> returning a raw value I&#8217;ve implemented <code>getTypedRef</code> which
+returns a wrapper having the raw instance.
+I did it becauseI didn&#8217;t found a solution to resolve the problem of having the ListMonad sharing
+the same interface with Monads sharing single values and still respecting the
+<code>fmap</code>, <code>fapply</code> and <code>bind</code> methods. I&#8217;m not perfect so I will be very happy if
+someone gives me a better solution :)
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>But the  most important method is <code>fapply</code> which in in charge of receiving another
+applicative and use the value of that applicative and apply it to the inner value
+of the instance of the source applicative.</p>
+</div>
+<div class="paragraph">
+<p>Lets take a look to the implementation of the <code>fapply</code> method in the
+<code>Maybe.Right</code> class we can see how it works.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint java language-java"><code>@Override
+public &lt;B&gt; Just&lt;B&gt; fapply(Applicative&lt;Function&lt;JUST, B&gt;&gt; afn) {
+    return this.fmap(afn.getTypedRef().getValue());
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>How can we use it ?</p>
+</div>
+<div class="paragraph">
+<p>In this example I&#8217;m using implementations of <code>Maybe</code>. This implementation is not
+only an <code>Applicative</code> but a <code>Functor</code> (which is implied) and a <code>Monad</code>. Instead
+of creating object with <code>new</code> operator every object has a static method to do it.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>import static Maybe.just
+import static Maybe.nothing
+import groovyfp.categories.Maybe.Nothing</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This is the example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>void 'Applicative: Maybe applicative implementation'() {
+    when: 'combining two closures'
+        def inc = { Integer v -&gt; v + 1 }
+        def byTwo = { Integer v -&gt; v * 2 }
+    and: 'using the combination as a Function'
+        def combination = (inc &gt;&gt; byTwo) as Function
+    then: 'if the value is nothing the function shouldnt be applied'
+        nothing().fapply(just(combination)).typedRef.value == null <i class="conum" data-value="1"></i><b>(1)</b>
+    and: 'otherwise if the initial value is correct the function will work'
+        just(1).fapply(just(combination)).typedRef.value == 4 <i class="conum" data-value="2"></i><b>(2)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The implementation of the <code>Maybe.Nothing</code> <code>fapply</code> method doesn&#8217;t apply the
+function to the current instance and returns  an instance of <code>new Nothing(null)</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The implementation of <code>the Maybe.Just</code> <code>fapply</code> method applies current value
+to the function contained within the <code>Applicative</code> passed as parameter.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_monad">7.4. Monad</h3>
+<div class="paragraph">
+<p>What is a Monad ?</p>
+</div>
+<div class="paragraph">
+<p>While <code>Functor</code> applied a function to a wrapped value, and an <code>Applicative</code>
+applied a wrapped function to a wrapped value, a <code>Monad</code> applies a function
+to a wrapped value and returns a wrapped value.</p>
+</div>
+<div class="paragraph">
+<p>Because <code>Monad</code> is an <code>Applicative</code> and an <code>Applicative</code> is a <code>Functor</code>, likewise
+a <code>Monad</code> has some inherit methods such as <code>fmap</code> or  <code>fapply</code>. But the method
+that makes a <code>Monad</code> a <code>Monad</code> is the <code>bind</code> method (or <code>&gt;&gt;=</code> which is its alias
+in Haskell).</p>
+</div>
+<div class="paragraph">
+<p>How does <code>bind</code> looks like ? Like always , first step, Haskell syntax:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint haskell language-haskell"><code>class Monad m where
+    (&gt;&gt;=) :: m a -&gt; (a -&gt; m b) -&gt; m b</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A bind method receives a wrapped value <code>m a</code> then a function <code>(a &#8594; m b)</code> which
+transforms the wrapped value to another wrapped value, and finally returns the
+transformation result <code>m b</code>.</p>
+</div>
+<div class="paragraph">
+<p>In my humble representation of a Monad type in Java&#8482; I came up with the
+following code:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint java language-java"><code>package groovyfp.categories;
+
+/**
+ *
+ * @param &lt;A&gt;
+ */
+public interface Monad&lt;A&gt; extends Applicative&lt;A&gt; {
+    public &lt;B,M extends Monad&lt;B&gt;&gt; M bind(Function&lt;A,M&gt; fn);
+}</code></pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_maybe">7.4.1. Maybe</h4>
+<div class="paragraph">
+<p>The <code>Maybe</code> is normally used to avoid asking whether the value is null or it
+can contain any value. That&#8217;s why the <code>Maybe</code> object has two children:
+<code>Maybe.Just</code> and <code>Maybe.Nothing</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="icon-note" title="Note"></i>
+</td>
+<td class="content">
+In the JDK 8 you can find the <code>Optional</code> type. Sometimes is also called
+<code>Option</code>.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>As we&#8217;ll be seeing along this chapter is that monads like <code>Maybe</code>, <code>Either</code> or
+<code>ListMonad</code> will allow to apply functions over the wrapped value, only if the
+wrapped value is considered <strong>valid</strong>. Otherwise the wrapped value will be
+returned.</p>
+</div>
+<div class="paragraph">
+<p>To see how to use <code>Maybe</code> lets use it in a simple exercise:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Given a number, I want to divide it by half two times, and then if still
+not decimal, multiplied by three.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>Because all even numbers will become decimals as soon as I try to dividing them
+by half I want to stop the process as soon as the process detects that number
+is no longer eligible to success.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint groovy language-groovy"><code>void 'Monad: using maybe to shortcircuit a process'() {
+    given: 'a function dividing only even numbers'
+        def half = { BigDecimal possible -&gt;
+            return possible.intValue() % 2 == 0 ?
+                Maybe.just(possible.div(2)) :
+                Maybe.nothing()
+        }
+    and: 'another function multiplying by three'
+        def threeTimes = { BigDecimal possible -&gt;
+            return Maybe.just(possible * 3)
+        }
+    when: 'starting the process'
+        Integer result =
+            Maybe.just(sampleNumber)
+                .bind(half) <i class="conum" data-value="1"></i><b>(1)</b>
+                .bind(half) <i class="conum" data-value="2"></i><b>(2)</b>
+                .bind(threeTimes) <i class="conum" data-value="3"></i><b>(3)</b>
+                .typedRef.value
+    then: 'checking the result'
+        result == expected
+    where: 'sample numbers and expectations are'
+        sampleNumber | expected
+            100      |    75
+            200      |   150
+             50      |   null
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>tries to divide, if not even returns nothing otherwise returns division result.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>tries again to divide the number under the same premises.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>If division ended successfully only then applies multiplication.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The nice thing about this plan is that if any of the previous steps ended with
+a <code>Maybe.Nothing</code> instance the process won&#8217;t go any further.</p>
+</div>
+<div class="paragraph">
+<p>In order to understand what happens underneath, why process doesn&#8217;t continue,
+I would like to show you both implementation of <code>Maybe.Just</code> and <code>Maybe.Nothing</code>.</p>
+</div>
+<div class="paragraph">
+<p>While <code>Maybe.Just</code> applies the function:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint java language-java"><code>@Override
+public &lt;B, M extends Monad&lt;B&gt;&gt; M bind(Function&lt;JUST, M&gt; fn) {
+    return fn.apply(getTypedRef().getValue());
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>Maybe.Nothing</code> like its name, <strong>does nothing</strong> but to return the current value :P</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint java language-java"><code>@Override
+public &lt;B, F extends Functor&lt;B&gt;&gt; F fmap(Function&lt;NOTHING, B&gt; fn) {
+    return (F) new Nothing();
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_either">7.4.2. Either</h4>
+<div class="paragraph">
+<p>Either monad is also one of the classics. The <code>Either</code> monad instance can
+represent correct or error.</p>
+</div>
+<div class="paragraph">
+<p>As imperative programmer I&#8217;m used to choose between branches in my code using
+conditional structures such as <code>if</code>. As Groovy programmer I&#8217;ve gone one step
+further and I&#8217;ve met the <code>Groovy Truth</code> that helps me a lot classifying
+instances between those which could be seen as a false statement and those
+which can be taken as a true statement.</p>
+</div>
+<div class="paragraph">
+<p>But what if we go beyond ? What if we had a type saying it could be right or
+wrong depending on its own but still having content ?.</p>
+</div>
+<div class="paragraph">
+<p>The following example tries to search certain type of people from a given list.
+The search will stop once a person has been found with any of the given rules.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint java language-java"><code>void 'using Either to chain failback searchs'() {
+    given:'a base function to search by a certain criteria'
+        def baseSearch = { Closure&lt;Boolean&gt; search -&gt; <i class="conum" data-value="1"></i><b>(1)</b>
+            return { List sample -&gt;
+                def pr = sample.find(search)
+                // if found then return left to shortcircuit further
+                // searchs
+                pr ? Either.left(pr) : Either.right(sample)
+            }
+        }
+    and: 'composed criterias on top of the base function'
+        // they become Function&lt;A,Monad&lt;B&gt;&gt;
+        def lookByNameJohn = baseSearch { it.name == 'john' } <i class="conum" data-value="2"></i><b>(2)</b>
+        def lookByAgeGreaterThan = baseSearch { it.age &gt; 50 }
+        def lookByCity = baseSearch { it.city == 'dublin' }
+    when: 'chaining all search criterias'
+        Either result = <i class="conum" data-value="3"></i><b>(3)</b>
+            Either.right(sample)
+                .bind(lookByNameJohn)
+                .bind(lookByAgeGreaterThan)
+                .bind(lookByCity)
+    then: 'there should be only one item'
+        result.isLeft()
+        result.typedRef.value.name == name_of_the_result
+    where: 'samples used in this spec are'
+        sample          |   name_of_the_result
+        firstSample     |       'john'
+        secondSample    |       'peter'
+        thirdSample     |       'rob'
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>First of all, I need to apologise because in this example It seems I&#8217;ve used Either just
+to do the opposite. This time think <code>Either.Left</code> as something telling us to
+stop looking because we&#8217;ve found what we were looking for.</p>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>baseSearch</code> is a function that returns another function.
+That inner function returns an <code>Either.Left</code> instance with the result inside
+if the <code>search</code> function passed as parameter succeeded. I want the function to
+return <code>Either.Left</code> because I know when an <code>Either.Left</code> is returned no further
+action is done. And because I&#8217;ve found what I was looking for, I don&#8217;t want the
+search to go any further.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>I&#8217;ve created three different functions valid to be used in an <code>fmap</code> function. That
+means they receive an unwrapped value but they will return a wrapped value.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Given the source we will try to apply three types of search in order to find
+someone. Because the rules of the monad, I know if the first search fails the
+second will be triggered, and so on. In case any of them succeed the value will be
+return immediately.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_listmonad">7.4.3. ListMonad</h4>
+<div class="paragraph">
+<p>Collections in general are one of the most used data structures ever.
+Some languages use collections only as data structures and some others make
+them implement monadic semantics in order to be able to do things like
+<code>list comprehensions</code>.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_persistent_collections">8. Persistent collections</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>TODO</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-07-20 21:14:42 CEST
+Last updated 2014-09-14 19:36:31 CEST
 </div>
 </div>
 </body>
