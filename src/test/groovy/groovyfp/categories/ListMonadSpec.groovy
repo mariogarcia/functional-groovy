@@ -54,7 +54,7 @@ class ListMonadSpec extends Specification {
         and: 'with the list monad'
             def result2 =
                 list(1..3)
-                    .bind { x -> [x, x * 2, x / 2 ] as ListMonad }
+                    .bind { x -> list(x, x * 2, x / 2) }
         then: 'all results should give the same result'
             result1 == [1,2,0.5,2,4,1,3,6,1.5]
             result1 == result2.typedRef.value
