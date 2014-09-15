@@ -8,7 +8,7 @@ import java.util.List;
  *
  * @param <A>
  */
-public class ListMonad<A> implements Monad<A>{
+public class ListMonad<A> implements Monad<A> {
 
     private final List<A> value;
 
