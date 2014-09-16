@@ -31,7 +31,20 @@ class ListMonadSpec extends Specification {
             result.typedRef.value == [2,3,4,5]
     }
 
-    void 'using bind for list comprehensions'() {
+    void 'using bind for list comprehensions (I)'() {
+        given: 'a list of numbers'
+            ListMonad<Integer> fa = list("hi","bye")
+        and: 'making bind to look like Haskell bind'
+            fa.metaClass.'>>=' = { fn -> delegate.bind(fn) }
+        and: 'creating a function containing a list monad'
+            def wordAndCount = { String w -> list(w, w.length()) }
+        when: 'executing the binding'
+            def result = fa.'>>=' wordAndCount
+        then: 'we should get the word length and vowels in both words'
+            result.typedRef.value == list("hi",2,"bye",3).typedRef.value
+    }
+
+    void 'using bind for list comprehensions (II)'() {
         given: 'a list of numbers'
             ListMonad<Integer> fa = list("hi","bye")
         and: 'making bind to look like Haskell bind'

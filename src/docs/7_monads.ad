@@ -310,6 +310,23 @@ include::{sourceDirJava}/groovyfp/categories/Maybe.java[tags=justbind,indent=0]
 include::{sourceDirJava}/groovyfp/categories/Maybe.java[tags=nothingbind,indent=0]
 ----
 
+Sometimes it would be useful to have an alternative when there's no value. That's
+what the method +or+ does. It makes the monad to return the alternative value in
+case there was no value. Otherwise the current value is returned.
+
+[source,groovy]
+----
+include::{testDir}/groovyfp/categories/MaybeSpec.groovy[tags=maybeor1,indent=0]
+----
+
+It's pretty clear in the previous example, but it is even clearer when you do
+something ( a transformation for example) with the current inner value.
+
+[source,groovy]
+----
+include::{testDir}/groovyfp/categories/MaybeSpec.groovy[tags=maybeor2,indent=0]
+----
+
 ==== Either
 
 Either monad is also one of the classics. The +Either+ monad instance can 
@@ -356,6 +373,19 @@ Some languages use collections only as data structures and some others make
 them implement monadic semantics in order to be able to do things like
 +list comprehensions+.
 
+According to **Wikipedia** a +list comprehension+ is:
+
+[,Wikipedia]
+""
+A list comprehension is a syntactic construct available in some programming 
+languages for creating a list based on existing lists
+""
+
+I would add that implementations differ in which are capable of handling
+streams and those which don't. 
+
+First of all I'm would like to start with a basic finite example. Like we
+did before, lets sneak a little bit on how *Haskell* does it ;)
 
 
 

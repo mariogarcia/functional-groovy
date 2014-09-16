@@ -17,6 +17,10 @@ public abstract class Maybe<A> implements Monad<A> {
         return this.typedRef;
     }
 
+    public abstract boolean isPresent();
+
+    public abstract Maybe<A> or(Maybe<A> newOption);
+
     public static class Just<JUST> extends Maybe<JUST> {
 
         public Just(Type<JUST> valueRef) {
@@ -44,6 +48,16 @@ public abstract class Maybe<A> implements Monad<A> {
         }
         // end::justbind[]
 
+        @Override
+        public boolean isPresent() {
+            return true;
+        }
+
+        @Override
+        public Maybe<JUST> or(Maybe<JUST> newOption) {
+            return this;
+        }
+
     }
 
     public static class Nothing<NOTHING> extends Maybe<NOTHING> {
@@ -69,6 +83,16 @@ public abstract class Maybe<A> implements Monad<A> {
             return (F) new Nothing();
         }
         // end::nothingbind[]
+
+        @Override
+        public boolean isPresent() {
+            return false;
+        }
+
+        @Override
+        public Maybe<NOTHING> or(Maybe<NOTHING> newOption) {
+            return newOption;
+        }
 
     }
 
