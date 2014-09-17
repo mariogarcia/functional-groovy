@@ -1,6 +1,8 @@
 package groovyfp.closures
 
+import groovy.transform.Memoized
 import spock.lang.Specification
+import spock.lang.Unroll
 
 class ClosuresSpec extends Specification {
 
@@ -286,5 +288,26 @@ class ClosuresSpec extends Specification {
     }
     // end::closures16[]
 
+    // tag::closures17[]
+    void 'Using memoize for a given method'() {
+        given: 'a invocation to get a user'
+            def result = findUserDataById(1)
+        and: 'waiting to check timestamp later'
+            Thread.sleep(500)
+        when: 'asking again for the same user'
+            result = findUserDataById(1)
+        then: 'if cache is expected timestamp should match'
+            result.timestamp == old(result.timestamp)
+    }
+    // end::closures17[]
+
+    // tag::closures18[]
+    @groovy.transform.Memoized
+       def findUserDataById(Integer userId) {
+            println "Getting user [$userId] data"
+
+            return [id: userId, name: "john doe $userId", timestamp: System.currentTimeMillis()]
+       }
+    // end::closures18[]
 }
 

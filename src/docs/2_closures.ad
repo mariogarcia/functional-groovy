@@ -314,7 +314,38 @@ that couln't happen because I declare *_filters_* as a *_final_* parameter.
 
 === Memoization 
 
-(TODO)
+Although +memoization+ is normally used for recursive calculations... 
+don't worry, this chapter doesn't start with "yet another Fibonacci example".
+
+We'll get there, but I think is easier to think about +memoization+ as a form
+of +caching+. A very simple one but caching nevertheless.
+
+Imagine a very simple scenario. I would like a very simple cache to save
++n+ calls to...database/network/...etc and it's so simple I would waste my
+time to use any fancy cache system.
+
+In this first example, I'm simulating a way of getting users from a +UserService+
+class with a method +findUserById+ returning users having the id passed as parameter.
+
+Because I know memory is far more than the memory need to store all users in 
+the given process, and because every call to that method really consumes a lot
+of time, I've decided to +memoize+ it.
+
+[source, groovy]
+.Memoized method
+----
+include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures18,indent=0] 
+----
+
+In order to cache the method invocation I annotated the method with the annotation
++groovy.transform.Memoize+ which creates a new cache at instance level.  
+
+[source, groovy]
+.Memoized method
+----
+include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures17,indent=0] 
+----
+
 
 === Trampoline 
 
