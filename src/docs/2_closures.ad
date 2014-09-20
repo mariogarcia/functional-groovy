@@ -346,6 +346,25 @@ In order to cache the method invocation I annotated the method with the annotati
 include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures17,indent=0] 
 ----
 
+This was an easy way of turning an existing method to a method with an "extra" cache.
+But what if we wanted to use a closure with the same feature.
+
+Imagine we want to create a MD5 signature of every of a given list. It's
+clear same word will become the same hash, so why bothering doing the calculation
+if we already know the outcome ?
+
+[source, groovy]
+.Memoized closure
+----
+include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures19,indent=0] 
+----
+
+<1> I will be printing every word to notice that, at some point, some of the
+invocation will be omitted.
+<2> In order to create a +cache-included-closure+ we need to call +memoized()+ 
+method from +Closure+ class and most important, use the closure returned by
+that method.
+<3> Then we can use that closure in a more efficient way :)
 
 === Trampoline 
 
