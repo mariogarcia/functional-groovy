@@ -405,5 +405,47 @@ include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures13,indent=
 
 === Functional interface coercion
 
-(TODO)
+How do we used to pass filtering behavior to a collection if we didn't have closures ? I'd started
+by declaring an interface declaring the intent of the filter:
+
+[source, groovy]
+.Filter
+----
+include::{sourceDir}/groovyfp/oop2fn/Filter.groovy[indent=0] 
+----
+
+Then of course an implementation:
+
+[source, groovy]
+.Filter implementation
+----
+include::{sourceDir}/groovyfp/oop2fn/EvenNumbersFilter.groovy[indent=0] 
+----
+
+And that's it. We can now use it:
+
+[source, groovy]
+.How to use the functional interface
+----
+include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_2,indent=0] 
+----
+
+[source, groovy]
+.How to use the functional interface
+----
+include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_1,indent=0] 
+----
+
+And now, how can we do the same in Groovy ? Well, in case we wanted to reuse the method receiving
+the Filter instance we can use closures coercion:
+
+[source, groovy]
+.Closure coercion
+----
+include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_3,indent=0] 
+----
+
+<1> Creation of an instance that implements the functional interface. The body of the closure is
+supposed to be the implementation of the only method that the interface had.  
+<2> Then you can use it whenever you used to pass an instance of that object
 

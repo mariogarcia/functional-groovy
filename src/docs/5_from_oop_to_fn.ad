@@ -1,7 +1,7 @@
 == OOP Revisited 
 
 Most of the time is hard to think in terms of functional programming because we are not used to do
-it. I was born as a programmer in OOP programming, and it's now when I've started digging into
+it. I was born as an OOP programmer, and it's now when I've started digging into
 functional programming.
 
 So I guess that a friendly way of travelling to the functional land would be to pass through some of
@@ -13,58 +13,6 @@ Michael Bevilaqua-Linn.
 
 Object oriented languages that doesn't have functions as first citizens have to make do with classes
 and methods in order to be able to pass behavior to another classes or methods.
-
-=== Replacing Functional Interface
-
-The first example has to do with some of the topics we've seen so far. In previous chapters we've
-been talking about how to filter and transform data with closures. Now we're going to measure how
-far we are from the times we only could pass behavior using classes and methods.
-
-Don't get me wrong, I'm not complaining, but we don't have to do that anymore, do we ?
-
-How could do we pass filtering behavior to a collection if we didn't have closures ? I would start
-by declaring an interface declaring the intent of the filter:
-
-[source, groovy]
-.Filter
-----
-include::{sourceDir}/groovyfp/oop2fn/Filter.groovy[indent=0] 
-----
-
-Then of course an implementation:
-
-[source, groovy]
-.Filter implementation
-----
-include::{sourceDir}/groovyfp/oop2fn/EvenNumbersFilter.groovy[indent=0] 
-----
-
-And that's it. We can now use it:
-
-[source, groovy]
-.How to use the functional interface
-----
-include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_2,indent=0] 
-----
-
-[source, groovy]
-.How to use the functional interface
-----
-include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_1,indent=0] 
-----
-
-And now, how can we do the same in Groovy ? Well, in case we wanted to reuse the method receiving
-the Filter instance we can use closures coercion:
-
-[source, groovy]
-.Closure coercion
-----
-include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_3,indent=0] 
-----
-
-<1> Creation of an instance that implements the functional interface. The body of the closure is
-supposed to be the implementation of the only method that the interface had.  
-<2> Then you can use it whenever you used to pass an instance of that object
 
 === State
 
