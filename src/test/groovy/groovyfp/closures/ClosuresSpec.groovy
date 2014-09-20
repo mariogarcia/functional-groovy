@@ -332,15 +332,47 @@ class ClosuresSpec extends Specification {
             then: 'checking figures'
                 md5Hashes.size() == 9
                 md5Hashes.unique().size() == 6
+            // Word: car
+            // Word: peter
+            // Word: maggie
+            // Word: ronnie
+            // Word: book
+            // Word: road
        }
-
-        // Word: car
-        // Word: peter
-        // Word: maggie
-        // Word: ronnie
-        // Word: book
-        // Word: road
-
     // end::closures19[]
+
+    // tag::closures20[]
+    class ClosureBehavior {
+
+        // <3>
+        def a = 1
+        def b = 0
+        def c = 0
+
+        def sum() {
+            // <2>
+            def b = 2
+
+            Closure<Integer> cl = {
+                // <1>
+                c = 3
+                a + b + c
+            }
+
+            return cl()
+        }
+
+    }
+    // end::closures20[]
+
+    // tag::closures21[]
+    void 'default closure resolution'() {
+        given: 'an instance of ClosureBehavior'
+            def instance = new ClosureBehavior()
+        expect: 'result to be two'
+            instance.sum() == 6
+    }
+    // end::closures21[]
+
 }
 

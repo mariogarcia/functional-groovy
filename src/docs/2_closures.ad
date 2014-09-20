@@ -310,6 +310,91 @@ that couln't happen because I declare *_filters_* as a *_final_* parameter.
 
 === Delegation strategy
 
+Closures can use different strategies to resolve some property references and methods.
+Before talking about strategies, and how to change the order of resolution, 
+there are some important concepts we must know up front.
+
+NOTE: Definition of every concept is taken from the Closure javadoc at
+http://groovy.codehaus.org/api/groovy/lang/Closure.html
+
+* +delegate+ : the delegate Object to which method calls will 
+go which is typically the outer class when the closure is constructed
+* +owner+ : the owner Object to which method calls will go which is 
+typically the outer class when the closure is constructed
+
+I want you to notice how many times the word *typically* is used. Here it would
+mean *_everything will happen this way if the default resolution strategy is used_*
+
+There are 4 different strategies:
+
+* +OWNER_FIRST+ : *(default)* With this resolveStrategy set the closure will attempt to 
+resolve property references and methods to the owner first, 
+then the delegate.
+* +OWNER_ONLY+ : With this resolveStrategy set the closure will resolve property 
+references and methods to the owner only and not call the delegate at all. 
+* +DELEGATE_FIRST+ : With this resolveStrategy set the closure will attempt to 
+resolve property references and methods to the delegate first then the owner.
+* +DELEGATE_ONLY+ : With this resolveStrategy set the closure will resolve 
+property references and methods to the delegate only and entirely bypass the owner
+
+NOTE: Strategies definition have been taken from the Closure javadoc at
+http://groovy.codehaus.org/api/groovy/lang/Closure.html
+
+The basic idea here is that we can change the order of the resolution of property
+references and methods. But before getting into detail of every one of them, 
+I would like to know what is the normal resolution behavior of a Closure. 
+In order to do that lets see this example:
+
+[source, groovy]
+.Lexical scope
+----
+include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures21,indent=0] 
+----
+
+[source, groovy]
+.Lexical scope
+----
+include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures20,indent=0] 
+----
+
+It seems that the closure follows lexical scope:
+
+<1> First tries to resolve in the closure scope
+<2> then goes up, to the local scope 
+<3> and finally goes up again until reaches the class instance scope
+
+But wait. I said default strategy was +OWNER_FIRST+ then... why some of the
+variables are resolved by lexical scope ? Well I came up with the following
+example to help me to understand how the variables are resolved. As you may
+notice local variables always win vs strategies. Only +global+ and 
++delegate+ scope can be influenced by changing the resolution strategy.
+
+.Resolution
+|===
+|Strategy| 1st | 2nd | 3th | 4th
+|+OWNER_FIRST+| local 2 closure | local | global | delegate
+|+OWNER_ONLY+| local 2 closure | local | global | none
+|+DELEGATE_FIRST+| local 2 closure | local | delegate | global 
+|+DELEGATE_ONLY+| local 2 closure | local | delegate | none 
+|===
+
+With this table as a cheatsheet I'm going to do some examples of all
+strategies listed before.
+
+==== OWNER FIRST
+
+(TODO)
+
+==== OWNER_ONLY
+
+(TODO)
+
+==== DELEGATE FIRST
+
+(TODO)
+
+==== DELEGATE_OWNER
+
 (TODO)
 
 === Memoization 
