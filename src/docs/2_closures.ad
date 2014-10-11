@@ -310,6 +310,91 @@ that couln't happen because I declare *_filters_* as a *_final_* parameter.
 
 === Delegation strategy
 
+Closures can use different strategies to resolve some property references and methods.
+Before talking about strategies, and how to change the order of resolution, 
+there are some important concepts we must know up front.
+
+NOTE: Definition of every concept is taken from the Closure javadoc at
+http://groovy.codehaus.org/api/groovy/lang/Closure.html
+
+* +delegate+ : the delegate Object to which method calls will 
+go which is typically the outer class when the closure is constructed
+* +owner+ : the owner Object to which method calls will go which is 
+typically the outer class when the closure is constructed
+
+I want you to notice how many times the word *typically* is used. Here it would
+mean *_everything will happen this way if the default resolution strategy is used_*
+
+There are 4 different strategies:
+
+* +OWNER_FIRST+ : *(default)* With this resolveStrategy set the closure will attempt to 
+resolve property references and methods to the owner first, 
+then the delegate.
+* +OWNER_ONLY+ : With this resolveStrategy set the closure will resolve property 
+references and methods to the owner only and not call the delegate at all. 
+* +DELEGATE_FIRST+ : With this resolveStrategy set the closure will attempt to 
+resolve property references and methods to the delegate first then the owner.
+* +DELEGATE_ONLY+ : With this resolveStrategy set the closure will resolve 
+property references and methods to the delegate only and entirely bypass the owner
+
+NOTE: Strategies definition have been taken from the Closure javadoc at
+http://groovy.codehaus.org/api/groovy/lang/Closure.html
+
+The basic idea here is that we can change the order of the resolution of property
+references and methods. But before getting into detail of every one of them, 
+I would like to know what is the normal resolution behavior of a Closure. 
+In order to do that lets see this example:
+
+[source, groovy]
+.Lexical scope
+----
+include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures21,indent=0] 
+----
+
+[source, groovy]
+.Lexical scope
+----
+include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures20,indent=0] 
+----
+
+It seems that the closure follows lexical scope:
+
+<1> First tries to resolve in the closure scope
+<2> then goes up, to the local scope 
+<3> and finally goes up again until reaches the class instance scope
+
+But wait. I said default strategy was +OWNER_FIRST+ then... why some of the
+variables are resolved by lexical scope ? Well I came up with the following
+example to help me to understand how the variables are resolved. As you may
+notice local variables always win vs strategies. Only +global+ and 
++delegate+ scope can be influenced by changing the resolution strategy.
+
+.Resolution
+|===
+|Strategy| 1st | 2nd | 3th | 4th
+|+OWNER_FIRST+| local 2 closure | local | global | delegate
+|+OWNER_ONLY+| local 2 closure | local | global | none
+|+DELEGATE_FIRST+| local 2 closure | local | delegate | global 
+|+DELEGATE_ONLY+| local 2 closure | local | delegate | none 
+|===
+
+With this table as a cheatsheet I'm going to do some examples of all
+strategies listed before.
+
+==== OWNER FIRST
+
+(TODO)
+
+==== OWNER_ONLY
+
+(TODO)
+
+==== DELEGATE FIRST
+
+(TODO)
+
+==== DELEGATE_OWNER
+
 (TODO)
 
 === Memoization 
@@ -346,6 +431,25 @@ In order to cache the method invocation I annotated the method with the annotati
 include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures17,indent=0] 
 ----
 
+This was an easy way of turning an existing method to a method with an "extra" cache.
+But what if we wanted to use a closure with the same feature.
+
+Imagine we want to create a MD5 signature of every of a given list. It's
+clear same word will become the same hash, so why bothering doing the calculation
+if we already know the outcome ?
+
+[source, groovy]
+.Memoized closure
+----
+include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures19,indent=0] 
+----
+
+<1> I will be printing every word to notice that, at some point, some of the
+invocation will be omitted.
+<2> In order to create a +cache-included-closure+ we need to call +memoized()+ 
+method from +Closure+ class and most important, use the closure returned by
+that method.
+<3> Then we can use that closure in a more efficient way :)
 
 === Trampoline 
 
@@ -386,5 +490,47 @@ include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures13,indent=
 
 === Functional interface coercion
 
-(TODO)
+How do we used to pass filtering behavior to a collection if we didn't have closures ? I'd started
+by declaring an interface declaring the intent of the filter:
+
+[source, groovy]
+.Filter
+----
+include::{sourceDir}/groovyfp/oop2fn/Filter.groovy[indent=0] 
+----
+
+Then of course an implementation:
+
+[source, groovy]
+.Filter implementation
+----
+include::{sourceDir}/groovyfp/oop2fn/EvenNumbersFilter.groovy[indent=0] 
+----
+
+And that's it. We can now use it:
+
+[source, groovy]
+.How to use the functional interface
+----
+include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_2,indent=0] 
+----
+
+[source, groovy]
+.How to use the functional interface
+----
+include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_1,indent=0] 
+----
+
+And now, how can we do the same in Groovy ? Well, in case we wanted to reuse the method receiving
+the Filter instance we can use closures coercion:
+
+[source, groovy]
+.Closure coercion
+----
+include::{testDir}/groovyfp/oop2fn/ObjectOrientedPatternsSpec.groovy[tags=oop2fn_3,indent=0] 
+----
+
+<1> Creation of an instance that implements the functional interface. The body of the closure is
+supposed to be the implementation of the only method that the interface had.  
+<2> Then you can use it whenever you used to pass an instance of that object
 

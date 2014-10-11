@@ -309,5 +309,70 @@ class ClosuresSpec extends Specification {
             return [id: userId, name: "john doe $userId", timestamp: System.currentTimeMillis()]
        }
     // end::closures18[]
+
+    // tag::closures19[]
+       void 'Using a memoized closure'() {
+            given: 'a list of words'
+                def words = [\
+                    'car','peter','maggie',
+                    'ronnie','book','peter',
+                    'road','car','ronnie'
+                ]
+            and: 'building the memoized closure'
+                def md5fromWord = { String word ->
+                    println "Word: $word" // <1>
+                    java.security.MessageDigest
+                        .getInstance("MD5")
+                        .digest(word.getBytes("UTF-8"))
+                        .encodeHex()
+                        .toString()
+                }.memoize() // <2>
+            when: 'collecting their md5 hashes'
+                def md5Hashes = words.collect(md5fromWord) // <3>
+            then: 'checking figures'
+                md5Hashes.size() == 9
+                md5Hashes.unique().size() == 6
+            // Word: car
+            // Word: peter
+            // Word: maggie
+            // Word: ronnie
+            // Word: book
+            // Word: road
+       }
+    // end::closures19[]
+
+    // tag::closures20[]
+    class ClosureBehavior {
+
+        // <3>
+        def a = 1
+        def b = 0
+        def c = 0
+
+        def sum() {
+            // <2>
+            def b = 2
+
+            Closure<Integer> cl = {
+                // <1>
+                c = 3
+                a + b + c
+            }
+
+            return cl()
+        }
+
+    }
+    // end::closures20[]
+
+    // tag::closures21[]
+    void 'default closure resolution'() {
+        given: 'an instance of ClosureBehavior'
+            def instance = new ClosureBehavior()
+        expect: 'result to be two'
+            instance.sum() == 6
+    }
+    // end::closures21[]
+
 }
 
