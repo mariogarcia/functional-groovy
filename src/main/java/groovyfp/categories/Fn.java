@@ -11,7 +11,7 @@ public final class Fn {
         return Either.left(source);
     }
 
-    public static <A> Either.Right<A> light(A source) {
+    public static <A> Either.Right<A> right(A source) {
         return Either.right(source);
     }
 
