@@ -1,6 +1,8 @@
 package groovyfp.categories
 
 import static groovyfp.categories.Fn.List
+import static groovyfp.categories.Fn.bind
+import static groovyfp.categories.Fn.fmap
 import static groovyfp.categories.Fn.Try
 import spock.lang.Specification
 
@@ -51,12 +53,14 @@ class TrySpec extends Specification {
     def 'classic try catch example MONADIC'() {
         given: 'a list of numbers as strings'
             def numbers = ["1","2a","11","24","4A"]
-        when:
+            def toParseStringToInt = Integer.&parseInt
+        when: 'trying to get the average'
             def average =
-                List(numbers).bind { n ->
-                    Try(Integer.&parseInt)
-                        .fmap { fn -> fn.apply(n) }
-                        .with { no ->
+                bind(List(numbers)) { n ->
+                    bind(
+                        fmap(Try(toParseStringToInt)) { fn ->
+                            fn.apply(n)
+                        }) { no ->
                             no.isSuccess() ? List(no.typedRef.value) : List()
                         }
                 }.typedRef.value.with { list ->
@@ -74,7 +78,7 @@ class TrySpec extends Specification {
         when: 'trying to execute it'
             def failure = tryAction.fmap { fn -> fn(0) } // it failed
             def success =
-		tryAction
+		        tryAction
                     .fmap { fn -> fn.apply(1) }
                     .fmap { no -> no + 1 }
         then: 'checking both results'
@@ -104,9 +108,11 @@ class TrySpec extends Specification {
 	given: 'an action'
 	    def getWordLength = { String word -> word.length() }
 	when: 'we use it wisely'
+        Function action = { 0.div(0) }
 	    Try successSoFar =
-		Try { 0.div(0) } // something wrong :P
-		    .fmap { fn -> fn.apply("john") }
+            fmap(Try(action)){ fn ->
+                fn.apply("john")
+            }
 	and: 'once we know it ended wrong'
 	    assert successSoFar.isFailure()
 	and: 'asking the failure to throw an exception'
