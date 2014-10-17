@@ -5,18 +5,18 @@ Mario Garcia
 :sourceDir: ../../src/main/groovy
 :sourceDirJava: ../../src/main/java
   
-include::src/docs/1_intro.ad[]
+include::1_intro.ad[]
 
-include::src/docs/2_closures.ad[]
+include::2_closures.ad[]
 
-include::src/docs/3_iteration.ad[]
+include::3_iteration.ad[]
 
-include::src/docs/4_streams.ad[]
+include::4_streams.ad[]
 
-include::src/docs/5_from_oop_to_fn.ad[]
+include::5_from_oop_to_fn.ad[]
 
-include::src/docs/6_fn_patterns.ad[]
+include::6_fn_patterns.ad[]
 
-include::src/docs/7_monads.ad[]
+include::7_monads.ad[]
 
-include::src/docs/8_persistent.ad[]
+include::8_persistent.ad[]
