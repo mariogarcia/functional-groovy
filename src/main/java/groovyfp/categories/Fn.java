@@ -64,4 +64,8 @@ public final class Fn {
         return fa.fmap(fn);
     }
 
+    public static <A> A val(Monad<A> monad) {
+        return monad.getTypedRef().getValue();
+    }
+
 }

@@ -4,6 +4,7 @@ import static groovyfp.categories.Fn.List
 import static groovyfp.categories.Fn.Just
 import static groovyfp.categories.Fn.bind
 import static groovyfp.categories.Fn.fmap
+import static groovyfp.categories.Fn.val
 import static groovyfp.categories.Fn.Try
 import static groovyfp.categories.Fn.recover
 
@@ -42,14 +43,14 @@ class TrySpec extends Specification {
             def AVG = { list -> list.sum().div(list.size()) }
         when: 'calculating average safely'
             def average =
-                fmap(
+                val(fmap(
                     Just(
                         numbers.collectMany { n ->
-                            bind(recover(Try(parse(n)),Try(ZERO)), addToList).typedRef.value
+                            val(bind(recover(Try(parse(n)),Try(ZERO)), addToList))
                         }
                     ),
                     AVG
-                ).typedRef.value
+                ))
         then: 'the average should be 12'
             average == 12
     }
@@ -65,14 +66,14 @@ class TrySpec extends Specification {
             def addToList = { x -> x ? List(x) : List() }
         when: 'trying to get the average'
             def average =
-                fmap(
-                    Just(
-                        bind(List(numbers)) { n ->
-                            bind(recover(Try(parse(n)),Try(ZERO)), addToList)
-                        }.typedRef.value
-                    ),
-                    AVG
-                ).typedRef.value
+                val(
+                    fmap(
+                        Just(
+                            val(bind(List(numbers)) { n ->
+                                bind(recover(Try(parse(n)),Try(ZERO)), addToList)
+                            })
+                        ),
+                        AVG))
         then: 'the average should be 12'
             average == 12
     }
@@ -89,7 +90,7 @@ class TrySpec extends Specification {
             failure instanceof Try.Failure
             success instanceof Try.Success
 	and: 'success action ends with a given value'
-	    success.typedRef.value == 1.5
+	    val(success) == 1.5
     }
 
     def 'once we have a success we want to make it fail'() {
@@ -104,7 +105,7 @@ class TrySpec extends Specification {
             fmap(Try(getWordLength("John")), multiplyByTwo)
     and: 'checking so far so good'
 	    assert successSoFar.isSuccess()
-	    assert successSoFar.typedRef.value == 8
+	    assert val(successSoFar) == 8
 	and: 'then screw it'
 	    Try failure = fmap(successSoFar, divByZero)
 	then: 'the try instance will return failure'
@@ -117,15 +118,15 @@ class TrySpec extends Specification {
 	when: 'we use it wisely'
         Function action = { 0.div(0) }
 	    Try successSoFar =
-            fmap(Try(action)){ fn ->
-                fn.apply("john")
+            fmap(Try(action)){ undefined ->
+                undefined + 1 // wont be executed
             }
 	and: 'once we know it ended wrong'
 	    assert successSoFar.isFailure()
 	and: 'asking the failure to throw an exception'
 	    successSoFar.throwException()
 	then: 'and only then we will get the exception'
-            thrown(ArithmeticException)
+        thrown(ArithmeticException)
     }
 
 }
