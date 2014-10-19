@@ -391,28 +391,75 @@ did before, lets sneak a little bit on how *Haskell* does it ;)
 
 ==== Try
 
-Nowadays most JVM languages deal with exceptions with *try-catch* blocks. The
+Nowadays JVM languages deal with exceptions using *try-catch* blocks. The
 problem is that these constructions force programmers to build their code in
-a certain way. For instance, let's say we had a list of numbers, but those
-numbers are built as Strings, then you want calculate the average of the
-strings that were really numbers, filtering those that weren't.
+a certain way.
+
+*Try* monad wraps the result of a given computation. That computation could 
+either end on a desired value, having an instance of *Success*, 
+or could throw an exception, having an instance of *Failure* instead. 
+
+Like *Either*, composition has a special importance here, due to
+the fact that when having a *Failure* instance all possible actions
+applied over it will always return the same failure.
+
+This first example tries to parse an invalid number and add one to it. 
 
 [source,groovy]
-.Classic  try/catch
+.Parse a possible number
 ----
-include::{testDir}/groovyfp/categories/TrySpec.groovy[tags=classictrycatch,indent=0]
+include::{testDir}/groovyfp/categories/TrySpec.groovy[tags=basic1,indent=0]
 ----
+
+Here we can see both behaviors. 
+
+<1> First of all the given function fails and
+the instance returned is an instance of *Failure* we know that because only
+*Failure* instances return *true* when calling to *isFailure()* method.
+<2> Besides that we can also notice that using a failure instance to create 
+further function composition will end returning the same failure, which is the
+same as saying that no further function will ever succeed using that failure.
+
+When having a *Failure* instance, the exception that caused it is also wrapped
+within the instance, and you could whether get it to inspect it, or throw it
+like any other exception.
 
 [source,groovy]
-.Classic try/catch with no try/catch
+.throwException
 ----
-include::{testDir}/groovyfp/categories/TrySpec.groovy[tags=classictrycatchreloaded,indent=0]
+include::{testDir}/groovyfp/categories/TrySpec.groovy[tags=exception1,indent=0]
 ----
+
+<1> You can get the wrapped exception
+<2> Or throw the exception instead
+
+Normally when having an exception we would like to react somehow. Sometimes
+we may want to set, for example a default value in case something went wrong.
+
+In our example I would like to get zero in case the number was not valid. 
+Then I would like to add one to that given number.
 
 [source,groovy]
-.Classic try/catch with ListMonad
+.TryOrElse
 ----
-include::{testDir}/groovyfp/categories/TrySpec.groovy[tags=classictrycatchmonadic,indent=0]
+include::{testDir}/groovyfp/categories/TrySpec.groovy[tags=tryorelse,indent=0]
 ----
 
+<1> You can notice how we use *TryOrElse* to react when the main action
+failed. Then the second action will be executed instead. I think this
+is a very common scenario and this way of coding could be very useful
+and descriptive.
 
+Of course, if the alternative function fails the *TryOrElse* execution
+will return a *Failure* instance anyway. So, the next question could be:
+Is there any way of recovering from a failure instance once we've executed
+both main and alternative actions ?
+
+Well there is the *recover()* method. This method has two arguments the
+possible *Failure* instance, and the *Success* instance to use instead.
+
+[source,groovy]
+.recover()
+----
+include::{testDir}/groovyfp/categories/TrySpec.groovy[tags=recover,indent=0]
+----
