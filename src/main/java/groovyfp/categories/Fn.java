@@ -31,8 +31,29 @@ public final class Fn {
         return ListMonad.list(values);
     }
 
-    public static <A,B,F extends Function<A,B>> Try.Success Try(F fn) {
-        return new Try.Success<F>(new Type(fn));
+    public static <A,B,F extends Function<A,B>> Try Try(F fn) {
+        try {
+            return new Try.Success<A>(new Type(fn.apply(null)));
+        } catch (Throwable th) {
+            return new Try.Failure<A>(th);
+        }
+    }
+
+    public static <A,B,F extends Function<A,B>> Try TryOrElse(F fn, F alternative) {
+        try {
+            return new Try.Success<A>(new Type(fn.apply(null)));
+        } catch (Throwable anything) {
+            try {
+                return new Try.Success<A>(new Type(alternative.apply(null)));
+            } catch (Throwable th) {
+                return new Try.Failure<A>(th);
+            }
+        }
+
+    }
+
+    public static <A> Try<A> recover(Try<A> possibleFailure, Try<A> alternative) {
+        return possibleFailure.recover(alternative);
     }
 
     public static <A,B,MA extends Monad<A>,MB extends Monad<B>> MB bind(MA ma, Function<A,MB> fn) {

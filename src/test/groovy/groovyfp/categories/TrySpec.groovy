@@ -1,9 +1,12 @@
 package groovyfp.categories
 
 import static groovyfp.categories.Fn.List
+import static groovyfp.categories.Fn.Just
 import static groovyfp.categories.Fn.bind
 import static groovyfp.categories.Fn.fmap
 import static groovyfp.categories.Fn.Try
+import static groovyfp.categories.Fn.recover
+
 import spock.lang.Specification
 
 class TrySpec extends Specification {
@@ -33,17 +36,20 @@ class TrySpec extends Specification {
     def 'classic try catch example RELOADED'() {
         given: 'a list of numbers as strings'
             def numbers = ["1","2a","11","24","4A"]
+            def parse = { item -> return { Integer.parseInt(item) } }
+            def ZERO = { 0 }
+            def addToList = { x -> x ? List(x) : List() }
+            def AVG = { list -> list.sum().div(list.size()) }
         when: 'calculating average safely'
             def average =
-                numbers.findResults { n ->
-                    Try(Integer.&parseInt)
-                        .fmap { fn -> fn.apply(n) }
-                        .with { no ->
-                            no.isSuccess() ? no.typedRef.value : null
+                fmap(
+                    Just(
+                        numbers.collectMany { n ->
+                            bind(recover(Try(parse(n)),Try(ZERO)), addToList).typedRef.value
                         }
-                }.with { list ->
-                    list.sum().div(list.size())
-                }
+                    ),
+                    AVG
+                ).typedRef.value
         then: 'the average should be 12'
             average == 12
     }
@@ -53,53 +59,54 @@ class TrySpec extends Specification {
     def 'classic try catch example MONADIC'() {
         given: 'a list of numbers as strings'
             def numbers = ["1","2a","11","24","4A"]
-            def toParseStringToInt = Integer.&parseInt
+            def ZERO = { 0 }
+            def AVG = { list -> list.sum().div(list.size()) }
+            def parse = { item -> return { Integer.parseInt(item) } }
+            def addToList = { x -> x ? List(x) : List() }
         when: 'trying to get the average'
             def average =
-                bind(List(numbers)) { n ->
-                    bind(
-                        fmap(Try(toParseStringToInt)) { fn ->
-                            fn.apply(n)
-                        }) { no ->
-                            no.isSuccess() ? List(no.typedRef.value) : List()
-                        }
-                }.typedRef.value.with { list ->
-                    list.sum().div(list.size())
-                }
+                fmap(
+                    Just(
+                        bind(List(numbers)) { n ->
+                            bind(recover(Try(parse(n)),Try(ZERO)), addToList)
+                        }.typedRef.value
+                    ),
+                    AVG
+                ).typedRef.value
         then: 'the average should be 12'
             average == 12
     }
     // end::classictrycatchmonadic[]
-
     def 'basic execution of a try'() {
         given: 'an action'
-            def divideByZero = { 0.div(it) }
-            def tryAction = Try(divideByZero)
+            def koDivision = { 0.div(0) }
+            def okDivision = { 1.div(2) }
+            def addOne = { x -> x + 1 }
         when: 'trying to execute it'
-            def failure = tryAction.fmap { fn -> fn(0) } // it failed
-            def success =
-		        tryAction
-                    .fmap { fn -> fn.apply(1) }
-                    .fmap { no -> no + 1 }
+            def failure = fmap(Try(koDivision), addOne) // it failed
+            def success = fmap(Try(okDivision), addOne) // it succeed
         then: 'checking both results'
             failure instanceof Try.Failure
             success instanceof Try.Success
 	and: 'success action ends with a given value'
-	    success.typedRef.value == 1
+	    success.typedRef.value == 1.5
     }
 
     def 'once we have a success we want to make it fail'() {
 	given: 'an action'
-	    def getWordLength = { String word -> word.length() }
+	    def getWordLength = { String word ->
+            return { word.length() }
+        }
+        def multiplyByTwo = { x -> x * 2 }
+        def divByZero = { x -> x.div(0) }
 	when: 'we use it wisely'
 	    Try successSoFar =
-		Try(getWordLength)
-                    .fmap { fn -> fn.apply("john") } // ok
-                    .fmap { no -> no * 2 }
+            fmap(Try(getWordLength("John")), multiplyByTwo)
+    and: 'checking so far so good'
 	    assert successSoFar.isSuccess()
 	    assert successSoFar.typedRef.value == 8
 	and: 'then screw it'
-	    Try failure = successSoFar.fmap { no -> no.div(0) }
+	    Try failure = fmap(successSoFar, divByZero)
 	then: 'the try instance will return failure'
 	    failure.isFailure()
     }
