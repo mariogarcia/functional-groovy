@@ -5,111 +5,124 @@ package groovyfp.categories;
  * @author mario
  * @param <A>
  */
-public abstract class Try<A extends Function<?,?>> implements Monad<A> {
+public abstract class Try<A> implements Monad<A> {
 
-	 private final Type<A> typedRef;
+    private final Type<A> typedRef;
 
-	 public Try(Type<A> fn) {
-		this.typedRef = fn;
-	 }
+    protected Try(Type<A> valueRef) {
+        this.typedRef = valueRef;
+    }
 
-	 @Override
-	 public Type<A> getTypedRef() {
-		  return this.typedRef;
-	 }
+    public Type<A> getTypedRef() {
+      return this.typedRef;
+    }
 
-	 public abstract Boolean isSuccess();
-	 public abstract Boolean isFailure() ;
+    public abstract Boolean isSuccess();
+    public abstract Boolean isFailure() ;
+    public abstract Try<A> recover(Try<A> alternative);
 
-	 public static class Failure<FN extends Function<?,?>> extends Try<FN> {
+    public static class Success<SUCCESS> extends Try<SUCCESS> {
 
-		private final Throwable throwable;
+        public Success(Type<SUCCESS> value) {
+            super(value);
+        }
 
-		public Failure(Type<FN> valueRef) {
-		  super(valueRef);
-		  this.throwable = 
-			  new IllegalStateException("Value: " + valueRef.getValue() + " is not valid");
-		}
+        @Override
+        public Boolean isSuccess() {
+            return true;
+        }
 
-		public Failure(Type<FN> valueRef, Throwable throwable) {
-		  super(valueRef);
-		  this.throwable = throwable;
-		}
+        @Override
+        public Boolean isFailure() {
+            return false;
+        }
 
-		@Override
-		public <B, M extends Monad<B>> M bind(Function<FN, M> fn) {
-		  return (M) new Failure(this.getTypedRef());
-		}
+        @Override
+        public <B, M extends Monad<B>> M bind(Function<SUCCESS, M> fn) {
+             return fn.apply(getTypedRef().getValue());
+        }
 
-		@Override
-		public <B> Applicative<B> fapply(Applicative<Function<FN, B>> afn) {
-			return new Failure(this.getTypedRef());
-		}
+        @Override
+        public <B> Applicative<B> fapply(Applicative<Function<SUCCESS, B>> afn) {
+              return this.fmap(afn.getTypedRef().getValue());
+        }
 
-		@Override
-		public <B, F extends Functor<B>> F fmap(Function<FN, B> fn) {
-			return (F) new Failure(this.getTypedRef());
-		}
+        @Override
+        public <B, F extends Functor<B>> F fmap(Function<SUCCESS, B> fn) {
+            try {
+                return (F) success(fn.apply(getTypedRef().getValue()));
+            } catch(Throwable th) {
+                return (F) failure(getTypedRef(), th);
+            }
+        }
 
-		@Override
-		public Boolean isFailure() {
-			return true;
-		}
+        @Override
+        public Try<SUCCESS> recover(Try<SUCCESS> alternative) {
+            return this;
+        }
 
-		@Override
-		public Boolean isSuccess() {
-			return false;
-		}
+    }
 
-		public void throwException() throws Throwable {
-			throw this.throwable;
-		}
-		
-		public Throwable getException() {
-			 return this.throwable;
-		}
-		
-	 }
+    public static class Failure<FAILURE> extends Try<FAILURE> {
 
-	 public static class Success<FN extends Function<?,?>> extends Try<FN> {
+        private final Throwable throwable;
 
-		public Success(Type<FN> valueRef) {
-			super(valueRef);
-		}
+        public Failure(Type<FAILURE> value, Throwable th) {
+            super(value);
+            this.throwable = th;
+        }
 
-		@Override
-		public Boolean isSuccess() {
-			return true;
-		}
+        public Failure(Throwable throwable) {
+            super(new Type<FAILURE>(null));
+            this.throwable = throwable;
+        }
 
-		@Override
-		public Boolean isFailure() {
-			return false;
-		}
+        @Override
+        public <B, M extends Monad<B>> M bind(Function<FAILURE, M> fn) {
+          return (M) new Try.Failure<FAILURE>(throwable);
+        }
 
-		@Override
-		public <B, M extends Monad<B>> M bind(Function<FN, M> fn) {
-			 return fn.apply(getTypedRef().getValue());
-		}
+        @Override
+        public <B> Applicative<B> fapply(Applicative<Function<FAILURE, B>> afn) {
+            return (Applicative<B>) new Try.Failure<FAILURE>(throwable);
+        }
 
-		@Override
-		public <B> Applicative<B> fapply(Applicative<Function<FN, B>> afn) {
-			  return this.fmap(afn.getTypedRef().getValue());
-		}
+        @Override
+        public <B, F extends Functor<B>> F fmap(Function<FAILURE, B> fn) {
+            return (F) new Try.Failure<FAILURE>(throwable);
+        }
 
-		@Override
-		public <B, F extends Functor<B>> F fmap(Function<FN, B> fn) {
-			try {
-				return (F) new Success(new Type(fn.apply(getTypedRef().getValue())));
-			} catch (Throwable th) {
-				return (F) new Failure(this.getTypedRef(), th);
-			}
-		}
+        @Override
+        public Boolean isFailure() {
+            return true;
+        }
 
-	 }
-	
-	 public static <FN extends Function<?,?>> Try<FN> Try(Function<?,?> fn) {
-		 return new Try.Success<>(new Type(fn));
-	 }
-	
+        @Override
+        public Boolean isSuccess() {
+            return false;
+        }
+
+        public void throwException() throws Throwable {
+            throw this.throwable;
+        }
+
+        public Throwable getException() {
+             return this.throwable;
+        }
+
+        @Override
+        public Try<FAILURE> recover(Try<FAILURE> alternative) {
+            return alternative;
+        }
+
+    }
+
+    public static <T> Try.Success<T> success(T value) {
+        return new Try.Success(new Type(value));
+    }
+
+    public static <T> Try.Failure<T> failure(Type<T> value, Throwable th) {
+        return new Try.Failure<T>(value, th);
+    }
+
 }
