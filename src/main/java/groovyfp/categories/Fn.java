@@ -65,7 +65,15 @@ public final class Fn {
     }
 
     public static <A> A val(Monad<A> monad) {
-        return monad.getTypedRef().getValue();
+        return monad != null ? monad.getTypedRef().getValue() : null;
+    }
+
+    public static <A> Maybe<A> maybe(Monad<A> monad) {
+        if (monad == null) return Nothing();
+
+        A value = monad.getTypedRef().getValue();
+
+        return (Maybe<A>) (value != null ? Just(value) : Nothing()) ;
     }
 
 }
