@@ -58,22 +58,21 @@ class FnSpec extends Specification {
     @CompileStatic(TypeCheckingMode.SKIP)
     void 'Using maybe method'() {
         given: 'a function to increment a given number'
-            def inc = { Integer y ->
-                return {
-                    y + 1
-                }
-            }
+            def inc = { x ->  x + 1 }
         when: 'trying to apply the computation'
             def tryResult =
-                bind(Right(value)) { Integer x ->
-                   Try(inc(x))
-                }
+                fmap(
+                    fmap(Try { inc(value) }, inc),
+                    inc
+                )
         then: 'there could be a result or not'
             maybe(tryResult).isPresent() == isPresent
+        and: 'possible final value should be'
+            val(maybe(tryResult)) == finalValue
         where: 'possible values are'
-            value | isPresent
-            null  | false
-            2     | true
+            value | isPresent | finalValue
+            null  | false| null
+            2     | true | 5
     }
 
 }
