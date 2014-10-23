@@ -426,6 +426,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_example">Example</a></li>
 <li><a href="#_function_a_b">Function (a&#8594;b)</a></li>
 <li><a href="#_functor_a">Functor&lt;A&gt;</a></li>
+<li><a href="#_plain_groovy">Plain Groovy</a></li>
 </ul>
 </li>
 <li><a href="#_applicative_functor">Applicative Functor</a>
@@ -665,6 +666,83 @@ the Maybe implementation wraps that value into another instance of a functor
 <p>Basically here the fmap method takes as an argument a function transforming
 the contained value in the source functor and then wraps it again in another
 functor instance.</p>
+</div>
+<div class="paragraph">
+<p>By the way, althought <strong>fmap</strong> is implemented in <strong>Functor</strong> in languages
+like Haskell, you won&#8217;t see <strong>fmap</strong> being invoked like "myObject.fmap(&#8230;&#8203;)" but instead
+you will find something like <strong>fmap(functor, function)</strong></p>
+</div>
+<div class="paragraph">
+<p>In the source code you will see that there&#8217;re several methods adding
+some syntactic sugar to inner functors/applicative/monads methods mimicking the way
+Haskell does it.</p>
+</div>
+<div class="listingblock">
+<div class="title">Public API</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">Unresolved directive in 7_monads.ad - include::{testDir}/groovyfp/categories/FunctorSpec.groovy[tags=publicapimethods,indent=0]</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Functor&lt;Integer&gt;</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">Unresolved directive in 7_monads.ad - include::{testDir}/groovyfp/categories/FunctorSpec.groovy[tags=functorspec3,indent=0]</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_plain_groovy">Plain Groovy</h4>
+<div class="paragraph">
+<p>Well under the hood many of the methods added to the Groovy API (api, gapi, gdk) resemble
+monadic behaviors. For example there is the <strong>with</strong> method all Groovy objects have. Although
+it could be seen more like a <strong>bind</strong> action (we&#8217;ll cover it later on) we can create a lighter
+version of <strong>fmap</strong> with this <strong>with</strong>.</p>
+</div>
+<div class="listingblock">
+<div class="title">Groovy map</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">Unresolved directive in 7_monads.ad - include::{testDir}/groovyfp/categories/FunctorSpec.groovy[tags=groovyfunctormockery,indent=0]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As we&#8217;ll see later on, many monadic estructures don&#8217;t execute functions when they detect
+something went wrong, or the type at a hand means nothing can be executed (a Maybe.Nothing ,
+Either.Left value, or a Try.Failure values could be an example for that)</p>
+</div>
+<div class="paragraph">
+<p>This <strong>with</strong> on steroids executes the closure (function) passed as parameter when
+the value exists (and represents a Groovy truth of couse ;) ). Notice was achieved
+by using the <strong>safe</strong> operator from Groovy (foo?.unsafeMethod()).</p>
+</div>
+<div class="listingblock">
+<div class="title">Groovy map</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">Unresolved directive in 7_monads.ad - include::{testDir}/groovyfp/categories/FunctorSpec.groovy[tags=groovyfunctor,indent=0]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And I can&#8217;t finish this section without talking about <strong>collect</strong>.
+<a href="http://groovy.codehaus.org/groovy-jdk/java/util/Collection.html#collect(groovy.lang.Closure)"><strong>Collect</strong></a>
+is the closest version of fmap I can think about within Groovy. Collect transforms each item in a collection
+into something else.</p>
+</div>
+<div class="paragraph">
+<p>Same way our <strong>map</strong> method was safe so is <strong>collect</strong>.</p>
+</div>
+<div class="listingblock">
+<div class="title">Groovy collect</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">Unresolved directive in 7_monads.ad - include::{testDir}/groovyfp/categories/FunctorSpec.groovy[tags=collect,indent=0]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>So&#8230;&#8203; why don&#8217;t we make a better world and use both ideas combined ?</p>
+</div>
+<div class="listingblock">
+<div class="title">Groovy collect</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">Unresolved directive in 7_monads.ad - include::{testDir}/groovyfp/categories/FunctorSpec.groovy[tags=collectandmap,indent=0]</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -1126,7 +1204,7 @@ possible <strong>Failure</strong> instance, and the <strong>Success</strong> ins
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-10-19 22:02:34 +00:00
+Last updated 2014-10-23 21:40:36 +00:00
 </div>
 </div>
 </body>
