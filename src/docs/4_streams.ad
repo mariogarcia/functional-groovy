@@ -16,7 +16,8 @@ include::{testDir}/groovyfp/streams/StreamsSpec.groovy[tags=streams_1,indent=0]
 ----
 
 <1> We loop through the entire collection to get all required values
-<2> The we loop through the filtered values to apply some transformation
+<2> Then we loop through the filtered values to apply some transformation
+<3> Then we loop one more time to apply another transformation
 
 It's clear we should be able to loop only once the collection while applying the transformation only
 to the required values. In this particular example is not critical, but imagine we were looping a collection with thousands
@@ -32,9 +33,19 @@ represent infinite sequences and series.
 ""
 
 So how can we modify previous example to make it process the required values on the fly, as
-soon as the process detectes they are suitable to be part of the result.
+soon as the process detectes they are suitable to be part of the result ?
 
-Later on we'll see there're at least a couple libraries that can do it for you in a 
+If we only wanted to combine transformations we could have done something like this:
+
+[source, groovy]
+.Combine transformations
+----
+include::{testDir}/groovyfp/streams/StreamsSpec.groovy[tags=streams_composedclosures,indent=0] 
+----
+
+Ok, but now I would like one step futher and apply filters and transformations per each item in the list.
+
+Although later on we'll be seeing there're at least a couple libraries that can do it for you in a 
 easy way. But for now we have to make do with Groovy alone.
 
 [source, groovy]
@@ -77,6 +88,13 @@ Now if we change our test code, it should look like the following:
 ----
 include::{testDir}/groovyfp/streams/StreamsSpec.groovy[tags=streams_3,indent=0] 
 ----
+
+Notice that even though I could be possibly looping through a huge number of items,
+I'm only processing the minimum possible amount.
+
+Although there is a method in Groovy called *take(Integer)* which can be used to get a certain
+number of items from a given collection/iterable/iterator as far as I know it can't be used
+for an infinite collection. 
 
 === stream-groovy
 

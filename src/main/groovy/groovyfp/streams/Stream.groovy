@@ -5,6 +5,7 @@ final class Stream {
     final Collection<?> col
     Closure<Boolean> filter
     Closure<?> transformer
+    Integer howMany
 
     Stream(Collection<?> col) {
        this.col = col
@@ -24,13 +25,22 @@ final class Stream {
         this
     }
 
+    Stream take(Integer howMany) {
+        this.howMany = howMany
+        this
+    }
+
     Collection<?> collect() {
-        return col.inject([]){ acc, val ->
+        def result = []
+
+        col.takeWhile { val ->
             if (filter(val)) {
-                acc << transformer(val)
+                result << transformer(val)
             }
-            acc
+            howMany ? (result.size() < howMany) : true
         }
+
+        return result
     }
 
 }
