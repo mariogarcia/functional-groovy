@@ -149,6 +149,74 @@ Basically here the +fmap+ method takes as an argument a function transforming
 the contained value in the source functor and then wraps it again in another
 functor instance. 
 
+By the way, althought *fmap* is implemented in *Functor* in languages
+like Haskell, you won't see *fmap* being invoked like "myObject.fmap(...)" but instead 
+you will find something like *fmap(functor, function)*
+
+In the source code you will see that there're several methods adding
+some syntactic sugar to inner functors/applicative/monads methods mimicking the way
+Haskell does it.
+
+[source,groovy]
+.Public API
+----
+include::{testDir}/groovyfp/categories/FunctorSpec.groovy[tags=publicapimethods,indent=0] 
+----
+
+[source,groovy]
+.Functor<Integer>
+----
+include::{testDir}/groovyfp/categories/FunctorSpec.groovy[tags=functorspec3,indent=0] 
+----
+
+==== Plain Groovy 
+
+Well under the hood many of the methods added to the Groovy API (api, gapi, gdk) resemble
+monadic behaviors. For example there is the *with* method all Groovy objects have. Although
+it could be seen more like a *bind* action (we'll cover it later on) we can create a lighter
+version of *fmap* with this *with*.
+
+[source,groovy]
+.Groovy map
+----
+include::{testDir}/groovyfp/categories/FunctorSpec.groovy[tags=groovyfunctormockery,indent=0] 
+----
+
+As we'll see later on, many monadic estructures don't execute functions when they detect
+something went wrong, or the type at a hand means nothing can be executed (a Maybe.Nothing , 
+Either.Left value, or a Try.Failure values could be an example for that)
+
+This *with* on steroids executes the closure (function) passed as parameter when
+the value exists (and represents a Groovy truth of couse ;) ). Notice was achieved
+by using the *safe* operator from Groovy (foo?.unsafeMethod()).
+
+[source,groovy]
+.Groovy map
+----
+include::{testDir}/groovyfp/categories/FunctorSpec.groovy[tags=groovyfunctor,indent=0] 
+----
+
+And I can't finish this section without talking about *collect*. 
+http://groovy.codehaus.org/groovy-jdk/java/util/Collection.html#collect(groovy.lang.Closure)[*Collect*] 
+is the closest version of fmap I can think about within Groovy. Collect transforms each item in a collection
+into something else.
+
+Same way our *map* method was safe so is *collect*.
+
+[source,groovy]
+.Groovy collect 
+----
+include::{testDir}/groovyfp/categories/FunctorSpec.groovy[tags=collect,indent=0] 
+----
+
+So... why don't we make a better world and use both ideas combined ?
+
+[source,groovy]
+.Groovy collect 
+----
+include::{testDir}/groovyfp/categories/FunctorSpec.groovy[tags=collectandmap,indent=0] 
+----
+
 === Applicative Functor
 
 Remember I was saying a +Functor+ is a container, a box if you like, containing

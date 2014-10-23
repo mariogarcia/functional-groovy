@@ -60,9 +60,11 @@ public final class Fn {
        return ma.bind(fn);
     }
 
+    // tag::fmap[]
     public static <A,B, FA extends Functor<A>, FB extends Functor<B>> FB fmap(FA fa, Function<A,B> fn) {
         return fa.fmap(fn);
     }
+    // end::fmap[]
 
     public static <A> A val(Monad<A> monad) {
         return monad != null ? monad.getTypedRef().getValue() : null;
