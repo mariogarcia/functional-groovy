@@ -2218,11 +2218,12 @@ efficient in the way we do those tasks.</p>
         def numbers = (0..10)
     when: 'Filtering and transforming numbers'
         def result =
-            numbers.
-                findAll { it % 2 == 0}. <i class="conum" data-value="1"></i><b>(1)</b>
-                collect { it * 10 } <i class="conum" data-value="2"></i><b>(2)</b>
+            numbers
+                .findAll { it % 2 == 0} <i class="conum" data-value="1"></i><b>(1)</b>
+                .collect { it * 10 } <i class="conum" data-value="2"></i><b>(2)</b>
+                .collect { it + 1 } <i class="conum" data-value="3"></i><b>(3)</b>
     then: 'We should get the expected result'
-        result == [0, 20, 40, 60, 80, 100]
+        result == [1, 21, 41, 61, 81, 101]
 }</code></pre>
 </div>
 </div>
@@ -2234,7 +2235,11 @@ efficient in the way we do those tasks.</p>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>The we loop through the filtered values to apply some transformation</td>
+<td>Then we loop through the filtered values to apply some transformation</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Then we loop one more time to apply another transformation</td>
 </tr>
 </table>
 </div>
@@ -2260,10 +2265,35 @@ represent infinite sequences and series.</p>
 </div>
 <div class="paragraph">
 <p>So how can we modify previous example to make it process the required values on the fly, as
-soon as the process detectes they are suitable to be part of the result.</p>
+soon as the process detectes they are suitable to be part of the result ?</p>
 </div>
 <div class="paragraph">
-<p>Later on we&#8217;ll see there&#8217;re at least a couple libraries that can do it for you in a
+<p>If we only wanted to combine transformations we could have done something like this:</p>
+</div>
+<div class="listingblock">
+<div class="title">Combine transformations</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">void 'Multiply even numbers 10 times'() {
+    given: 'A collection of numbers'
+        def numbers = (0..10)
+        def multiplyTenTimes = { x -&gt; x * 10}
+        def byEvenNumber = { x -&gt; x % 2 == 0 }
+        def plusOne = { x -&gt; x + 1 }
+    when: 'Filtering and transforming numbers'
+        def result =
+            numbers
+                .findAll(byEvenNumber) <i class="conum" data-value="1"></i><b>(1)</b>
+                .collect(multiplyTenTimes &gt;&gt; plusOne) <i class="conum" data-value="2"></i><b>(2)</b>
+    then: 'We should get the expected result'
+        result == [1, 21, 41, 61, 81, 101]
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Ok, but now I would like one step futher and apply filters and transformations per each item in the list.</p>
+</div>
+<div class="paragraph">
+<p>Although later on we&#8217;ll be seeing there&#8217;re at least a couple libraries that can do it for you in a
 easy way. But for now we have to make do with Groovy alone.</p>
 </div>
 <div class="listingblock">
@@ -2271,17 +2301,21 @@ easy way. But for now we have to make do with Groovy alone.</p>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">void 'Multiply even numbers 10 times lazily'() {
     given: 'A collection of numbers'
+        def emptyList = []
         def numbers = (0..10)
+        def multiplyTenTimes = { x -&gt; x * 10}
+        def byEvenNumber = { x -&gt; x % 2 == 0 }
+        def plusOne = { x -&gt; x + 1 }
     when: 'Filtering and transforming numbers'
         def result =
-            numbers.inject([]){ acc, val -&gt;
+            numbers.inject(emptyList) { acc, val -&gt;
                 if (val % 2 == 0) {
-                    acc &lt;&lt; (val * 10)
+                    acc &lt;&lt; plusOne(multiplyTenTimes(val))
                 }
                 acc
             }
     then: 'We should get the expected result'
-        result == [0, 20, 40, 60, 80, 100]
+        result == [1, 21, 41, 61, 81, 101]
 }</code></pre>
 </div>
 </div>
@@ -2321,6 +2355,7 @@ final class Stream {
     final Collection&lt;?&gt; col
     Closure&lt;Boolean&gt; filter
     Closure&lt;?&gt; transformer
+    Integer howMany
 
     Stream(Collection&lt;?&gt; col) {
        this.col = col
@@ -2340,13 +2375,22 @@ final class Stream {
         this
     }
 
+    Stream take(Integer howMany) {
+        this.howMany = howMany
+        this
+    }
+
     Collection&lt;?&gt; collect() {
-        return col.inject([]){ acc, val -&gt;
+        def result = []
+
+        col.takeWhile { val -&gt;
             if (filter(val)) {
-                acc &lt;&lt; transformer(val)
+                result &lt;&lt; transformer(val)
             }
-            acc
+            howMany ? (result.size() &lt; howMany) : true
         }
+
+        return result
     }
 
 }</code></pre>
@@ -2377,16 +2421,30 @@ part is in the <strong><em>collect()</em></strong> method:</p>
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">void 'Multiply even numbers 10 times lazily (nicer way)'() {
     given: 'A collection of numbers'
         def numbers = (0..10)
+        def multiplyTenTimes = { x -&gt; x * 10}
+        def byEvenNumber = { x -&gt; x % 2 == 0 }
+        def plusOne = { x -&gt; x + 1 }
     when: 'Filtering and transforming numbers'
         def result =
-            Stream.
-                from(numbers).
-                filter { it % 2 == 0 }.
-                map { it * 10 }.collect()
+            Stream
+                .from(numbers)
+                .filter(byEvenNumber)
+                .map(multiplyTenTimes &gt;&gt; plusOne)
+                .take(2)
+                .collect()
     then: 'We should get the expected result'
-        result == [0, 20, 40, 60, 80, 100]
+        result == [1, 21]
 }</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>Notice that even though I could be possibly looping through a huge number of items,
+I&#8217;m only processing the minimum possible amount.</p>
+</div>
+<div class="paragraph">
+<p>Although there is a method in Groovy called <strong>take(Integer)</strong> which can be used to get a certain
+number of items from a given collection/iterable/iterator as far as I know it can&#8217;t be used
+for an infinite collection.</p>
 </div>
 </div>
 <div class="sect2">

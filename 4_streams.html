@@ -462,7 +462,11 @@ efficient in the way we do those tasks.</p>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>The we loop through the filtered values to apply some transformation</td>
+<td>Then we loop through the filtered values to apply some transformation</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Then we loop one more time to apply another transformation</td>
 </tr>
 </table>
 </div>
@@ -488,10 +492,22 @@ represent infinite sequences and series.</p>
 </div>
 <div class="paragraph">
 <p>So how can we modify previous example to make it process the required values on the fly, as
-soon as the process detectes they are suitable to be part of the result.</p>
+soon as the process detectes they are suitable to be part of the result ?</p>
 </div>
 <div class="paragraph">
-<p>Later on we&#8217;ll see there&#8217;re at least a couple libraries that can do it for you in a
+<p>If we only wanted to combine transformations we could have done something like this:</p>
+</div>
+<div class="listingblock">
+<div class="title">Combine transformations</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">Unresolved directive in 4_streams.ad - include::{testDir}/groovyfp/streams/StreamsSpec.groovy[tags=streams_composedclosures,indent=0]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Ok, but now I would like one step futher and apply filters and transformations per each item in the list.</p>
+</div>
+<div class="paragraph">
+<p>Although later on we&#8217;ll be seeing there&#8217;re at least a couple libraries that can do it for you in a
 easy way. But for now we have to make do with Groovy alone.</p>
 </div>
 <div class="listingblock">
@@ -556,6 +572,15 @@ part is in the <strong><em>collect()</em></strong> method:</p>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">Unresolved directive in 4_streams.ad - include::{testDir}/groovyfp/streams/StreamsSpec.groovy[tags=streams_3,indent=0]</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>Notice that even though I could be possibly looping through a huge number of items,
+I&#8217;m only processing the minimum possible amount.</p>
+</div>
+<div class="paragraph">
+<p>Although there is a method in Groovy called <strong>take(Integer)</strong> which can be used to get a certain
+number of items from a given collection/iterable/iterator as far as I know it can&#8217;t be used
+for an infinite collection.</p>
 </div>
 </div>
 <div class="sect2">
@@ -733,7 +758,7 @@ all.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-10-16 22:24:13 +00:00
+Last updated 2014-10-23 22:39:07 +00:00
 </div>
 </div>
 </body>
