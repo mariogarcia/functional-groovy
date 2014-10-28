@@ -1,0 +1,64 @@
+== Recursion
+
+When writing recursive code, sometimes we can overflow the size of the stack and get and
+Stackoverflow exception. To prevent that situation, Groovy gives us two solutions:
+
+* Closure's *_trampoline()_* method
+* *_@TailRecursive_* AST transformation
+
+=== TailRecursive
+
+*_@TailRecursive_* transformation helps you to avoid dealing with that kind of details.
+You just focus on the implementation and it handles how to make the function to a 
+recursive one. This AST transformation is avaiable since version 2.3 of Groovy.
+
+The only requirement here is to put the recursive call as the last expression in the 
+method body (at the tail, that's why it's called tail recursion optimization).
+
+*@TailRecursive* represents a specific version of recursion called _self-recursion_ 
+through which we can obtain a smaller version of the problem every time, 
+it becomes an iterative process.
+
+[source, groovy]
+.Recursion with @TailRecursive 
+----
+include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures13,indent=0] 
+----
+
+=== Trampoline 
+
+With _@TailRecursive_ we've seen how to apply a concept called *self-recursion*. We
+can obtain the same behavior using plain closures with the closure's method called
+*trampoline()*.
+
+This first example will try to add up a list of numbers recursively.
+
+[source, groovy]
+.Recursion with trampoline()
+----
+include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures12,indent=0] 
+----
+
+<1> We need to declare sumRecursively and then attach its behabior to the actual variable
+<2> Within the function every time we make a recursive call we must call to the "trampoline" 
+version of the function
+<3> Finally to init the whole process execute a "trampoline" version of the closure
+
+It works ok but it seems a little bit complicated. Get a version with trampoline()
+then not forget to call trampoline with arguments...mmmmm  
+
+There is another type of recursion called *mutual-recursion*, a type of recursion
+happening when two methods call each other recursively.
+
+[source, groovy]
+.Mutual recursion using trampoline()
+----
+include::{testDir}/groovyfp/closures/ClosuresSpec.groovy[tags=closures_mutualrecursion,indent=0] 
+----
+
+<1> Declaring mutual-recursive functions. Can't declare and define mutual-recursion functions all at once.
+<2> Getting a new recursive version of the function with trampoline()
+<3> Getting a new recursive version of the function with trampoline()
+<4> Triggering recursive process per each element in the list
+
+

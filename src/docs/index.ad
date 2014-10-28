@@ -12,14 +12,16 @@ include::2_closures.ad[]
 
 include::3_iteration.ad[]
 
-include::4_streams.ad[]
+include::4_recursion.ad[]
 
-include::5_immutability.ad[]
+include::5_streams.ad[]
 
-include::6_from_oop_to_fn.ad[]
+include::6_immutability.ad[]
 
-include::7_fn_patterns.ad[]
+include::7_from_oop_to_fn.ad[]
 
-include::8_monads.ad[]
+include::8_fn_patterns.ad[]
 
-include::9_persistent.ad[]
+include::9_monads.ad[]
+
+include::10_persistent.ad[]

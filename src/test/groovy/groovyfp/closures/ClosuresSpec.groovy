@@ -225,6 +225,18 @@ class ClosuresSpec extends Specification {
     }
     // end::closures12[]
 
+    // tag::closures_mutualrecursion[]
+    void 'Trampoline: Mutual recursion'() {
+        given: 'two functions'
+            def even, odd // <1>
+        and: 'describing how the mutually call each other recursively'
+            even = { Integer x -> x == 0 ? true : odd.trampoline(x - 1) }.trampoline() // <2>
+            odd = { Integer x -> x == 0 ? false : even.trampoline(x - 1) }.trampoline() // <3>
+        expect: 'to get right answers'
+            [100, 101, 102, 103].collect(even) == [true, false, true, false] // <4>
+    }
+    // end::closures_mutualrecursion[]
+
 
     // tag::closures13[]
     @groovy.transform.TailRecursive
