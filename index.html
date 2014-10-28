@@ -413,6 +413,20 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.js"></script>
 <script>document.addEventListener('DOMContentLoaded', prettyPrint)</script>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [["\\(", "\\)"]],
+    displayMath: [["\\[", "\\]"]],
+    ignoreClass: "nostem|nolatexmath"
+  },
+  asciimath2jax: {
+    delimiters: [["\\$", "\\$"]],
+    ignoreClass: "nostem|noasciimath"
+  }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.4.0/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
 </head>
 <body class="article toc2 toc-left">
 <div id="header">
@@ -468,45 +482,47 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_nba_time">4.4. NBA time</a></li>
 </ul>
 </li>
-<li><a href="#_oop_revisited">5. OOP Revisited</a>
+<li><a href="#_immutability">5. Immutability</a></li>
+<li><a href="#_oop_revisited">6. OOP Revisited</a>
 <ul class="sectlevel2">
-<li><a href="#_state">5.1. State</a></li>
-<li><a href="#_command">5.2. Command</a></li>
-<li><a href="#_immutable_objects_instead_of_builder">5.3. Immutable objects instead of Builder</a></li>
-<li><a href="#_replacing_iterator">5.4. Replacing Iterator</a></li>
-<li><a href="#_template_pattern">5.5. Template pattern</a></li>
-<li><a href="#_strategy">5.6. Strategy</a></li>
-<li><a href="#_fighting_null_object">5.7. Fighting Null Object</a></li>
+<li><a href="#_state">6.1. State</a></li>
+<li><a href="#_command">6.2. Command</a></li>
+<li><a href="#_immutable_objects_instead_of_builder">6.3. Immutable objects instead of Builder</a></li>
+<li><a href="#_replacing_iterator">6.4. Replacing Iterator</a></li>
+<li><a href="#_template_pattern">6.5. Template pattern</a></li>
+<li><a href="#_strategy">6.6. Strategy</a></li>
+<li><a href="#_fighting_null_object">6.7. Fighting Null Object</a></li>
 </ul>
 </li>
-<li><a href="#_functional_patterns">6. Functional Patterns</a></li>
-<li><a href="#_the_m_word">7. The M-Word</a>
+<li><a href="#_functional_patterns">7. Functional Patterns</a></li>
+<li><a href="#_functional_abstractions">8. Functional Abstractions</a>
 <ul class="sectlevel2">
-<li><a href="#_introduction">7.1. Introduction</a></li>
-<li><a href="#_functor">7.2. Functor</a>
+<li><a href="#_introduction">8.1. Introduction</a></li>
+<li><a href="#_monoids">8.2. Monoids</a></li>
+<li><a href="#_functor">8.3. Functor</a>
 <ul class="sectlevel3">
-<li><a href="#_example">7.2.1. Example</a></li>
-<li><a href="#_function_a_b">7.2.2. Function (a&#8594;b)</a></li>
-<li><a href="#_functor_a">7.2.3. Functor&lt;A&gt;</a></li>
-<li><a href="#_plain_groovy">7.2.4. Plain Groovy</a></li>
+<li><a href="#_example">8.3.1. Example</a></li>
+<li><a href="#_function_a_b">8.3.2. Function (a&#8594;b)</a></li>
+<li><a href="#_functor_a">8.3.3. Functor&lt;A&gt;</a></li>
+<li><a href="#_plain_groovy">8.3.4. Plain Groovy</a></li>
 </ul>
 </li>
-<li><a href="#_applicative_functor">7.3. Applicative Functor</a>
+<li><a href="#_applicative_functor">8.4. Applicative Functor</a>
 <ul class="sectlevel3">
-<li><a href="#_example_2">7.3.1. Example</a></li>
+<li><a href="#_example_2">8.4.1. Example</a></li>
 </ul>
 </li>
-<li><a href="#_monad">7.4. Monad</a>
+<li><a href="#_monad">8.5. Monad</a>
 <ul class="sectlevel3">
-<li><a href="#_maybe">7.4.1. Maybe</a></li>
-<li><a href="#_either">7.4.2. Either</a></li>
-<li><a href="#_listmonad">7.4.3. ListMonad</a></li>
-<li><a href="#_try">7.4.4. Try</a></li>
+<li><a href="#_maybe">8.5.1. Maybe</a></li>
+<li><a href="#_either">8.5.2. Either</a></li>
+<li><a href="#_listmonad">8.5.3. ListMonad</a></li>
+<li><a href="#_try">8.5.4. Try</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#_persistent_collections">8. Persistent collections</a></li>
+<li><a href="#_persistent_collections">9. Persistent collections</a></li>
 </ul>
 </div>
 </div>
@@ -2681,7 +2697,15 @@ all.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_oop_revisited">5. OOP Revisited</h2>
+<h2 id="_immutability">5. Immutability</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>(TODO)</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_oop_revisited">6. OOP Revisited</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Most of the time is hard to think in terms of functional programming because we are not used to do
@@ -2702,7 +2726,7 @@ Michael Bevilaqua-Linn.</p>
 and methods in order to be able to pass behavior to another classes or methods.</p>
 </div>
 <div class="sect2">
-<h3 id="_state">5.1. State</h3>
+<h3 id="_state">6.1. State</h3>
 <div class="paragraph">
 <p>Closures have an important characteristic, which is they capture the "state" of the scope where they
 were created.</p>
@@ -2793,7 +2817,7 @@ state when it was created nothing more.</td>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_command">5.2. Command</h3>
+<h3 id="_command">6.2. Command</h3>
 <div class="paragraph">
 <p>Command pattern normally wraps a certain behavior, and that behavior is passed to another function
 or object to execute that behavior with the data found at the destination function or object.</p>
@@ -2871,7 +2895,7 @@ we can create a closure and coerce it to become a functional interface.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_immutable_objects_instead_of_builder">5.3. Immutable objects instead of Builder</h3>
+<h3 id="_immutable_objects_instead_of_builder">6.3. Immutable objects instead of Builder</h3>
 <div class="paragraph">
 <p>Six years ago I remember creating builder objects in Java not only because I was preserving
 immutability (I didn&#8217;t care about it at that time) but also because using a builder with a fluent
@@ -3038,7 +3062,7 @@ welcome :-)</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_replacing_iterator">5.4. Replacing Iterator</h3>
+<h3 id="_replacing_iterator">6.4. Replacing Iterator</h3>
 <div class="paragraph">
 <p>Most of the ideas about this topic have been already discussed in <a href="3_iteration.html">Internal vs External Iteration</a>.</p>
 </div>
@@ -3114,7 +3138,7 @@ comprehensions implementation.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_template_pattern">5.5. Template pattern</h3>
+<h3 id="_template_pattern">6.5. Template pattern</h3>
 <div class="paragraph">
 <p>The intent of the template pattern is to describe a process skeleton in an abstract class and let
 subclasses to implement the behavior of some parts of the process.</p>
@@ -3305,7 +3329,7 @@ you
 </div>
 </div>
 <div class="sect2">
-<h3 id="_strategy">5.6. Strategy</h3>
+<h3 id="_strategy">6.6. Strategy</h3>
 <div class="paragraph">
 <p>The intent of this pattern is to declare a process that uses an algoritm that can be implemented in
 several ways</p>
@@ -3371,7 +3395,7 @@ Closure&lt;Boolean&gt; strategy2 = { ImmutableVideo video -&gt; video.length &lt
 </div>
 </div>
 <div class="sect2">
-<h3 id="_fighting_null_object">5.7. Fighting Null Object</h3>
+<h3 id="_fighting_null_object">6.7. Fighting Null Object</h3>
 <div class="paragraph">
 <p>Null pointer exceptions are the plague of our era in computing programming. There are studies on how
 many millions are wasted because of this problem.</p>
@@ -3648,7 +3672,7 @@ and: 'transformation has been applied'
 </div>
 </div>
 <div class="sect1">
-<h2 id="_functional_patterns">6. Functional Patterns</h2>
+<h2 id="_functional_patterns">7. Functional Patterns</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>(TODO)</p>
@@ -3656,10 +3680,10 @@ and: 'transformation has been applied'
 </div>
 </div>
 <div class="sect1">
-<h2 id="_the_m_word">7. The M-Word</h2>
+<h2 id="_functional_abstractions">8. Functional Abstractions</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_introduction">7.1. Introduction</h3>
+<h3 id="_introduction">8.1. Introduction</h3>
 <div class="paragraph">
 <p>Category Theory is a huge topic not related <strong>per se</strong> to programming, but
 nowadays is the basis of what functional programming has become today.</p>
@@ -3690,7 +3714,161 @@ it&#8217;s about time&#8230;&#8203; <strong>LETS DO THIS</strong></p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_functor">7.2. Functor</h3>
+<h3 id="_monoids">8.2. Monoids</h3>
+<div class="paragraph">
+<p>Please stick this into your mind&#8230;&#8203;A monoid&#8230;&#8203;.IS NOT A MONAD!!!! I wish it was, monads
+would be a lot easier to understand, A <strong>monoid</strong> is a very simple concept,
+simple and yet powerful&#8230;&#8203;we&#8217;ll see later on why.  Lets see formal description first.</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>&#8230;&#8203;a monoid is an algebraic structure with a single associative binary operation and an
+identity element.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>Ok so imagine we&#8217;ve got a set of numbers called <strong>V</strong> and a binary operation such as <strong>V</strong> x <strong>V</strong> &#8594; <strong>V</strong> then
+<strong>V</strong> with <strong>*</strong> is a monoid if satisfies the following axioms:</p>
+</div>
+<div class="stemblock">
+<div class="title">associativity</div>
+<div class="content">
+\$AA a,b,c in V, (a*b) * c = a * (b*c)\$
+</div>
+</div>
+<div class="paragraph">
+<p>That means that you can combine elements from that set, using that operation, in any order. Lets think
+about coding&#8230;&#8203; you can build a code module as a <strong>combination of smaller computations</strong>. And because those
+computations can be executed <strong>in any order</strong>, they <strong>could be executed in parallel</strong> as well and finally
+combine the results of all of them.</p>
+</div>
+<div class="listingblock">
+<div class="title">Monoid</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">@Immutable <i class="conum" data-value="1"></i><b>(1)</b>
+@EqualsAndHashCode <i class="conum" data-value="2"></i><b>(2)</b>
+class V {
+    int x, y
+
+    <i class="conum" data-value="3"></i><b>(3)</b>
+    def plus(final V v) {
+        return new V (x: x + v.x, y: y + v.y)
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>We will be declaring as immutable all possible objects in order to apply best practices
+when trying to use those objects in a multi-threaded environment</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>We&#8217;are implementing equals() and hashCode() to know which object is which</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Defining our <strong>binary operation</strong></td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Here we just defined an object declaring a simple binary operation which is the sum of two
+given CarFleet objects.</p>
+</div>
+<div class="listingblock">
+<div class="title">Monoids: associativity</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">void 'simple monoid: associativity'() {
+    given: 'three different entries'
+        def a = new V(x: 1, y: 2)
+        def b = new V(x: 1, y: 3)
+        def c = new V(x: 1, y: 4)
+    expect: 'applying binaryOp'
+        ((a + b) + c) == (a + (b + c))
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Applying the operation in a sequential manner.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Applying the operation in no order at all, or at least in a way we cannot predict
+the order.</td>
+</tr>
+</table>
+</div>
+<div class="stemblock">
+<div class="title">identity element</div>
+<div class="content">
+\$\exists e in V, AA a in V, e * a  = a * e = a\$
+</div>
+</div>
+<div class="paragraph">
+<p>Keep in mind that the indentity element could be anything. It&#8217;s not the number one neccesarily, but something
+that doesn&#8217;t alter the element operated with it.</p>
+</div>
+<div class="listingblock">
+<div class="title">Monoids: identity</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">void 'simple monoid: identity'() {
+    given: 'three different entries'
+        def a = new V(x: 1, y: 200)
+        def e = new V(x: 0, y: 0)
+    expect: 'applying binaryOp'
+        (e + a) == (a + e)
+        (e + a) == a
+        (a + e) == a
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You may be wondering why should you bother about building an object like that and having
+such operations obeying that kind of rules&#8230;&#8203;
+well associativity comes handy when talking about <strong>parallelism</strong>. If it doesn&#8217;t really
+matter in which order operations are executed, then you can scatter those operations through
+the available cores in your computer.</p>
+</div>
+<div class="listingblock">
+<div class="title">Monoids: parallelism</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">void 'simple monoid: parallelism'() {
+    given: 'three different entries'
+        def a = new V(x: 1, y: 2)
+        def b = new V(x: 1, y: 3)
+        def c = new V(x: 1, y: 4)
+    when: 'applying binaryOp in order'
+        def result1 = [a, b, c].sum() <i class="conum" data-value="1"></i><b>(1)</b>
+    and: 'applying in any order'
+        def result2 = withPool { [a,b,c].sumParallel() } <i class="conum" data-value="2"></i><b>(2)</b>
+    then: 'both results should match'
+        result1 == result2
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Sum is executed in order</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Sum is executed in parallel (no specific order can be assumed)</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_functor">8.3. Functor</h3>
 <div class="paragraph">
 <p>In Category Theory a Functor is a mapping between categories&#8230;&#8203;WHaAaAAAaaTT?? O_o</p>
 </div>
@@ -3726,7 +3904,7 @@ and finally returns a functor of type b.</p>
 <p>How could we implement this ?</p>
 </div>
 <div class="sect3">
-<h4 id="_example">7.2.1. Example</h4>
+<h4 id="_example">8.3.1. Example</h4>
 <div class="listingblock">
 <div class="title">Functor (Java)</div>
 <div class="content">
@@ -3798,7 +3976,7 @@ value and after applying the function how to wrap it again.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_function_a_b">7.2.2. Function (a&#8594;b)</h4>
+<h4 id="_function_a_b">8.3.2. Function (a&#8594;b)</h4>
 <div class="paragraph">
 <p>A function represents a transformation applied to a given input, giving
 a certain result.</p>
@@ -3856,7 +4034,7 @@ the type to the closure parameter if you care about input type.
 </div>
 </div>
 <div class="sect3">
-<h4 id="_functor_a">7.2.3. Functor&lt;A&gt;</h4>
+<h4 id="_functor_a">8.3.3. Functor&lt;A&gt;</h4>
 <div class="paragraph">
 <p>Well now we need an instance of a functor of type <strong>A</strong>, pass to the functor
 our previously created function and expect to receive a certain value with
@@ -3943,7 +4121,7 @@ import static groovyfp.categories.Fn.fmap</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_plain_groovy">7.2.4. Plain Groovy</h4>
+<h4 id="_plain_groovy">8.3.4. Plain Groovy</h4>
 <div class="paragraph">
 <p>Well under the hood many of the methods added to the Groovy API (api, gapi, gdk) resemble
 monadic behaviors. For example there is the <strong>with</strong> method all Groovy objects have. Although
@@ -4040,7 +4218,7 @@ into something else.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_applicative_functor">7.3. Applicative Functor</h3>
+<h3 id="_applicative_functor">8.4. Applicative Functor</h3>
 <div class="paragraph">
 <p>Remember I was saying a Functor is a container, a box if you like, containing
 a simple value ? You can think about Applicative like a Functor containing
@@ -4066,7 +4244,7 @@ functor containing a function transforming from a to b) and returns the
 transformation from a functor containing a to a functor containing b (f a -&gt; f b).</p>
 </div>
 <div class="sect3">
-<h4 id="_example_2">7.3.1. Example</h4>
+<h4 id="_example_2">8.4.1. Example</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-java" data-lang="java">package groovyfp.categories;
@@ -4169,7 +4347,7 @@ to the function contained within the Applicative passed as parameter.</td>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_monad">7.4. Monad</h3>
+<h3 id="_monad">8.5. Monad</h3>
 <div class="paragraph">
 <p>What is a Monad ?</p>
 </div>
@@ -4216,7 +4394,7 @@ public interface Monad&lt;A&gt; extends Applicative&lt;A&gt; {
 </div>
 </div>
 <div class="sect3">
-<h4 id="_maybe">7.4.1. Maybe</h4>
+<h4 id="_maybe">8.5.1. Maybe</h4>
 <div class="paragraph">
 <p>The Maybe is normally used to avoid asking whether the value is null or it
 can contain any value. That&#8217;s why the Maybe object has two children:
@@ -4367,7 +4545,7 @@ something ( a transformation for example) with the current inner value.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_either">7.4.2. Either</h4>
+<h4 id="_either">8.5.2. Either</h4>
 <div class="paragraph">
 <p>Either monad is also one of the classics. The Either monad instance can
 represent correct or error.</p>
@@ -4453,7 +4631,7 @@ return immediately.</td>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_listmonad">7.4.3. ListMonad</h4>
+<h4 id="_listmonad">8.5.3. ListMonad</h4>
 <div class="paragraph">
 <p>Collections in general are one of the most used data structures ever.
 Some languages use collections only as data structures and some others make
@@ -4487,7 +4665,7 @@ did before, lets sneak a little bit on how <strong>Haskell</strong> does it ;)</
 </div>
 </div>
 <div class="sect3">
-<h4 id="_try">7.4.4. Try</h4>
+<h4 id="_try">8.5.4. Try</h4>
 <div class="paragraph">
 <p>Nowadays JVM languages deal with exceptions using <strong>try-catch</strong> blocks. The
 problem is that these constructions force programmers to build their code in
@@ -4650,17 +4828,17 @@ possible <strong>Failure</strong> instance, and the <strong>Success</strong> ins
 </div>
 </div>
 <div class="sect1">
-<h2 id="_persistent_collections">8. Persistent collections</h2>
+<h2 id="_persistent_collections">9. Persistent collections</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>TODO</p>
+<p>(TODO)</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-10-17 15:06:48 +00:00
+Last updated 2014-10-27 23:10:57 +00:00
 </div>
 </div>
 </body>
