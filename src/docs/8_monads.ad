@@ -25,6 +25,85 @@ learn about +Category Theory+ applied to functional programming the more
 you understand how to use functional programming at work... but stop! 
 it's about time... *LETS DO THIS* 
 
+=== Monoids
+
+Please stick this into your mind...A monoid....IS NOT A MONAD!!!! I wish it was, monads
+would be a lot easier to understand, A *monoid* is a very simple concept, 
+simple and yet powerful...we'll see later on why.  Lets see formal description first.
+
+[Wikipedia]
+""
+...a monoid is an algebraic structure with a single associative binary operation and an 
+identity element. 
+""
+
+Ok so imagine we've got a set of numbers called *V* and a binary operation such as *V* x *V* -> *V* then
+*V* with *** is a monoid if satisfies the following axioms:
+
+[stem]
+.associativity
+++++
+AA a,b,c in V, (a*b) * c = a * (b*c)
+++++
+
+That means that you can combine elements from that set, using that operation, in any order. Lets think
+about coding... you can build a code module as a *combination of smaller computations*. And because those
+computations can be executed *in any order*, they *could be executed in parallel* as well and finally 
+combine the results of all of them.
+
+[source,groovy]
+.Monoid
+----
+include::{testDir}/groovyfp/categories/MonoidsSpec.groovy[tags=monoid1,indent=0] 
+----
+
+<1> We will be declaring as immutable all possible objects in order to apply best practices
+when trying to use those objects in a multi-threaded environment
+<2> We'are implementing equals() and hashCode() to know which object is which
+<3> Defining our *binary operation*
+
+Here we just defined an object declaring a simple binary operation which is the sum of two 
+given CarFleet objects. 
+
+[source,groovy]
+.Monoids: associativity
+----
+include::{testDir}/groovyfp/categories/MonoidsSpec.groovy[tags=monoid2,indent=0] 
+----
+
+<1> Applying the operation in a sequential manner.
+<2> Applying the operation in no order at all, or at least in a way we cannot predict
+the order.
+
+[stem]
+.identity element
+++++
+\exists e in V, AA a in V, e * a  = a * e = a
+++++
+
+Keep in mind that the indentity element could be anything. It's not the number one neccesarily, but something
+that doesn't alter the element operated with it.
+
+[source,groovy]
+.Monoids: identity
+----
+include::{testDir}/groovyfp/categories/MonoidsSpec.groovy[tags=monoid3,indent=0] 
+----
+
+You may be wondering why should you bother about building an object like that and having 
+such operations obeying that kind of rules...
+well associativity comes handy when talking about *parallelism*. If it doesn't really
+matter in which order operations are executed, then you can scatter those operations through
+the available cores in your computer.
+
+[source,groovy]
+.Monoids: parallelism 
+----
+include::{testDir}/groovyfp/categories/MonoidsSpec.groovy[tags=monoid4,indent=0] 
+----
+
+<1> Sum is executed in order
+<2> Sum is executed in parallel (no specific order can be assumed)
 
 === Functor
 
